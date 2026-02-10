@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --bg-color: #0b0b0b;
+  --bg-color-2: #fff;
+  --panel-color: #1a1a1a;
+  --panel-color-2: green;
+  --text-main: #e0e0e0;
+  --text-main-2: #000;
+  --text-muted: #888;
+  --accent-gold: #a38d6d;
+  --action-buy: #4ecca3;
+  --action-err: #e85d75;
+  --border-color: #333;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.login-card {
+  background-color: var(--panel-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--accent-gold);
+  margin-bottom: 10px;
+  display: inline-block;
+}
+.subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 30px;
+}
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+.input-label {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+.input-field {
+  width: 100%;
+  background: #0f0f0f;
+  border: 1px solid var(--border-color);
+  padding: 12px;
+  color: white;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  background-color: rgba(78, 204, 163, 0.15);
+  color: var(--action-buy);
+  border: 1px solid rgba(78, 204, 163, 0.3);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn-login:hover {
+  background-color: rgba(78, 204, 163, 0.25);
+}
+.error-msg {
+  color: var(--action-err);
+  font-size: 0.9rem;
+  margin-top: 10px;
+  display: none;
+}
+.links {
+  margin-top: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+}
+.link-text {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.link-text:hover {
+  color: var(--accent-gold);
+}
