@@ -20,5 +20,6 @@ export default {
       },
     },
   },
+  important: "#root",
   plugins: [],
 } satisfies Config;

@@ -1,13 +1,17 @@
 import api from "./axios";
 
 export const register = (payload: {
-  name: string;
+  // name: string;
+  firstname: string;
+  lastname: string;
   email: string;
   password: string;
   role: string;
+  nin: string;
+  address: string;
 }) => api.post("/auth/register", payload);
 
-export const login = (payload: { email: string; password: string }) => {
+export const login = (payload: { username: string; password: string }) => {
   api.post("/auth/login", payload).then((res) => {
     const { user } = res.data;
     // sessionStorage.setItem("access_token", accessToken);

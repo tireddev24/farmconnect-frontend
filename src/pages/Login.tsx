@@ -1,16 +1,16 @@
-import { Box, Button, Input, Heading, VStack } from "@chakra-ui/react";
+// import { Box, Button, Input, Heading, VStack } from "@chakra-ui/react";
 import { useState } from "react";
-import { getMe, login } from "../api/auth";
+import { login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
-      await login({ email, password });
+      login({ username, password });
       // await getMe();
       navigate("/dashboard");
     } catch (err: any) {
@@ -20,25 +20,54 @@ export default function Login() {
   };
 
   return (
-    <Box
-      h="100vh"
-      display="flex"
-      w={"svw"}
-      justifyContent={"center"}
-      alignItems={"center"}
-    >
-      <VStack justifyContent={"center"}>
-        <Heading>Login</Heading>
-        <Input placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
-        <Input
-          placeholder="Password"
-          type="password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <Button color={"black"} w="100%" onClick={handleSubmit}>
-          Login
-        </Button>
-      </VStack>
-    </Box>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="login-card">
+        <div className="logo">FARMCONNECT</div>
+        <div className="subtitle">Access the Agricultural Marketplace</div>
+        <form id="loginForm">
+          <div className="input-group">
+            <label className="input-label">Username</label>
+            <input
+              type="text"
+              id="username"
+              className="input-field"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <div className="input-group">
+            <label className="input-label">Password</label>
+            <input
+              type="password"
+              id="password"
+              className="input-field"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <button type="submit" className="btn-login">
+            Log In
+          </button>
+          <div id="errorMsg" className="error-msg">
+            Invalid credentials. Try 'buyer'.
+          </div>
+        </form>
+        <div className="links">
+          <a href="#" className="link-text">
+            Forgot Password?
+          </a>
+          <a href="/register" className="link-text">
+            Create Account
+          </a>
+        </div>
+        <a
+          href="/dashboard"
+          className="link-text"
+          style={{ marginTop: "30px" }}
+        >
+          ← Back to Market
+        </a>
+      </div>
+    </div>
   );
 }

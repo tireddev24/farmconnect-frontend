@@ -3,22 +3,44 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Root } from "./pages/root";
+import Market from "./pages/Market";
+import Orders from "./pages/Orders";
+import Profile from "./pages/Profile";
+import Home from "./pages/Dash2";
+import { Box } from "lucide-react";
+import { Container } from "@chakra-ui/react";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route
+    <Container maxW={"full"} p={0} m={0} bg={"#0a0a0a"} minH={"dvh"}>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        {/* <Route path="/" element={<Navigate to="/dashboard" replace />} /> */}
+        {/* <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+          <Dashboard />
           </ProtectedRoute>
-        }
-      />
-    </Routes>
+          }
+          /> */}
+        <Route path="/" element={<Root />}>
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="market" element={<Market />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Container>
   );
 }
 
