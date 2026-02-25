@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { login } from "../api/auth";
 import { useNavigate } from "react-router-dom";
+import { toaster } from "../components/ui/toaster";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,10 +11,16 @@ export default function Login() {
 
   const handleSubmit = async () => {
     try {
-      login({ username, password });
+      const { success, message } = await login({ username, password });
       // await getMe();
-      navigate("/dashboard");
-    } catch (err: any) {
+
+      toaster.create({
+        type: success ? "success" : "warning",
+        description: message,
+      });
+
+      setTimeout(() => navigate("/dashboard"), 500);
+    } catch (err) {
       alert("Invalid credentials");
       console.error(err);
     }

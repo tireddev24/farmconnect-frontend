@@ -4,7 +4,8 @@ import { SearchX } from "lucide-react";
 
 import { ProductCard } from "../components/productcard";
 import { Header } from "../components/header";
-import { Box } from "@chakra-ui/react";
+import { Box, HStack, Text } from "@chakra-ui/react";
+import { Dot } from "../components/ui/icons";
 
 const FarmConnect: React.FC = () => {
   const [filter, setFilter] = useState("all");
@@ -32,7 +33,7 @@ const FarmConnect: React.FC = () => {
   }, [filter]);
 
   return (
-    <Box className="flex-1  flex-col" zIndex={50} marginTop={36}>
+    <Box className="flex-1  flex-col" zIndex={50}>
       {/* HEADER */}
 
       <Header
@@ -45,56 +46,36 @@ const FarmConnect: React.FC = () => {
         setFilter={setFilter}
       />
 
-      <Box bg={"#1a1a1a"} mt={36} p={2} px={6}>
-        <div className="px-4 lg:px-8 py-4 border-b border-gray-100 dark:border-dark-500/50">
-          <div className="flex items-center gap-6 overflow-x-auto">
-            <div className="flex items-center gap-2 text-sm">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
-              <span className="text-gray-500 dark:text-gray-400">
-                Live Market
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <i
-                data-lucide="users"
-                className="w-4 h-4 text-agri-500 dark:text-gold-400"
-              ></i>
-              <span className="text-gray-500 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-200 font-medium">
-                  2,847
-                </span>{" "}
-                Active Traders
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <i
-                data-lucide="package"
-                className="w-4 h-4 text-agri-500 dark:text-gold-400"
-              ></i>
-              <span className="text-gray-500 dark:text-gray-400">
-                <span className="text-gray-900 dark:text-gray-200 font-medium">
-                  15,234
-                </span>{" "}
-                Tons Traded
-              </span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <i
-                data-lucide="clock"
-                className="w-4 h-4 text-agri-500 dark:text-gold-400"
-              ></i>
-              <span className="text-gray-500 dark:text-gray-400">
-                Updated{" "}
-                <span className="text-gray-900 dark:text-gray-200">
-                  just now
-                </span>
-              </span>
-            </div>
-          </div>
-        </div>
+      <Box
+        bg={{ base: "white", _dark: "black" }}
+        borderY={"1px solid "}
+        borderColor={"gray.100/10"}
+        p={3}
+        px={6}
+        display={"flex"}
+        alignItems={"center"}
+        gap={4}
+      >
+        <HStack color={"green"}>
+          <Dot color="green" />
+          <Text co>Live Market</Text>
+        </HStack>
+        <HStack>
+          <Text>Icon here</Text>
+          <Text color={{ base: "black", _dark: "white" }}> 2,847</Text>
+          <Text>Active Traders</Text>
+        </HStack>
+        <HStack>
+          <Text>Icon here</Text>
+          <Text color={{ base: "black", _dark: "white" }}> 2,847</Text>
+          <Text>Tons Traded</Text>
+        </HStack>
+        <HStack>
+          <Text>Icon here</Text>
+          <Text>Updated</Text>
+          <Text color={{ base: "black", _dark: "white" }}>Just now</Text>
+        </HStack>
       </Box>
-
-      {/* <Box border={" 1px solid gray"} marginY={"4"} /> */}
 
       {/* PRODUCT GRID */}
 

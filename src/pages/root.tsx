@@ -1,4 +1,4 @@
-import { Box, Container } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/sidebar";
 import { useEffect } from "react";
@@ -14,12 +14,12 @@ export const Root = () => {
   }, [navigate]);
 
   return (
-    <Box rounded={"md"} minH={"100vh"} w={"full"} overflow={"clip"}>
+    <Box rounded={"md"} alignContent={"flex-start"}>
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main content */}
-      <Box ml={14} minH={"dvh"} bg={"black"}>
+      <Box ml={16} bg={{ base: "whiteAlpha.100", _dark: "black" }}>
         <Outlet />
       </Box>
     </Box>

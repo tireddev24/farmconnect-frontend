@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+* {
+  margin: 0;
+  /* padding: 0; */
+  /* box-sizing: border-box; */
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -7,7 +13,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -31,16 +37,16 @@
 
 body {
   font-family: "Segoe UI", sans-serif;
-  background-color: var(--bg-color-3);
-  color: var(--text-main-2);
-  margin: 0;
-  height: 100vh;
-  display: flex;
+  /* background-color: var(--bg-color-3); */
+  color: var(--text-muted);
+  /* margin: 0; */
+  /* height: 100vh; */
+  /* display: flex; */
   /* flex: 1; */
 
   /* align-items: center; */
-  justify-content: center;
-  flex-direction: column;
+  /* justify-content: center; */
+  /* flex-direction: column; */
 }
 
 .auth-card {

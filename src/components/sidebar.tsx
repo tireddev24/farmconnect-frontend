@@ -11,36 +11,43 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 export const Sidebar = () => {
   return (
-    <Box bg={"#141414"} zIndex={"30"}>
+    <Box bg={{ base: "white", _dark: "#141414" }} zIndex={"30"}>
       <Box
         position={"fixed"}
-        top={0}
-        pt={4}
-        className=" lg:flex w-14 flex-col items-center py-6 bg-[#141414] border-r border-[#252525]  min-h-screen "
+        px={1}
+        pt={6}
+        borderRight={"1px solid"}
+        borderColor={"gray.400/30"}
+        display={"flex"}
+        flexDir={"column"}
+        alignItems={"center"}
+        gap={4}
+        minH={"dvh"}
       >
-        <div className=" w-10 h-10 rounded-xl bg-linear-to-br from-[#c9a962] to-[#8a7557] flex items-center justify-center">
-          <Wheat className="w-5 h-5 text-[#0a0a0a]" />
-        </div>
         <Box
-          marginTop={"4"}
-          flex={1}
-          display={"flex"}
-          flexDirection={"column"}
-          alignItems={"center"}
+          bgGradient={"to-r"}
+          gradientFrom={{ base: "green.600/90", _dark: "#c9a962" }}
+          gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
+          className=" w-10 h-10 rounded-xl  flex items-center justify-center"
+          color={{ base: "white", _dark: "#0a0a0a" }}
+          // mb={4}
         >
-          <Box px={3} mt={4} className="flex flex-col gap-4  *:cursor-pointer ">
-            <NavItem link="dashboard" icon={<Home />} />
+          <Wheat className="w-5 h-5 " />
+        </Box>
 
-            <NavItem link="market" icon={<TrendingUp />} />
-            <NavItem link="orders" icon={<ClipboardList />} />
-            <NavItem link="profile" icon={<User />} />
-          </Box>
-        </Box>
-        <Box>
-          <button className="p-3 text-gray-500 hover:text-[#c9a962] transition-colors">
-            <Settings className="w-5 h-5" />
-          </button>
-        </Box>
+        <NavItem link="dashboard" icon={<Home />} />
+
+        <NavItem link="market" icon={<TrendingUp />} />
+        <NavItem link="orders" icon={<ClipboardList />} />
+        <NavItem link="profile" icon={<User />} />
+
+        <Button
+          color={{ base: "green.600", _dark: "yellow.600" }}
+          bg={"none"}
+          mt={"auto"}
+        >
+          <Settings />
+        </Button>
       </Box>
     </Box>
   );
@@ -71,8 +78,27 @@ const NavItem = ({
       display={"flex"}
       alignItems={"center"}
       justifyContent={"center"}
-      _hover={{ bg: active ? "" : "#252525" }}
-      bg={active ? "#a38d6d" : ""}
+      _hover={{
+        bg: {
+          base: active ? "" : "gray.100/90",
+          _dark: active ? "" : "#8a7557/30",
+        },
+        borderLeft: "2px solid",
+        borderLeftColor: { base: "green", _dark: "#8a7557" },
+        color: { base: "green.600", _dark: "yellow.500/70" },
+      }}
+      color={{
+        base: active ? "green.600" : "gray.500",
+        _dark: active ? "yellow.500/70" : "gray.500",
+      }}
+      bg={{
+        base: active ? "white" : "gray.100/90",
+        _dark: active ? "#8a7557/30" : "none",
+      }}
+      border={"2px solid transparent"}
+      borderLeft={active ? "2px solid" : "none"}
+      borderLeftColor={{ base: "green.600", _dark: "#8a7557" }}
+      rounded={"lg"}
       onClick={() => navigate(`../${link}`)}
       // ${active ? "bg-[#a38d6d]/10 text-[#c9a962]" : "text-gray-500 hover:bg-[#252525] hover:text-[#c9a962]"}`}
     >

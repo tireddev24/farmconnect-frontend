@@ -34,6 +34,7 @@ import {
   Heart,
   Star,
 } from "../components/ui/icons";
+import type { JSX } from "react";
 
 const user = {
   name: "Michael Amao",
@@ -325,7 +326,15 @@ const Profile = () => {
   );
 };
 
-const QuickLink = ({ icon, label, sub, link, disabled }: any) => {
+interface quicklink {
+  icon: JSX.Element;
+  label: string;
+  sub: string;
+  link?: string;
+  disabled?: boolean;
+}
+
+const QuickLink = ({ icon, label, sub, link, disabled }: quicklink) => {
   const navigate = useNavigate();
   return (
     <VStack
@@ -353,7 +362,17 @@ const QuickLink = ({ icon, label, sub, link, disabled }: any) => {
   );
 };
 
-const OrderCard = ({ order }: any) => {
+interface ProfileOrderCard {
+  orderid: number;
+  orderItem: string;
+  ordernum: string;
+  quantity: number;
+  date: string;
+  amount: string;
+  status: "processing" | "shipped" | "delivered" | "cancelled" | string;
+}
+
+const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
   const badgecolor = order.status === "processing" ? "yellow" : "blue";
   return (
     <Box w={"full"} bg="#1a1a1a" rounded="xl" border="1px solid #262626">

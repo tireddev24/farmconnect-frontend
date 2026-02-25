@@ -4,6 +4,7 @@ import { FilterPill } from "./filterpill";
 import { Box, Button, HStack, Input, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiGalleryView2 as Gallery } from "react-icons/ri";
+import { ColorModeButton } from "./ui/color-mode";
 
 interface HeaderProps {
   title: string;
@@ -35,20 +36,22 @@ export const Header = ({
       top={0}
       position={"sticky"}
       minH={36}
-      className=" bg-[#1a1a1a]/80 backdrop-blur-xl border-b border-[#252525]"
+      bg={{ base: "white", _dark: "#1a1a1a/80" }}
+      // className=" bg-[#1a1a1a]/80 backdrop-blur-xl border-b border-[#252525]"
     >
       <Box px={4} py={4} className="px-4 lg:px-8 py-4">
         <Box className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-[#c9a962]  font-bold tracking-tight hidden lg:block">
-              <Text
-                fontSize={"xl"}
-                fontWeight={"bold"}
-                textTransform={"uppercase"}
-              >
-                {title}
-              </Text>
-            </h1>
+            {/* <h1 className="text-green-500/40 dark:text-[#c9a962]  font-bold tracking-tight hidden lg:block"> */}
+            <Text
+              fontSize={"xl"}
+              fontWeight={"bold"}
+              textTransform={"uppercase"}
+              color={{ base: "green", _dark: "yellow.500" }}
+            >
+              {title}
+            </Text>
+            {/* </h1> */}
             <p className=" text-gray-500">
               <Text fontSize={"md"}>{subtitle}</Text>
             </p>
@@ -83,6 +86,8 @@ export const Header = ({
             </Box>
           )}
 
+          <ColorModeButton />
+
           {/* Auth Display */}
           <div className="flex items-center gap-3">
             {user ? (
@@ -101,16 +106,20 @@ export const Header = ({
               <HStack spaceX={2}>
                 <Button
                   _hover={{ bg: "whiteAlpha.100" }}
-                  className=" text-black  px-5 py-2 rounded-xl font-medium"
+                  bg={{ base: "none", _dark: "none" }}
+                  color={{ base: "black", _dark: "white" }}
+                  className="  px-5 py-2 rounded-xl font-medium"
                   onClick={() => navigate("/login")}
                 >
                   Log in
                 </Button>
 
                 <Button
-                  bg={"#a38d6d"}
+                  bg={{ base: "green.500", _dark: "#8d7b60" }}
+                  gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
                   _hover={{ bg: "#8d7b60" }}
-                  className="bg-[#8d7b60] text-black  px-5 py-2 rounded-xl font-medium"
+                  color={{ base: "white", _dark: "black" }}
+                  className=" px-5 py-2 rounded-xl font-medium"
                   onClick={() => navigate("/register")}
                 >
                   Sign Up
