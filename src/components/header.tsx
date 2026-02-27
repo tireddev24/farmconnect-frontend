@@ -5,15 +5,16 @@ import { Box, Button, HStack, Input, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiGalleryView2 as Gallery } from "react-icons/ri";
 import { ColorModeButton } from "./ui/color-mode";
+import type { User } from "../types/userType";
 
 interface HeaderProps {
   title: string;
   subtitle: string;
   searchQuery?: string;
-  setSearchQuery?: any;
-  user?: any;
+  setSearchQuery?: React.Dispatch<React.SetStateAction<string>> | null;
+  user?: User;
   filter?: string;
-  setFilter?: any;
+  setFilter?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const Header = ({
@@ -67,7 +68,9 @@ export const Header = ({
                 placeholder="Search for grains, tubers..."
                 className="w-full bg-[#252525] border border-[#333] h-8 left-2 rounded-xl text-sm focus:outline-none focus:border-[#c9a962]/50 transition-all"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) =>
+                  setSearchQuery && setSearchQuery(e.target.value)
+                }
               />
             </Box>
           )}
@@ -81,7 +84,9 @@ export const Header = ({
                 placeholder="Search for products, categories..."
                 className="w-full bg-[#252525] border border-[#333] h-8 left-2 rounded-xl text-sm focus:outline-none focus:border-[#c9a962]/50 transition-all"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) =>
+                  setSearchQuery && setSearchQuery(e.target.value)
+                }
               />
             </Box>
           )}
@@ -93,11 +98,13 @@ export const Header = ({
             {user ? (
               <div className="flex items-center gap-3">
                 <div className="text-right hidden md:block">
-                  <p className="text-sm font-medium">{user.name}</p>
+                  <p className="text-sm font-medium">
+                    {user.firstname + " " + user.lastname}
+                  </p>
                   <p className="text-xs text-gray-500">Farmer</p>
                 </div>
                 <img
-                  src={`https://ui-avatars.com/api/?name=${user.name}&background=a38d6d&color=fff`}
+                  src={`https://ui-avatars.com/api/?name=${user.firstname + " " + user.lastname}&background=a38d6d&color=fff`}
                   className="w-10 h-10 rounded-xl border border-[#333]"
                   alt="avatar"
                 />
@@ -117,7 +124,7 @@ export const Header = ({
                 <Button
                   bg={{ base: "green.500", _dark: "#8d7b60" }}
                   gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
-                  _hover={{ bg: "#8d7b60" }}
+                  _hover={{ bg: { base: "green.600", _dark: "#8d7b60" } }}
                   color={{ base: "white", _dark: "black" }}
                   className=" px-5 py-2 rounded-xl font-medium"
                   onClick={() => navigate("/register")}
@@ -136,19 +143,19 @@ export const Header = ({
               label="Trending"
               icon={<Flame size={16} />}
               active={filter === "all"}
-              onClick={() => setFilter("all")}
+              onClick={() => setFilter && setFilter("all")}
             />
             <FilterPill
               label="Grains"
               icon={<Wheat size={16} />}
               active={filter === "grains"}
-              onClick={() => setFilter("grains")}
+              onClick={() => setFilter && setFilter("grains")}
             />
             <FilterPill
               label="Tubers"
               icon={<CircleDot size={16} />}
               active={filter === "tubers"}
-              onClick={() => setFilter("tubers")}
+              onClick={() => setFilter && setFilter("tubers")}
             />
           </div>
         )}
@@ -159,25 +166,25 @@ export const Header = ({
               label="All Trends"
               icon={<Gallery size={16} />}
               active={filter === "all"}
-              onClick={() => setFilter("all")}
+              onClick={() => setFilter && setFilter("all")}
             />
             <FilterPill
               label="Trending"
               icon={<Flame size={16} />}
               active={filter === "all"}
-              onClick={() => setFilter("all")}
+              onClick={() => setFilter && setFilter("all")}
             />
             <FilterPill
               label="Grains"
               icon={<Wheat size={16} />}
               active={filter === "grains"}
-              onClick={() => setFilter("grains")}
+              onClick={() => setFilter && setFilter("grains")}
             />
             <FilterPill
               label="Tubers"
               icon={<CircleDot size={16} />}
               active={filter === "tubers"}
-              onClick={() => setFilter("tubers")}
+              onClick={() => setFilter && setFilter("tubers")}
             />
           </div>
         )}

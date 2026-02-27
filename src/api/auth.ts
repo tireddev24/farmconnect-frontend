@@ -4,8 +4,9 @@ export const register = (payload: {
   // name: string;
   firstname: string;
   lastname: string;
-  email: string;
+  email?: string;
   password: string;
+  username?: string;
   role: string;
   nin: string;
   address: string;

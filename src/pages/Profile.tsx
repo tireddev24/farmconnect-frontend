@@ -20,7 +20,7 @@ import {
   Location,
   Contact,
   Phone,
-  Calender,
+  Calendar,
   Leaf,
   RightArrow,
   // Dot,
@@ -178,7 +178,7 @@ const Profile = () => {
                     Member Since
                   </Text>
                   <HStack>
-                    <Calender size={16} color="orange" />
+                    <Calendar size={16} color="orange" />
                     <Text>{user.memberSince}</Text>
                   </HStack>
                 </VStack>

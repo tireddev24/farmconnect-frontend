@@ -4,8 +4,8 @@ import { SearchX } from "lucide-react";
 
 import { ProductCard } from "../components/productcard";
 import { Header } from "../components/header";
-import { Box, HStack, Text } from "@chakra-ui/react";
-import { Dot } from "../components/ui/icons";
+import { Box } from "@chakra-ui/react";
+import MarketBar from "../components/marketbar";
 
 const FarmConnect: React.FC = () => {
   const [filter, setFilter] = useState("all");
@@ -46,36 +46,7 @@ const FarmConnect: React.FC = () => {
         setFilter={setFilter}
       />
 
-      <Box
-        bg={{ base: "white", _dark: "black" }}
-        borderY={"1px solid "}
-        borderColor={"gray.100/10"}
-        p={3}
-        px={6}
-        display={"flex"}
-        alignItems={"center"}
-        gap={4}
-      >
-        <HStack color={"green"}>
-          <Dot color="green" />
-          <Text co>Live Market</Text>
-        </HStack>
-        <HStack>
-          <Text>Icon here</Text>
-          <Text color={{ base: "black", _dark: "white" }}> 2,847</Text>
-          <Text>Active Traders</Text>
-        </HStack>
-        <HStack>
-          <Text>Icon here</Text>
-          <Text color={{ base: "black", _dark: "white" }}> 2,847</Text>
-          <Text>Tons Traded</Text>
-        </HStack>
-        <HStack>
-          <Text>Icon here</Text>
-          <Text>Updated</Text>
-          <Text color={{ base: "black", _dark: "white" }}>Just now</Text>
-        </HStack>
-      </Box>
+      <MarketBar />
 
       {/* PRODUCT GRID */}
 

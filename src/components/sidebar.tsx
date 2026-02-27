@@ -93,7 +93,7 @@ const NavItem = ({
       }}
       bg={{
         base: active ? "white" : "gray.100/90",
-        _dark: active ? "#8a7557/30" : "none",
+        _dark: active ? "#8a7557/20" : "none",
       }}
       border={"2px solid transparent"}
       borderLeft={active ? "2px solid" : "none"}
