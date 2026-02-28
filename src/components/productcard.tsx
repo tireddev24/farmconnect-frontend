@@ -4,63 +4,114 @@ import { Box, Text } from "@chakra-ui/react";
 
 export const ProductCard = ({ product }: { product: Product }) => (
   <Box
-    padding={5}
-    bg={"whiteAlpha.100"}
+    padding={4}
+    bg={{ base: "white", _dark: "whiteAlpha.300/50" }}
+    border={"1px solid"}
+    borderColor={{ base: "gray.100", _dark: "gray.700" }}
+    cursor={"pointer"}
     margin={4}
     rounded={"xl"}
-    _hover={{ boxShadow: "" }}
+    _hover={{ boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
   >
-    <Box className="flex items-center gap-4 mb-4">
-      <div className="w-14 h-14 rounded-2xl bg-[#252525] flex items-center justify-center text-2xl">
+    <Box className="flex items-center gap-4" mb={2}>
+      <Box
+        bg={{ base: "gray.200/30", _dark: "#252525" }}
+        className="w-14 h-14 rounded-2xl  flex items-center justify-center text-2xl"
+      >
         {product.icon}
-      </div>
-      <Box className="flex flex-col items-start" my={1}>
+      </Box>
+      <Box className="flex flex-col items-start">
         <h3 className="font-semibold text-gray-200">
-          <Text fontSize={"lg"} fontWeight={"semibold"}>
+          <Text
+            fontSize={"lg"}
+            fontWeight={"semibold"}
+            color={{ base: "#252525", _dark: "white" }}
+          >
             {product.name}
           </Text>
         </h3>
-        <p className="text-sm text-gray-500">{product.unit}</p>
+        <Text
+          fontSize={"sm"}
+          color={{ base: "gray.400", _dark: "gray.500" }}
+          textTransform={"capitalize"}
+        >
+          {product.unit}
+        </Text>
         <Text
           rounded={"2xl"}
-          bg={"#252525"}
+          bg={{ base: "gray.100", _dark: "#252525" }}
+          color={{ base: "gray.400/70", _dark: "gray.500" }}
           w={"max-content"}
           p={1}
           mt={1}
           px={2}
           fontWeight={"bold"}
-          fontSize={"2xs"}
+          fontSize={"xs"}
         >
           Tubers
         </Text>
       </Box>
     </Box>
 
-    <Box mt={2} className="grid mt-10 grid-cols-2 gap-3 mb-4">
+    <Box mt={4} className="grid mt-10 grid-cols-2 gap-3 mb-4">
       <Box
         p={2}
-        className="bg-[#4ecca3]/10 border border-[#4ecca3]/20 rounded-xl p-3"
+        bg={{ base: "green.100/50", _dark: "green.300/10" }}
+        border={"1px solid"}
+        borderColor={{ base: "green.300/50", _dark: "green.400/30" }}
+        rounded={"xl"}
       >
-        <p className="text-[10px] text-gray-500 uppercase">Buy Now</p>
-        <p className="text-[#4ecca3] font-bold text-lg">
+        <Text
+          color={{ base: "#", _dark: "" }}
+          fontSize={"xs"}
+          fontWeight={"semibold"}
+          className="capitalize"
+        >
+          Buy Now
+        </Text>
+        <Text
+          color={{ base: "green.500", _dark: "" }}
+          fontWeight={"semibold"}
+          fontSize={"lg"}
+        >
           ₦{product.price.toLocaleString()}
-        </p>
+        </Text>
       </Box>
       <Box
         p={2}
-        className="bg-[#e85d75]/10 border border-[#e85d75]/20 rounded-xl p-3"
+        bg={{ base: "red.100/50", _dark: "red.300/10" }}
+        border={"1px solid"}
+        borderColor={{ base: "red.300/50", _dark: "red.400/30" }}
+        rounded={"xl"}
       >
-        <p className="text-[10px] text-gray-500 uppercase">Best Offer</p>
-        <p className="text-[#e85d75] font-bold text-lg">
+        <Text
+          color={{ base: "", _dark: "" }}
+          fontSize={"xs"}
+          fontWeight={"semibold"}
+        >
+          Best Offer
+        </Text>
+        <Text
+          color={{ base: "#e85d75", _dark: "" }}
+          fontSize={"lg"}
+          fontWeight={"semibold"}
+        >
           ₦{(product.price * 0.95).toLocaleString()}
-        </p>
+        </Text>
       </Box>
     </Box>
 
-    <Box border={" 1px solid gray"} marginY={"4"} />
+    <Box
+      border={"1px solid"}
+      borderColor={{ base: "gray.100", _dark: "gray.700/50" }}
+      marginY={"4"}
+    />
 
-    <div className="flex items-center justify-between pt-4 border-t border-[#252525]">
-      <span className="text-xs text-gray-500 flex items-center gap-1">
+    <Box
+      color={{ base: "gray.100", _dark: "gray.400" }}
+      className="flex items-center justify-between  border-t border-[#252525]"
+    >
+      <span className="flex items-center gap-1">
         <Package size={14} /> {product.stock} in stock
       </span>
       <span
@@ -73,6 +124,6 @@ export const ProductCard = ({ product }: { product: Product }) => (
         )}
         {product.trend === "up" ? "Rising" : "Falling"}
       </span>
-    </div>
+    </Box>
   </Box>
 );

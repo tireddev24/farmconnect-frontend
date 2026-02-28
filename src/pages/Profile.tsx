@@ -74,7 +74,7 @@ const Profile = () => {
 
   // Reusable card style
   const cardStyle = {
-    bg: "#121212",
+    bg: { base: "white", _dark: "#121212" },
     border: "1px solid #262626",
     rounded: "2xl",
     p: 6,
@@ -82,22 +82,39 @@ const Profile = () => {
   };
 
   return (
-    <Box bg="black" minH="100vh" p={10} color="white" fontFamily="sans-serif">
-      <VStack maxW="6xl" mx="auto" gap={8} align="stretch">
+    <Box minH="100vh" p={10} fontFamily="sans-serif">
+      {/* <Box
+        position="absolute"
+        zIndex={0}
+        top="10%"
+        right={"50%"}
+        w="500px"
+        h="500px"
+        bg="green.200"
+        filter="blur(80px)"
+        opacity={0.3}
+        rounded="full"
+      /> */}
+      <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
         <HStack justifyContent="space-between">
           <VStack align="start" gap={0}>
-            <Text fontSize="3xl" fontWeight="bold">
+            <Text
+              fontSize="3xl"
+              fontWeight="bold"
+              color={{ base: "black", _dark: "white" }}
+            >
               Buyer's Profile
             </Text>
             <Text color="gray.500">Manage your profile and track orders</Text>
           </VStack>
           <Button
-            variant="solid"
-            borderColor="gray.700"
-            color="white"
+            variant="outline"
+            color={{ base: "black", _dark: "whiteAlpha.100" }}
             rounded={"lg"}
-            _hover={{ borderColor: "yellow.500/50" }}
+            _hover={{
+              borderColor: { base: "green.400", _dark: "yellow.500/50" },
+            }}
           >
             <Pen size={16} />
             Edit Profile
@@ -109,20 +126,40 @@ const Profile = () => {
           <GridItem colSpan={4}>
             <VStack gap={6}>
               {/* Profile Card */}
-              <VStack {...cardStyle} gap={4}>
-                <Avatar.Root bg="#2a2a2a" size="2xl" border="4px solid #1a1a1a">
+              <VStack
+                {...cardStyle}
+                borderColor={{ base: "green.300", _dark: "#262626" }}
+                gap={4}
+              >
+                <Avatar.Root
+                  bg={"#2a2a2a"}
+                  size="2xl"
+                  border="4px solid #1a1a1a"
+                >
                   <Avatar.Fallback name={user.name} color="gray.400" />
                   <Avatar.Image src={user.image} />
                 </Avatar.Root>
-                <VStack gap={1}>
+                <VStack gap={1} color={{ base: "black", _dark: "gray.300" }}>
                   <Text fontSize="xl" fontWeight="bold">
                     {user.name}
                   </Text>
-                  <Badge text={user.type} color="yellow" />
+
+                  <HStack
+                    p={1}
+                    px={2}
+                    fontSize={14}
+                    border={"1px solid"}
+                    borderColor={{ base: "black", _dark: "gray.300" }}
+                    color={{ base: "black", _dark: "gray.300" }}
+                    bg={"gray.200/50"}
+                    rounded={"lg"}
+                  >
+                    {user.type}
+                  </HStack>
                 </VStack>
                 <Separator borderColor="gray.800" />
                 <HStack justify="space-around" w="full" textAlign="center">
-                  <VStack gap={0}>
+                  <VStack gap={0} color={{ base: "black", _dark: "white" }}>
                     <Text fontWeight="bold" fontSize="lg">
                       {user.stats.orders}
                     </Text>
@@ -131,7 +168,11 @@ const Profile = () => {
                     </Text>
                   </VStack>
                   <VStack gap={0}>
-                    <Text fontWeight="bold" fontSize="lg" color="green.400">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="lg"
+                      color={{ base: "green.500", _dark: "green.400" }}
+                    >
                       {user.stats.spent}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
@@ -139,7 +180,11 @@ const Profile = () => {
                     </Text>
                   </VStack>
                   <VStack gap={0}>
-                    <Text fontWeight="bold" fontSize="lg" color="yellow.500">
+                    <Text
+                      fontWeight="bold"
+                      fontSize="lg"
+                      color={{ base: "green.500", _dark: "yellow.400" }}
+                    >
                       {user.stats.rating}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
@@ -221,16 +266,19 @@ const Profile = () => {
               {/* Active Orders */}
               <VStack {...cardStyle} align="stretch" gap={6}>
                 <HStack justifyContent="space-between">
-                  <HStack>
-                    <Cube color="orange" />
+                  <HStack color={{ base: "black", _dark: "white" }}>
+                    <Text color={{ base: "green.500", _dark: "orange" }}>
+                      <Cube />
+                    </Text>
                     <Text fontWeight="bold">Active Orders</Text>
                   </HStack>
                   <HStack
-                    color="yellow.600"
+                    color={{ base: "green.500", _dark: "orange" }}
                     cursor="pointer"
                     onClick={() => navigate("/orders")}
                   >
                     <Text fontSize="sm">View All</Text>
+
                     <RightArrow />
                   </HStack>
                 </HStack>

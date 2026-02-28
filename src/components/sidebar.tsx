@@ -1,4 +1,4 @@
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, VStack } from "@chakra-ui/react";
 import {
   Wheat,
   Home,
@@ -8,6 +8,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ColorModeButton } from "./ui/color-mode";
 
 export const Sidebar = () => {
   return (
@@ -41,13 +42,15 @@ export const Sidebar = () => {
         <NavItem link="orders" icon={<ClipboardList />} />
         <NavItem link="profile" icon={<User />} />
 
-        <Button
-          color={{ base: "green.600", _dark: "yellow.600" }}
-          bg={"none"}
-          mt={"auto"}
-        >
-          <Settings />
-        </Button>
+        <VStack bg={"none"} mt={"auto"} gap={4} mb={4}>
+          <ColorModeButton />
+          <Button
+            color={{ base: "green.600", _dark: "yellow.600" }}
+            bg={"none"}
+          >
+            <Settings />
+          </Button>
+        </VStack>
       </Box>
     </Box>
   );

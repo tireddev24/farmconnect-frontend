@@ -4,7 +4,7 @@ export const FilterPill = ({ label, icon, active, onClick }: any) => (
   <Button
     onClick={onClick}
     bg={{
-      base: active ? "green.600" : "gray.100",
+      base: active ? "green.600/80" : "gray.100",
       _dark: active ? "#8a7557" : "#252525",
     }}
     color={{

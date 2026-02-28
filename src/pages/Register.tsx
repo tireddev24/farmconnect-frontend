@@ -19,7 +19,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import { register } from "../api/auth";
 
-import { Wheat } from "lucide-react";
 import {
   LeftArrow,
   PadLock,
@@ -28,6 +27,8 @@ import {
   ShieldCheck,
 } from "../components/ui/icons";
 import CustomSelect from "../components/customselect";
+import { ColorModeButton } from "../components/ui/color-mode";
+import Spin from "../components/ui/spinner";
 
 export default function Register() {
   const [firstname, setFirstname] = useState("");
@@ -41,11 +42,16 @@ export default function Register() {
   const [password, setPassword] = useState("");
   // const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setLoading(true);
+      setTimeout(() => {}, 5000);
+      // return;
       await register({
         firstname,
         lastname,
@@ -59,6 +65,8 @@ export default function Register() {
     } catch (err) {
       console.error(err);
       alert("Registration failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,6 +78,21 @@ export default function Register() {
       overflow="hidden"
       py={10}
     >
+      {/* <Box
+        position={"absolute"}
+        top={0}
+        right={0}
+        bg={"white"}
+        p={2}
+        m={2}
+        cursor={"pointer"}
+      > */}
+
+      <Box>
+        <ColorModeButton />
+      </Box>
+      {/* </Box> */}
+
       {/* Decorative Background Elements */}
       <Box
         position="absolute"
@@ -77,7 +100,7 @@ export default function Register() {
         right="-10%"
         w="500px"
         h="500px"
-        bg="emerald.50"
+        bg="green.100"
         filter="blur(80px)"
         opacity={0.6}
         rounded="full"
@@ -115,7 +138,7 @@ export default function Register() {
           border="1px solid"
           borderColor="gray.100"
         >
-          <form onSubmit={handleSubmit}>
+          <form>
             <Stack spaceX={0}>
               {/* Names Row */}
               <SimpleGrid columns={2} spaceX={4}>
@@ -343,7 +366,7 @@ export default function Register() {
               </Box>
 
               <Button
-                type="submit"
+                // type="submit"
                 bg="#10a37f"
                 color="white"
                 h="14"
@@ -354,15 +377,20 @@ export default function Register() {
                 _active={{ transform: "scale(0.98)" }}
                 boxShadow="0 4px 14px 0 rgba(16, 163, 127, 0.39)"
                 mt={4}
+                cursor={"pointer"}
+                onClick={handleSubmit}
               >
-                Create Account
+                {loading ? <Spin /> : "Create Account"}
               </Button>
             </Stack>
           </form>
 
           <Center mt={8}>
             <Text fontSize="sm" color="gray.500" fontWeight={"semibold"}>
-              Already have an account? <Link color="green.600">Log In</Link>
+              Already have an account?{" "}
+              <Link href="/login" cursor={"pointer"} color="green.600">
+                Log In
+              </Link>
             </Text>
           </Center>
         </Container>

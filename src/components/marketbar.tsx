@@ -4,7 +4,7 @@ import { Dot, Clock4, ClosedBox, Users } from "../components/ui/icons";
 const MarketBar = () => {
   return (
     <Box
-      bg={{ base: "white", _dark: "black" }}
+      // bg={{ base: "gray.50", _dark: "black" }}
       borderY={"1px solid "}
       borderColor={{ base: "gray.200", _dark: "gray.100/10" }}
       p={3}

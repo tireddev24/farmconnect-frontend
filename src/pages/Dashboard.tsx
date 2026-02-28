@@ -50,7 +50,7 @@ const FarmConnect: React.FC = () => {
 
       {/* PRODUCT GRID */}
 
-      <Box className="">
+      <Box className="" m={2}>
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 ">
             {filteredProducts.map((product) => (

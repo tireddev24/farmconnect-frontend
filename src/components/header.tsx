@@ -4,7 +4,6 @@ import { FilterPill } from "./filterpill";
 import { Box, Button, HStack, Input, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiGalleryView2 as Gallery } from "react-icons/ri";
-import { ColorModeButton } from "./ui/color-mode";
 import type { User } from "../types/userType";
 
 interface HeaderProps {
@@ -90,8 +89,6 @@ export const Header = ({
               />
             </Box>
           )}
-
-          <ColorModeButton />
 
           {/* Auth Display */}
           <div className="flex items-center gap-3">

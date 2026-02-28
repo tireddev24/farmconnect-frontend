@@ -11,11 +11,11 @@ const Orders = () => {
     <Box
       display={"flex"}
       flexDirection={"column"}
-      justifyContent={"center"}
+      justifyContent={"flex-start"}
       alignItems={"center"}
-      color={"white"}
-      // mt={10}
-      className=" overflow-hidden gap-10"
+      gap={10}
+      minH={"dvh"}
+      color={{ base: "black", _dark: "white" }}
     >
       <Box display={"flex"} flexDir={"column"} gap={10} mt={10}>
         <HStack
@@ -23,7 +23,7 @@ const Orders = () => {
           display={"flex"}
           flexDirection={"row"}
           justifyContent={"space-between"}
-          className="bg-[#0a0a0a] flex gap-10 justify-between text-gray-200 font-sans  items-start "
+          className=" font-sans "
         >
           <div>
             <Text fontSize={24} fontWeight={"bold"}>
@@ -35,21 +35,27 @@ const Orders = () => {
           </div>
 
           <Box>
-            <Button mr={4} colorPalette={"gray"} disabled>
+            <Button mr={4} colorPalette={"gray"} variant={"outline"} disabled>
               Support
             </Button>
             <Button
               p={2}
               onClick={() => navigate("../market")}
-              bg={"yellow.600/70"}
+              bg={{ base: "green.600", _dark: "#8a7557" }}
             >
               Browse Market
             </Button>
           </Box>
         </HStack>
         <HStack alignSelf={"flex-start"}>
-          <Truck className="text-yellow-500" />
-          <Text fontSize={16} fontWeight={"bold"} color={"white"}>
+          <Text
+            fontWeight={"bold"}
+            fontSize={20}
+            color={{ base: "green.600", _dark: "yellow.400/80" }}
+          >
+            <Truck />
+          </Text>
+          <Text fontSize={18} fontWeight={"semibold"}>
             Active Deliveries (2)
           </Text>
         </HStack>
@@ -57,7 +63,7 @@ const Orders = () => {
           <OrderCard order={o} />
         ))}
 
-        <HStack fontWeight={"bold"} alignItems={"center"} h={"max-content"}>
+        <HStack fontWeight={"bold"} alignItems={"center"}>
           <History className="text-2xl text-gray-600" />
           <Text>History</Text>
         </HStack>
@@ -116,11 +122,20 @@ const OrderCard = ({ order }: { order: Product }) => {
       justifyContent={"space-between"}
       alignItems={"center"}
       gap={2}
-      color={"white"}
+      bg={"whiteAlpha.300/50"}
+      p={4}
+      border={"1px solid"}
+      borderColor={{ base: "", _dark: "#8a7557/40" }}
+      py={6}
+      rounded={"xl"}
     >
-      <div className="w-16 h-16 rounded-2xl bg-[#252525] flex items-center justify-center text-2xl">
+      <Box
+        bg={{ base: "gray.200", _dark: "#252525" }}
+        fontSize={"2xl"}
+        className="w-16 h-16 rounded-2xl  flex items-center justify-center text-2xl"
+      >
         {order.icon}
-      </div>
+      </Box>
       <Box
         display={"flex"}
         flexDir={"column"}
@@ -131,7 +146,11 @@ const OrderCard = ({ order }: { order: Product }) => {
           {order.name}
         </Text>
         <Text fontSize={14}>Seller: {order.seller}</Text>
-        <Text fontSize={12} color={"gray.400"} fontWeight={"bold"}>
+        <Text
+          fontSize={12}
+          color={{ base: "gray.400", _dark: "gray.500" }}
+          fontWeight={"bold"}
+        >
           {order.orderId}
         </Text>
       </Box>
@@ -146,17 +165,18 @@ const OrderTable = () => {
   const navigate = useNavigate();
   return (
     <>
-      <Table.Root rounded={"lg"} p={2}>
+      <Table.Root mt={-6} colorPalette={"gray"}>
         <Table.Header
-          rounded={"lg"}
-          color={"gray.500"}
-          className="uppercase font-bold rounded-3xl text-gray-500"
+          rounded={"2xl"}
+          color={{ base: "black", _dark: "gray.500" }}
+          bg={"gray.200"}
+          className="uppercase font-bold  "
         >
           <Table.Row
             rounded={"lg"}
             className="uppercase font-bold rounded-3xl text-gray-500"
-            bg={"whiteAlpha.100"}
-            border={"none"}
+            bg={{ base: "whiteAlpha.100", _dark: "black/90" }}
+            // border={"none"}
             alignContent={"center"}
           >
             <Table.ColumnHeader color={"gray.500"}>order id</Table.ColumnHeader>
@@ -167,13 +187,14 @@ const OrderTable = () => {
             <Table.ColumnHeader color={"gray.500"}>Action</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
-        <TableBody justifyContent={"center"}>
+        <TableBody>
           {orders.map((order) => (
             <Table.Row
               alignContent={"center"}
               key={order.id}
-              border={"none"}
-              bg={"whiteAlpha.100"}
+              // border={"none"}
+              rounded={"xl"}
+              bg={{ base: "whiteAlpha.100", _dark: "whiteAlpha.200" }}
             >
               <Table.Cell>
                 <Text>{order.id}</Text>
@@ -192,13 +213,13 @@ const OrderTable = () => {
                   <Badge text="Delivered" color="green" />
                 </Text>
               </Table.Cell>
-              <Table.Cell textAlign={"center"}>
+              <Table.Cell>
                 <Text
                   cursor={"pointer"}
                   onClick={() => navigate("../market")}
-                  color={"green.400/70"}
+                  color={{ base: "green.600", _dark: "yellow.300/60" }}
                 >
-                  View
+                  View Details
                 </Text>
               </Table.Cell>
             </Table.Row>
