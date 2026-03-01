@@ -1,7 +1,7 @@
 import { Wheat, Search, Flame, CircleDot } from "lucide-react";
 
 import { FilterPill } from "./filterpill";
-import { Box, Button, HStack, Input, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, HStack, Input, Text } from "@chakra-ui/react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { RiGalleryView2 as Gallery } from "react-icons/ri";
 import type { User } from "../types/userType";
@@ -93,19 +93,32 @@ export const Header = ({
           {/* Auth Display */}
           <div className="flex items-center gap-3">
             {user ? (
-              <div className="flex items-center gap-3">
-                <div className="text-right hidden md:block">
+              <Box className="flex items-center gap-3">
+                <Box className="text-right hidden md:block">
                   <p className="text-sm font-medium">
-                    {user.firstname + " " + user.lastname}
+                    {user.firstName + " " + user.lastName}
                   </p>
-                  <p className="text-xs text-gray-500">Farmer</p>
-                </div>
-                <img
-                  src={`https://ui-avatars.com/api/?name=${user.firstname + " " + user.lastname}&background=a38d6d&color=fff`}
-                  className="w-10 h-10 rounded-xl border border-[#333]"
-                  alt="avatar"
-                />
-              </div>
+                  <Text
+                    fontWeight={"semibold"}
+                    className="text-xs uppercase text-gray-500"
+                  >
+                    {user.role}
+                  </Text>
+                </Box>
+                <Avatar.Root
+                  bg={"#2a2a2a"}
+                  size="lg"
+                  // border="4px solid #1a1a1a"
+                >
+                  <Avatar.Fallback
+                    name={user.firstName + " " + user.lastName}
+                    color="gray.400"
+                  />
+                  <Avatar.Image
+                    src={`https://ui-avatars.com/api/?name=${user.firstName + " " + user.lastName}&background=a38d6d&color=fff`}
+                  />
+                </Avatar.Root>
+              </Box>
             ) : (
               <HStack spaceX={2}>
                 <Button

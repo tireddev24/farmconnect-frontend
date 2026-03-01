@@ -1,15 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Spin from "./ui/spinner";
 
 export default function ProtectedRoute({ children }: any) {
-  // const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-  // const storedData = JSON.parse(sessionStorage.getItem("user_data")!);
+  if (loading)
+    return (
+      <div className="flex  justify-center items-center min-h-dvh">
+        <Spin />
+      </div>
+    );
 
-  // console.log("User in AuthProvider:", storedData);
-
-  // if (loading) return <p>Loading...</p>;
-  // if (!storedData) return <Navigate to="/login" />;
+  if (!user) return <Navigate to="/login" />;
 
   return children;
 }

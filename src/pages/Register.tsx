@@ -22,23 +22,25 @@ import { register } from "../api/auth";
 import {
   LeftArrow,
   PadLock,
-  User,
+  // User,
   Location as MapPin,
-  ShieldCheck,
+  // ShieldCheck,
 } from "../components/ui/icons";
 import CustomSelect from "../components/customselect";
 import { ColorModeButton } from "../components/ui/color-mode";
 import Spin from "../components/ui/spinner";
+import { Wheat } from "lucide-react";
+import { Toaster, toaster } from "../components/ui/toaster";
 
 export default function Register() {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [dob, setDob] = useState("");
-  const [phoneNo, setPhoneNo] = useState("");
+  const [firstName, setFirstname] = useState("");
+  const [lastName, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
-  const [nin, setNin] = useState("");
-  const [role, setRole] = useState("Buyer (Retail/Wholesale)");
-  const [username, setUsername] = useState("");
+  // const [nin, setNin] = useState("");
+  const [role, setRole] = useState("Buyer");
+  // const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // const [password, setPassword] = useState("");
 
@@ -52,16 +54,27 @@ export default function Register() {
       setLoading(true);
       setTimeout(() => {}, 5000);
       // return;
-      await register({
-        firstname,
-        lastname,
+      const { success, message } = await register({
+        firstName,
+        lastName,
+        email,
         password,
+        phoneNumber,
         role,
         address,
-        nin,
-        username,
+        // nin,
+        // username,
       });
-      navigate("/dashboard");
+
+      toaster.create({
+        type: success ? "success" : "error",
+        title: success ? "Success" : "Error",
+        description: message,
+      });
+      if (success) {
+        setTimeout(() => {}, 2000);
+        navigate("/dashboard");
+      }
     } catch (err) {
       console.error(err);
       alert("Registration failed.");
@@ -78,6 +91,7 @@ export default function Register() {
       overflow="hidden"
       py={10}
     >
+      <Toaster />
       {/* <Box
         position={"absolute"}
         top={0}
@@ -157,10 +171,11 @@ export default function Register() {
                     variant="outline"
                     h="12"
                     rounded="xl"
-                    value={firstname}
+                    value={firstName}
                     onChange={(e) => setFirstname(e.target.value)}
                   />
                 </Box>
+
                 <Box>
                   <Text
                     fontSize="xs"
@@ -175,13 +190,13 @@ export default function Register() {
                     placeholder="Doe"
                     h="12"
                     rounded="xl"
-                    value={lastname}
+                    value={lastName}
                     onChange={(e) => setLastname(e.target.value)}
                   />
                 </Box>
               </SimpleGrid>
 
-              {/* DOB and Phone */}
+              {/* email and Phone */}
               <SimpleGrid columns={2} spaceX={4}>
                 <Box>
                   <Text
@@ -191,16 +206,17 @@ export default function Register() {
                     mb={1}
                     ml={1}
                   >
-                    Date of Birth
+                    Email Address
                   </Text>
                   <InputGroup>
                     <>
                       <Input
-                        type="date"
+                        type="email"
+                        placeholder="johndoe@gmail.com"
                         h="12"
                         rounded="xl"
-                        value={dob}
-                        onChange={(e) => setDob(e.target.value)}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
                       />
                     </>
                   </InputGroup>
@@ -221,8 +237,8 @@ export default function Register() {
                         placeholder="080..."
                         h="12"
                         rounded="xl"
-                        value={phoneNo}
-                        onChange={(e) => setPhoneNo(e.target.value)}
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
                       />
                     </>
                   </InputGroup>
@@ -238,7 +254,7 @@ export default function Register() {
                   mb={1}
                   ml={1}
                 >
-                  Residential Address
+                  Address
                 </Text>
                 <InputGroup>
                   <>
@@ -258,7 +274,7 @@ export default function Register() {
               </Box>
 
               {/* NIN */}
-              <Box>
+              {/* <Box>
                 <Text
                   fontSize="xs"
                   fontWeight="bold"
@@ -283,7 +299,7 @@ export default function Register() {
                     />
                   </>
                 </InputGroup>
-              </Box>
+              </Box> */}
 
               {/* Account Role */}
               <Box>
@@ -309,7 +325,7 @@ export default function Register() {
               </Box>
 
               {/* Username */}
-              <Box>
+              {/* <Box>
                 <Text
                   fontSize="xs"
                   fontWeight="bold"
@@ -334,7 +350,7 @@ export default function Register() {
                     />
                   </>
                 </InputGroup>
-              </Box>
+              </Box> */}
 
               {/* Password */}
               <Box>

@@ -9,8 +9,11 @@ import {
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ColorModeButton } from "./ui/color-mode";
+import { useAuth } from "../context/AuthContext";
+import { Logout } from "./ui/icons";
 
 export const Sidebar = () => {
+  const { logout } = useAuth();
   return (
     <Box bg={{ base: "white", _dark: "#141414" }} zIndex={"30"}>
       <Box
@@ -49,6 +52,13 @@ export const Sidebar = () => {
             bg={"none"}
           >
             <Settings />
+          </Button>
+          <Button
+            onClick={logout}
+            color={{ base: "red.600", _dark: "red.400" }}
+            bg={"none"}
+          >
+            <Logout />
           </Button>
         </VStack>
       </Box>

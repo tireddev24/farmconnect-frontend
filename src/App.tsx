@@ -8,6 +8,7 @@ import Market from "./pages/Market";
 import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import { Container } from "@chakra-ui/react";
+import Nopage from "./error/nopage";
 
 function App() {
   return (
@@ -16,18 +17,27 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Root />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="market" element={<Market />} />
+
           <Route
-            path="dashboard"
+            path="orders"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Orders />
               </ProtectedRoute>
             }
           />
-          <Route path="market" element={<Market />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="profile" element={<Profile />} />
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
         </Route>
+        <Route path="*" element={<Nopage />} />
       </Routes>
     </Container>
   );

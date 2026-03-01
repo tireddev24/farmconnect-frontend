@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { MOCK_PRODUCTS } from "../data/mockdata";
 import { SearchX } from "lucide-react";
 
@@ -7,20 +7,15 @@ import { Header } from "../components/header";
 import { Box } from "@chakra-ui/react";
 import MarketBar from "../components/marketbar";
 
+import { useAuth } from "../context/AuthContext";
+
 const FarmConnect: React.FC = () => {
+  const { user } = useAuth();
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<{
-    name: string;
-    isLoggedIn: boolean;
-  } | null>(null);
 
   // Simulation of your localStorage auth logic
-  useEffect(() => {
-    const savedUser = localStorage.getItem("fc_user");
-    if (savedUser) setUser(JSON.parse(savedUser));
-  }, []);
 
   // Filter Logic
   const filteredProducts = useMemo(() => {
@@ -41,7 +36,7 @@ const FarmConnect: React.FC = () => {
         subtitle="Agricultural Marketplace"
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        user={user}
+        user={user!}
         filter={filter}
         setFilter={setFilter}
       />

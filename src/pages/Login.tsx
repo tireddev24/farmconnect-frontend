@@ -20,22 +20,25 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { User, Lock, ArrowLeft } from "lucide-react";
-import { login } from "../api/auth";
 import { toaster } from "../components/ui/toaster";
 import { Wheat } from "lucide-react";
 import Spin from "../components/ui/spinner";
+import useLogin from "../hooks/useLogin";
+import { useAuth } from "../context/AuthContext";
 export default function Login() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { loading: load, user } = useAuth();
+  //implement for loading, awaiting data
+
+  const { loading, loginUser } = useLogin();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const { success, message } = await login({ username, password });
+      const { success, message } = await loginUser({ email, password });
 
       toaster.create({
         type: success ? "success" : "warning",
@@ -48,11 +51,19 @@ export default function Login() {
     } catch (err) {
       alert("Invalid credentials");
       console.error(err);
-    } finally {
-      setLoading(false);
     }
   };
 
+  if (user) {
+    navigate(-1);
+    window.location.reload();
+  }
+  if (load)
+    return (
+      <div className="flex  justify-center items-center min-h-dvh">
+        <Spin />
+      </div>
+    );
   return (
     <Box
       minH="100vh"
@@ -118,7 +129,7 @@ export default function Login() {
                   mb={2}
                   ml={1}
                 >
-                  Username
+                  Email
                 </Text>
                 <InputGroup>
                   <>
@@ -137,8 +148,8 @@ export default function Login() {
                         ring: "2px",
                         ringColor: "emerald.50",
                       }}
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                     />
                   </>
                 </InputGroup>

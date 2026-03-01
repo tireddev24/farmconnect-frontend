@@ -35,17 +35,7 @@ import {
   Star,
 } from "../components/ui/icons";
 import type { JSX } from "react";
-
-const user = {
-  name: "Michael Amao",
-  type: "BUYER",
-  phone: "0801 234 5678",
-  address: "Lekki, Lagos",
-  memberSince: "January 2024",
-  image:
-    "https://res.cloudinary.com/dpebuzpo4/image/upload/v1768730826/photo3_xzyf11.png",
-  stats: { orders: 12, spent: "₦450K", rating: 4.8 },
-};
+import { useAuth } from "../context/AuthContext";
 
 const orders = [
   {
@@ -70,6 +60,17 @@ const orders = [
 ];
 
 const Profile = () => {
+  const { user: User } = useAuth();
+
+  const user = {
+    ...User,
+    name: User?.firstName + " " + User?.lastName,
+    memberSince: "January 2024",
+    image:
+      "https://res.cloudinary.com/dpebuzpo4/image/upload/v1768730826/photo3_xzyf11.png",
+    stats: { orders: 12, spent: "₦450K", rating: 4.8 },
+  };
+
   const navigate = useNavigate();
 
   // Reusable card style
@@ -95,6 +96,8 @@ const Profile = () => {
         opacity={0.3}
         rounded="full"
       /> */}
+
+      {/* BUYERS Profile */}
       <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
         <HStack justifyContent="space-between">
@@ -154,7 +157,7 @@ const Profile = () => {
                     bg={"gray.200/50"}
                     rounded={"lg"}
                   >
-                    {user.type}
+                    {user.role}
                   </HStack>
                 </VStack>
                 <Separator borderColor="gray.800" />
@@ -206,7 +209,7 @@ const Profile = () => {
                   </Text>
                   <HStack>
                     <Phone size={16} color="orange" />
-                    <Text>{user.phone}</Text>
+                    <Text>{user.phoneNumber}</Text>
                   </HStack>
                 </VStack>
                 <VStack align="start" gap={1}>

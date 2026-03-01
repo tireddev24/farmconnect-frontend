@@ -1,10 +1,24 @@
 export interface User {
   id: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
   email: string;
+  password: string;
+  phoneNumber: string;
   role: string;
-  username?: string;
-  nin: string;
   address: string;
+  state?: string;
+  lga?: string;
+}
+
+export interface userRegister {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  role: string;
+  address: string;
+  state?: string;
+  lga?: string;
 }

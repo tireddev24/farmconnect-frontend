@@ -6,6 +6,8 @@ import type { ReactNode } from "react";
 import { AuthContext, type AuthContextType } from "./AuthContext";
 import type { User } from "../types/userType";
 
+const url = import.meta.env.VITE_API_URL;
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -21,6 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAuthenticated(true);
       setLoading(false);
     }
+    setLoading(false);
   }, []);
 
   // useEffect(() => {
@@ -37,12 +40,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // console.log(loading);
 
+  const login = (newData: User) => {
+    sessionStorage.setItem("user_data", JSON.stringify(newData));
+    setUser(newData);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("user_data");
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
   console.log("User in AuthProvider:", user);
 
   const value: AuthContextType = {
     user,
     isAuthenticated,
     loading,
+    url,
+    login,
+    logout,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

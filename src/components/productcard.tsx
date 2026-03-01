@@ -15,7 +15,7 @@ export const ProductCard = ({ product }: { product: Product }) => (
   >
     <Box className="flex items-center gap-4" mb={2}>
       <Box
-        bg={{ base: "gray.200/30", _dark: "#252525" }}
+        bg={{ base: "gray.300/40", _dark: "#252525" }}
         className="w-14 h-14 rounded-2xl  flex items-center justify-center text-2xl"
       >
         {product.icon}
@@ -108,7 +108,7 @@ export const ProductCard = ({ product }: { product: Product }) => (
     />
 
     <Box
-      color={{ base: "gray.100", _dark: "gray.400" }}
+      color={{ base: "gray.700", _dark: "gray.400" }}
       className="flex items-center justify-between  border-t border-[#252525]"
     >
       <span className="flex items-center gap-1">
