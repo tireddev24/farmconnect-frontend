@@ -11,7 +11,7 @@ You need to have all these installed for everything to work fine
 2. Clone the repo by running this in your VS Code terminal or command line
 
 ``` bash
-git clone https://github.com/tireddev24/farmconnect-frontend
+git clone https://github.com/tireddev24/farmconnect-frontend.git
 ```
 
 3. To work on the frontend
