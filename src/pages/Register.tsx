@@ -17,7 +17,6 @@ import {
   InputElement,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../api/auth";
 
 import {
   LeftArrow,
@@ -31,8 +30,10 @@ import { ColorModeButton } from "../components/ui/color-mode";
 import Spin from "../components/ui/spinner";
 import { Wheat } from "lucide-react";
 import { Toaster, toaster } from "../components/ui/toaster";
+import useRegister from "../hooks/useRegister";
 
 export default function Register() {
+  const { registerUser } = useRegister();
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -54,7 +55,7 @@ export default function Register() {
       setLoading(true);
       setTimeout(() => {}, 5000);
       // return;
-      const { success, message } = await register({
+      const { success, message } = await registerUser({
         firstName,
         lastName,
         email,
@@ -71,6 +72,7 @@ export default function Register() {
         title: success ? "Success" : "Error",
         description: message,
       });
+
       if (success) {
         setTimeout(() => {}, 2000);
         navigate("/dashboard");

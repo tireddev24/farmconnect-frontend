@@ -21,7 +21,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "3",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -31,7 +31,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "4",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -41,7 +41,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "5",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -51,7 +51,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "6",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -61,7 +61,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "7",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -71,7 +71,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "8",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -81,7 +81,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "9",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -91,7 +91,7 @@ export const MOCK_PRODUCTS: Product[] = [
     icon: "🥔",
   },
   {
-    id: "2",
+    id: "10",
     name: "Yam Tubers",
     unit: "per crate",
     category: "tubers",
@@ -100,35 +100,6 @@ export const MOCK_PRODUCTS: Product[] = [
     trend: "down",
     icon: "🥔",
   },
-  {
-    id: "2",
-    name: "Yam Tubers",
-    unit: "per crate",
-    category: "tubers",
-    price: 12000,
-    stock: 45,
-    trend: "down",
-    icon: "🥔",
-  },
-  {
-    id: "2",
-    name: "Yam Tubers",
-    unit: "per crate",
-    category: "tubers",
-    price: 12000,
-    stock: 45,
-    trend: "down",
-    icon: "🥔",
-  },
-  {
-    id: "2",
-    name: "Yam Tubers",
-    unit: "per crate",
-    category: "tubers",
-    price: 12000,
-    stock: 45,
-    trend: "down",
-    icon: "🥔",
-  },
+
   // Add more here...
 ];

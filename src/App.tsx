@@ -9,6 +9,7 @@ import Orders from "./pages/Orders";
 import Profile from "./pages/Profile";
 import { Container } from "@chakra-ui/react";
 import Nopage from "./error/nopage";
+import ProductDetails from "./pages/Product";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Root />}>
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="product/:id" element={<ProductDetails />} />
           <Route path="market" element={<Market />} />
 
           <Route

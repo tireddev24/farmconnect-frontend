@@ -1,8 +1,15 @@
 import { TrendingUp, Package, TrendingDown } from "lucide-react";
 import type { Product } from "../types/productTypes";
 import { Box, Text } from "@chakra-ui/react";
+import type { NavigateFunction } from "react-router-dom";
 
-export const ProductCard = ({ product }: { product: Product }) => (
+export const ProductCard = ({
+  product,
+  navigate,
+}: {
+  product: Product;
+  navigate: NavigateFunction;
+}) => (
   <Box
     padding={4}
     bg={{ base: "white", _dark: "whiteAlpha.300/50" }}
@@ -12,6 +19,7 @@ export const ProductCard = ({ product }: { product: Product }) => (
     margin={4}
     rounded={"xl"}
     _hover={{ boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+    onClick={() => navigate(`/product/${product.id}`)}
   >
     <Box className="flex items-center gap-4" mb={2}>
       <Box

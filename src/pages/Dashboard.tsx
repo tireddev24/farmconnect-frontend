@@ -8,8 +8,10 @@ import { Box } from "@chakra-ui/react";
 import MarketBar from "../components/marketbar";
 
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const FarmConnect: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,7 +51,11 @@ const FarmConnect: React.FC = () => {
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 ">
             {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                navigate={navigate}
+              />
             ))}
           </div>
         ) : (

@@ -13,7 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import { Logout } from "./ui/icons";
 
 export const Sidebar = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   return (
     <Box bg={{ base: "white", _dark: "#141414" }} zIndex={"30"}>
       <Box
@@ -45,21 +45,29 @@ export const Sidebar = () => {
         <NavItem link="orders" icon={<ClipboardList />} />
         <NavItem link="profile" icon={<User />} />
 
-        <VStack bg={"none"} mt={"auto"} gap={4} mb={4}>
+        <VStack bg={"none"} mt={"auto"} w={"max-content"} gap={4} mb={4}>
           <ColorModeButton />
-          <Button
-            color={{ base: "green.600", _dark: "yellow.600" }}
-            bg={"none"}
-          >
-            <Settings />
-          </Button>
-          <Button
-            onClick={logout}
-            color={{ base: "red.600", _dark: "red.400" }}
-            bg={"none"}
-          >
-            <Logout />
-          </Button>
+
+          {user ? (
+            <>
+              <Button
+                color={{ base: "green.600", _dark: "yellow.600" }}
+                bg={"none"}
+              >
+                <Settings />
+              </Button>
+
+              <Button
+                onClick={logout}
+                color={{ base: "red.600", _dark: "red.400" }}
+                bg={"none"}
+              >
+                <Logout />
+              </Button>
+            </>
+          ) : (
+            <></>
+          )}
         </VStack>
       </Box>
     </Box>

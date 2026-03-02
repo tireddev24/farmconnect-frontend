@@ -19,7 +19,11 @@ export const Root = () => {
       <Sidebar />
 
       {/* Main content */}
-      <Box ml={16} bg={{ base: "colorPalette.muted/70", _dark: "black" }}>
+      <Box
+        ml={16}
+        minH={"dvh"}
+        bg={{ base: "colorPalette.muted/70", _dark: "black" }}
+      >
         <Outlet />
       </Box>
     </Box>
