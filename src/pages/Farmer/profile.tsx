@@ -10,7 +10,7 @@ import {
   GridItem,
 } from "@chakra-ui/react";
 
-import Badge from "../components/ui/badge";
+import Badge from "../../components/ui/badge";
 
 import { useNavigate } from "react-router-dom";
 
@@ -33,9 +33,10 @@ import {
   Headset,
   Heart,
   Star,
-} from "../components/ui/icons";
+  Plus,
+} from "../../components/ui/icons";
 import type { JSX } from "react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const orders = [
   {
@@ -76,7 +77,7 @@ const Profile = () => {
   // Reusable card style
   const cardStyle = {
     bg: { base: "white", _dark: "#121212" },
-    border: "1px solid #262626",
+    // border: "1px solid #262626",
     rounded: "2xl",
     p: 6,
     w: "full",
@@ -107,9 +108,11 @@ const Profile = () => {
               fontWeight="bold"
               color={{ base: "black", _dark: "white" }}
             >
-              Buyer's Profile
+              Farmer's Profile
             </Text>
-            <Text color="gray.500">Manage your profile and track orders</Text>
+            <Text color="gray.500">
+              Manage your produce listings and payouts
+            </Text>
           </VStack>
           <Button
             variant="outline"
@@ -167,7 +170,7 @@ const Profile = () => {
                       {user.stats.orders}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
-                      Orders
+                      Listings
                     </Text>
                   </VStack>
                   <VStack gap={0}>
@@ -179,7 +182,7 @@ const Profile = () => {
                       {user.stats.spent}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
-                      Spent
+                      Sold
                     </Text>
                   </VStack>
                   <VStack gap={0}>
@@ -216,7 +219,7 @@ const Profile = () => {
                   </HStack>
                 </VStack>
                 <VStack align="start" gap={1}>
-                  <Text fontSize="xs">Location</Text>
+                  <Text fontSize="xs">Farm Location</Text>
                   <HStack>
                     <Location size={16} color="orange" />
                     <Text>{user.address}</Text>
@@ -276,16 +279,17 @@ const Profile = () => {
                     <Text color={{ base: "green.500", _dark: "orange" }}>
                       <Cube />
                     </Text>
-                    <Text fontWeight="bold">Active Orders</Text>
+                    <Text fontWeight="bold">My Active Listings</Text>
                   </HStack>
                   <HStack
                     color={{ base: "green.500", _dark: "orange" }}
                     cursor="pointer"
                     onClick={() => navigate("/orders")}
                   >
-                    <Text fontSize="sm">View All</Text>
-
-                    <RightArrow />
+                    <Text fontSize="sm">Add New</Text>
+                    <Text fontSize={"lg"} fontWeight={"bold"}>
+                      <Plus />
+                    </Text>
                   </HStack>
                 </HStack>
 
@@ -300,10 +304,10 @@ const Profile = () => {
                   <HStack justifyContent="space-between">
                     <HStack>
                       <History color="green" />
-                      <Text fontWeight="bold">Recent Purchases</Text>
+                      <Text fontWeight="bold">Recent Sales</Text>
                     </HStack>
                     <Text color="gray.500" fontSize="sm" cursor="pointer">
-                      Download History
+                      View Payouts
                     </Text>
                   </HStack>
 
@@ -347,27 +351,27 @@ const Profile = () => {
                 {/* Bottom Quick Links */}
                 <Grid templateColumns="repeat(4, 1fr)" gap={4} w="full">
                   <QuickLink
-                    icon={<ShoppingBag />}
-                    label="New Order"
-                    sub="Browse market"
-                    link="market"
+                    icon={<Plus />}
+                    label="Add Product"
+                    sub="List to market"
+                    link="newProduct"
                   />
                   <QuickLink
                     icon={<Headset />}
-                    label="Support"
+                    label="Payouts"
                     sub="Get help"
                     disabled={true}
                   />
                   <QuickLink
                     icon={<Heart />}
-                    label="Wishlist"
+                    label="Negotiations"
                     sub="Saved items"
                     disabled={true}
                   />
                   <QuickLink
                     icon={<Star />}
                     label="Reviews"
-                    sub="Rate orders"
+                    sub="Customer Feedback"
                     disabled={true}
                   />
                 </Grid>
@@ -433,7 +437,8 @@ const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
       w={"full"}
       bg={{ base: "white", _dark: "#1a1a1a" }}
       rounded="xl"
-      border="1px solid"
+      boxShadow="0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
+      //   border="1px solid"
       borderColor={{ _dark: "#262626" }}
     >
       <HStack justifyContent="space-between" p={4}>
@@ -444,7 +449,7 @@ const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
           <VStack align="start" gap={0}>
             <Text fontWeight="bold">{order.orderItem}</Text>
             <Text fontSize="sm" color="gray.500">
-              Order {order.ordernum} • {order.quantity} items
+              Ref: YAM-001
             </Text>
           </VStack>
         </HStack>
@@ -453,10 +458,9 @@ const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
           <RightChevron cursor={"pointer"} fontSize={"sm"} color="gray" />
         </HStack>
       </HStack>
-      <Separator my={1} mx={4} borderColor="gray.600" />
       <HStack justifyContent="space-between" p={4}>
         <Text fontSize={15} fontWeight={"bold"} color="gray.500">
-          Estimated Delivery: {order.date}
+          Views: {order.date}
         </Text>
         <Text fontWeight="bold" className="tracking-wider">
           ₦{order.amount.toLocaleString()}

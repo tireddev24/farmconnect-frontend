@@ -10,64 +10,71 @@ const Orders = () => {
   return (
     <Box
       display={"flex"}
-      flexDirection={"column"}
-      justifyContent={"flex-start"}
-      alignItems={"center"}
-      gap={10}
+      flex={1}
       minH={"dvh"}
+      // w={"full"}
       color={{ base: "black", _dark: "white" }}
     >
-      <Box display={"flex"} flexDir={"column"} gap={10} mt={10}>
-        <HStack
-          minW={"5xl"}
-          display={"flex"}
-          flexDirection={"row"}
-          justifyContent={"space-between"}
-          className=" font-sans "
-        >
-          <div>
-            <Text fontSize={24} fontWeight={"bold"}>
-              My Orders
-            </Text>
-            <Text color={"gray.400"} fontSize={14}>
-              Track active shipments and review past purchases
-            </Text>
-          </div>
-
-          <Box>
-            <Button mr={4} colorPalette={"gray"} variant={"outline"} disabled>
-              Support
-            </Button>
-            <Button
-              p={2}
-              onClick={() => navigate("../market")}
-              bg={{ base: "green.600", _dark: "#8a7557" }}
-            >
-              Browse Market
-            </Button>
-          </Box>
-        </HStack>
-        <HStack alignSelf={"flex-start"}>
-          <Text
-            fontWeight={"bold"}
-            fontSize={20}
-            color={{ base: "green.600", _dark: "yellow.400/80" }}
+      <Box
+        display={"flex"}
+        flexDir={"row"}
+        // w={"full"}
+        flex={1}
+        justifyContent={"center"}
+        mx={"auto"}
+      >
+        <Box display={"flex"} flexDir={"column"} gap={10} mt={10}>
+          <HStack
+            minW={"5xl"}
+            display={"flex"}
+            flexDirection={"row"}
+            justifyContent={"space-between"}
+            className=" font-sans "
           >
-            <Truck />
-          </Text>
-          <Text fontSize={18} fontWeight={"semibold"}>
-            Active Deliveries (2)
-          </Text>
-        </HStack>
-        {orders.map((o) => (
-          <OrderCard order={o} />
-        ))}
+            <div>
+              <Text fontSize={24} fontWeight={"bold"}>
+                My Orders
+              </Text>
+              <Text color={"gray.400"} fontSize={14}>
+                Track active shipments and review past purchases
+              </Text>
+            </div>
 
-        <HStack fontWeight={"bold"} alignItems={"center"}>
-          <History className="text-2xl text-gray-600" />
-          <Text>History</Text>
-        </HStack>
-        <OrderTable />
+            <Box>
+              <Button mr={4} colorPalette={"gray"} variant={"outline"} disabled>
+                Support
+              </Button>
+              <Button
+                p={2}
+                onClick={() => navigate("../market")}
+                bg={{ base: "green.600", _dark: "#8a7557" }}
+              >
+                Browse Market
+              </Button>
+            </Box>
+          </HStack>
+          <HStack alignSelf={"flex-start"}>
+            <Text
+              fontWeight={"bold"}
+              fontSize={20}
+              color={{ base: "green.600", _dark: "yellow.400/80" }}
+            >
+              <Truck />
+            </Text>
+            <Text fontSize={18} fontWeight={"semibold"}>
+              Active Deliveries (2)
+            </Text>
+          </HStack>
+          {orders.map((o) => (
+            <OrderCard order={o} />
+          ))}
+
+          <HStack fontWeight={"bold"} alignItems={"center"}>
+            <History className="text-2xl text-gray-600" />
+            <Text>History</Text>
+          </HStack>
+          <OrderTable />
+        </Box>
       </Box>
     </Box>
   );

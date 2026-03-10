@@ -4,6 +4,7 @@ import {
   BsEyeSlash,
   BsHourglassTop,
   BsLaptop,
+  BsPlus,
 } from "react-icons/bs";
 import { FaTools, FaTruck } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
@@ -76,6 +77,7 @@ export const ClosedBox = BsBoxSeam;
 export const Clock4 = TbClockHour4;
 export const PadLock = VscLockSmall;
 export const User = LuUserRound;
+export const Plus = BsPlus;
 
 export const ShieldCheck = LuShieldCheck;
 //colors

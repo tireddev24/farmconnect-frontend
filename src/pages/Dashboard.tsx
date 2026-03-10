@@ -1,17 +1,36 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { MOCK_PRODUCTS } from "../data/mockdata";
 import { SearchX } from "lucide-react";
 
 import { ProductCard } from "../components/productcard";
 import { Header } from "../components/header";
-import { Box } from "@chakra-ui/react";
+import { Box, Loader } from "@chakra-ui/react";
 import MarketBar from "../components/marketbar";
 
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useProductStore } from "../store/store";
 
 const FarmConnect: React.FC = () => {
   const navigate = useNavigate();
+
+  const { products, fetchProducts } = useProductStore();
+  const [load, setLoad] = useState<boolean>(true);
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchProducts();
+      } catch (error) {
+        console.log(error);
+        // setError(true);
+      } finally {
+        setLoad(false);
+      }
+    };
+    data();
+  }, []);
+
   const { user } = useAuth();
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -29,6 +48,10 @@ const FarmConnect: React.FC = () => {
     });
   }, [filter]);
 
+  if (load) {
+    return <Loader />;
+  }
+
   return (
     <Box className="flex-1  flex-col" zIndex={50}>
       {/* HEADER */}
@@ -42,6 +65,8 @@ const FarmConnect: React.FC = () => {
         filter={filter}
         setFilter={setFilter}
       />
+
+      {products}
 
       <MarketBar />
 

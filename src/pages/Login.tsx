@@ -54,10 +54,10 @@ export default function Login() {
     }
   };
 
-  if (user) {
-    navigate(-1);
-    window.location.reload();
-  }
+  // if (user) {
+  //   navigate("../dashboard");
+  //   // window.location.reload();
+  // }
   if (load)
     return (
       <div className="flex  justify-center items-center min-h-dvh">

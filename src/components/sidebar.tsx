@@ -2,7 +2,7 @@ import { Box, Button, VStack } from "@chakra-ui/react";
 import {
   Wheat,
   Home,
-  TrendingUp,
+  // TrendingUp,
   ClipboardList,
   User,
   Settings,
@@ -41,7 +41,7 @@ export const Sidebar = () => {
 
         <NavItem link="dashboard" icon={<Home />} />
 
-        <NavItem link="market" icon={<TrendingUp />} />
+        {/* <NavItem link="market" icon={<TrendingUp />} /> */}
         <NavItem link="orders" icon={<ClipboardList />} />
         <NavItem link="profile" icon={<User />} />
 
@@ -87,9 +87,14 @@ const NavItem = ({
   const location = useLocation();
 
   const path = location.pathname;
+  let farmerLink = false;
 
   if (path.includes(link)) {
     active = true;
+  }
+
+  if (path.includes("farmer")) {
+    farmerLink = true;
   }
 
   return (
@@ -120,7 +125,9 @@ const NavItem = ({
       borderLeft={active ? "2px solid" : "none"}
       borderLeftColor={{ base: "green.600", _dark: "#8a7557" }}
       rounded={"lg"}
-      onClick={() => navigate(`../${link}`)}
+      onClick={() =>
+        farmerLink ? navigate(`${link}`) : navigate(`../${link}`)
+      }
       // ${active ? "bg-[#a38d6d]/10 text-[#c9a962]" : "text-gray-500 hover:bg-[#252525] hover:text-[#c9a962]"}`}
     >
       {icon}
