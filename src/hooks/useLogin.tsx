@@ -23,10 +23,13 @@ const useLogin = () => {
 
       // Fetch doesn't throw an error on 404/500, so we check response.ok
 
+      if (response.status === 401) {
+        return { success: false, message: "Invalid Credentials" };
+      }
+
       if (!response.ok) {
         return { success: false, message: "Fetch threw an error " };
       }
-
       const resData = await response.json();
       const { user, accessToken, refreshToken } = resData.data;
 

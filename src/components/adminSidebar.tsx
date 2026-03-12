@@ -11,10 +11,18 @@ import {
   Center,
   Separator,
 } from "@chakra-ui/react";
-import { LayoutDashboard, Users, Ticket, ScrollText } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Ticket,
+  ScrollText,
+  Wheat,
+} from "lucide-react";
 import SidebarItem from "./sidebaritem";
+import { useAuth } from "../context/AuthContext";
 
 const AdminSidebar = () => {
+  const { logout } = useAuth();
   return (
     <VStack
       //   w="280px"
@@ -27,14 +35,16 @@ const AdminSidebar = () => {
       align="stretch"
     >
       <HStack mb={10} spaceX={3}>
-        <Center bg="#10a37f" p={2} rounded="lg">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"
-              fill="white"
-            />
-          </svg>
-        </Center>
+        <Box
+          bgGradient={"to-r"}
+          gradientFrom={{ base: "green.600/90", _dark: "#c9a962" }}
+          gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
+          className=" w-10 h-10 rounded-xl  flex items-center justify-center"
+          color={{ base: "white", _dark: "#0a0a0a" }}
+          // mb={4}
+        >
+          <Wheat className="w-5 h-5 " />
+        </Box>
         <Heading size="sm" letterSpacing="tight">
           ADMIN PANEL
         </Heading>
@@ -74,9 +84,10 @@ const AdminSidebar = () => {
         <Button
           variant="outline"
           w="full"
-          colorScheme="red"
+          colorPalette="red"
           size="sm"
           rounded="lg"
+          onClick={logout}
         >
           Logout
         </Button>

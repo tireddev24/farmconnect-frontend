@@ -4,7 +4,7 @@ const Spin = () => {
   return (
     <VStack>
       <Spinner
-        color={"teal.500"}
+        color={{ base: "teal.500", _dark: "yellow.700" }}
         css={{ "--spinner-track-color": "colors.gray.200" }}
       />
     </VStack>

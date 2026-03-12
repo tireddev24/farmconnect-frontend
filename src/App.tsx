@@ -17,6 +17,11 @@ import UserManagement from "./pages/Admin/UserManagement";
 import FarmerDashboard from "./pages/Farmer/dashboard";
 import FarmerOrders from "./pages/Farmer/orders";
 import FarmerProfile from "./pages/Farmer/profile";
+import SystemLogs from "./pages/Admin/logs";
+import SupportTickets from "./pages/Admin/SupportTickets";
+import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
+import Action from "pages/Admin/action";
 
 function App() {
   return (
@@ -24,7 +29,14 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Root />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Root />
+            </ProtectedRoute>
+          }
+        >
           <Route path="dashboard" element={<Dashboard />} />
           <Route
             path="product/:id"
@@ -52,10 +64,24 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="checkout/:id"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          >
+            <Route path="payment" element={<Payment />} />
+          </Route>
         </Route>
         <Route path="/admin" element={<AdminRoot />}>
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="usermanagement" element={<UserManagement />} />
+          <Route path="usermanagement" element={<UserManagement />}>
+            <Route path=":id" element={<Action />} />
+          </Route>
+          <Route path="support" element={<SupportTickets />} />
+          <Route path="logs" element={<SystemLogs />} />
         </Route>
         <Route path="/farmer" element={<FarmerRoot />}>
           <Route path="dashboard" element={<FarmerDashboard />} />

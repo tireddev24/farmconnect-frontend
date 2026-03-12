@@ -1,18 +1,11 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  VStack,
-  Icon,
-  SimpleGrid,
-  Circle,
-  Center,
-} from "@chakra-ui/react";
-import { Users, Sun, Banknote, UserCheck, AlertTriangle } from "lucide-react";
+import { Box, Flex, Heading, Text, VStack, SimpleGrid } from "@chakra-ui/react";
+import { Users, UserCheck, AlertTriangle, Loader } from "lucide-react";
 
-import AlertItem from "../../components/alertitem";
-import StatCard from "../../components/statcard";
+import AlertItem from "components/alertitem";
+import StatCard from "components/statcard";
+import { useEffect, useState } from "react";
+import { ColorModeButton } from "components/ui/color-mode";
+import { useAdminStore } from "store/store";
 
 const AdminDashboard = () => {
   // Chart Data
@@ -22,8 +15,30 @@ const AdminDashboard = () => {
   //     { name: "Logistics", value: 300, color: "#2563eb" },
   //   ];
 
+  const [load, setLoad] = useState<boolean>(true);
+
+  const { users, fetchUsers } = useAdminStore();
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchUsers();
+      } catch (error) {
+        console.log(error);
+        // setError(true);
+      } finally {
+        setLoad(false);
+      }
+    };
+    data();
+  }, []);
+
+  if (load) {
+    <Loader />;
+  }
+
   return (
-    <Flex minH="100vh" bg="#f8fafb">
+    <Flex minH="100vh">
       {/* --- Main Content --- */}
       <Box flex={1} p={10}>
         <Flex justify="space-between" align="center" mb={8}>
@@ -33,33 +48,19 @@ const AdminDashboard = () => {
               System status and key metrics.
             </Text>
           </Box>
-          <Circle
-            size="10"
-            bg="white"
-            shadow="sm"
-            border="1px solid"
-            borderColor="gray.100"
-          >
-            <Icon as={Sun} fontSize={18} color="gray.400" />
-          </Circle>
+          <ColorModeButton />
         </Flex>
 
         {/* Metric Cards */}
-        <SimpleGrid columns={4} spaceX={6} mb={8}>
+        <SimpleGrid columns={3} spaceX={6} mb={8}>
           <StatCard
             label="Total Users"
-            value="12,450"
+            value={users.data.totalCount}
             icon={Users}
             iconColor="blue.500"
             iconBg="blue.50"
           />
-          <StatCard
-            label="Total Revenue"
-            value="₦45.2M"
-            icon={Banknote}
-            iconColor="green.500"
-            iconBg="green.50"
-          />
+
           <StatCard
             label="Pending Approvals"
             value="3"
@@ -79,7 +80,7 @@ const AdminDashboard = () => {
         <SimpleGrid columns={2} spaceX={8}>
           {/* User Distribution Chart */}
           <Box
-            bg="white"
+            bg={{ base: "white", _dark: "gray.800" }}
             p={8}
             rounded="3xl"
             shadow="sm"
@@ -111,7 +112,7 @@ const AdminDashboard = () => {
 
           {/* System Alerts */}
           <Box
-            bg="white"
+            bg={{ base: "white", _dark: "gray.800" }}
             p={8}
             rounded="3xl"
             shadow="sm"
@@ -121,7 +122,7 @@ const AdminDashboard = () => {
             <Heading size="md" mb={6}>
               System Alerts
             </Heading>
-            <VStack align="stretch" spaceX={4}>
+            <VStack align="stretch">
               <AlertItem
                 type="warning"
                 title="High Transaction Volume Detected"

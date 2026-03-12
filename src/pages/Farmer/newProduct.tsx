@@ -269,6 +269,7 @@ export default function ListNewProduct() {
 }
 
 // Helper Center component for layout consistency
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Center = ({ children, ...props }: any) => (
   <Flex align="center" justify="center" {...props}>
     {children}

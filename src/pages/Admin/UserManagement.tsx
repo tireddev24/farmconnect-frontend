@@ -1,3 +1,5 @@
+import { RightArrow } from "components/ui/icons";
+import { ColorModeButton } from "../../components/ui/color-mode";
 import {
   Box,
   Flex,
@@ -5,7 +7,6 @@ import {
   Text,
   HStack,
   Icon,
-  Circle,
   Button,
   Input,
   InputGroup,
@@ -13,13 +14,29 @@ import {
   Table,
   TableBody,
   Badge,
-  IconButton,
 } from "@chakra-ui/react";
-import { Sun, Check, Search } from "lucide-react";
+import { Check, Search } from "lucide-react";
+import { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import type { Order } from "types/types";
 
 const UserManagement = () => {
+  const [orders] = useState(JSON.parse(localStorage.getItem("orders")!));
+
+  const navigate = useNavigate();
+
+  const handleView = (id: string) => {
+    navigate(id);
+  };
+
+  const path = location.pathname;
+
+  if (path.includes("FC")) {
+    return <Outlet />;
+  }
+
   return (
-    <Flex minH="100vh" bg="#f8fafb">
+    <Flex minH="100vh">
       {/* --- Main Content --- */}
       <Box flex={1} p={10}>
         <Flex justify="space-between" align="center" mb={8}>
@@ -29,32 +46,23 @@ const UserManagement = () => {
               System status and key metrics.
             </Text>
           </Box>
-          <Circle
-            size="10"
-            bg="white"
-            shadow="sm"
-            border="1px solid"
-            borderColor="gray.100"
-          >
-            <Icon as={Sun} fontSize={18} color="gray.400" />
-          </Circle>
+          <ColorModeButton />
         </Flex>
 
         {/* 1. Pending Farmer Verifications Table */}
         <Box
-          bg="white"
+          bg={{ base: "white", _dark: "gray.800" }}
           p={8}
           rounded="3xl"
           shadow="sm"
           border="1px solid"
-          borderColor="gray.100"
+          borderColor={{ base: "gray.100", _dark: "gray.800" }}
           mb={8}
+          color={{ base: "gray.800", _dark: "white" }}
         >
           <HStack mb={6} color="emerald.600">
             <Icon as={Check} fontSize={20} />
-            <Heading size="md" color="gray.800">
-              Pending Farmer Verifications
-            </Heading>
+            <Heading size="md">Pending Farmer Verifications</Heading>
           </HStack>
 
           <Table.Root size="sm">
@@ -66,10 +74,16 @@ const UserManagement = () => {
                 Location
               </Table.ColumnHeader>
               <Table.ColumnHeader color="gray.400" textTransform="none">
-                NIN Number
+                Seller
               </Table.ColumnHeader>
               <Table.ColumnHeader color="gray.400" textTransform="none">
-                Date Applied
+                Order Id
+              </Table.ColumnHeader>
+              <Table.ColumnHeader color="gray.400" textTransform="none">
+                Status
+              </Table.ColumnHeader>
+              <Table.ColumnHeader color="gray.400" textTransform="none">
+                Date
               </Table.ColumnHeader>
               <Table.ColumnHeader
                 color="gray.400"
@@ -80,24 +94,17 @@ const UserManagement = () => {
               </Table.ColumnHeader>
             </Table.Header>
             <TableBody>
-              <VerificationRow
-                name="Musa Ibrahim"
-                location="Kano State"
-                nin="12903847561"
-                date="Feb 20, 2026"
-              />
-              <VerificationRow
-                name="Chinedu Okeke"
-                location="Enugu State"
-                nin="55403928172"
-                date="Feb 21, 2026"
-              />
-              <VerificationRow
-                name="Folake Adebayo"
-                location="Ogun State"
-                nin="99201837465"
-                date="Feb 22, 2026"
-              />
+              {orders.map((o: Order) => (
+                <VerificationRow
+                  name={o.name}
+                  location={o.location!}
+                  seller={o.seller!}
+                  status={o.status!}
+                  orderId={o.orderId}
+                  date={o.date!}
+                  handleView={handleView}
+                />
+              ))}
             </TableBody>
           </Table.Root>
         </Box>
@@ -166,36 +173,61 @@ const UserManagement = () => {
 
 // --- Sub-components to keep code clean ---
 
-const VerificationRow = ({ name, location, nin, date }: any) => (
+const VerificationRow = ({
+  name,
+  location,
+  nin,
+  status,
+  orderId,
+  date,
+  seller,
+  handleView,
+}: {
+  name: string;
+  location: string;
+  nin?: string;
+  orderId: string;
+  date: string;
+  status: string;
+  handleView: (arg0: string) => void;
+
+  seller: string;
+}) => (
   <Table.Row>
     <Table.Cell fontWeight="bold" py={4}>
       {name}
     </Table.Cell>
     <Table.Cell color="gray.500">{location}</Table.Cell>
-    <Table.Cell color="gray.500">{nin}</Table.Cell>
+    <Table.Cell color="gray.500">{seller}</Table.Cell>
+    <Table.Cell color="gray.500">{orderId}</Table.Cell>
+    <Table.Cell textTransform={"capitalize"} color="gray.500">
+      {status.replace("-", " ")}
+    </Table.Cell>
     <Table.Cell color="gray.500">{date}</Table.Cell>
-    <Table.Cell textAlign="right">
-      <HStack justify="flex-end" spaceX={2}>
-        <IconButton
-          size="xs"
-          bg="emerald.50"
-          color="emerald.500"
-          //   icon={<Check size={14} />}
-          aria-label="Approve"
-        />
-        <IconButton
-          size="xs"
-          bg="red.50"
-          color="red.500"
-          //   icon={<X size={14} />}
-          aria-label="Reject"
-        />
+    <Table.Cell textAlign={"right"}>
+      <HStack
+        justifyContent={"end"}
+        _hover={{ color: { base: "green.500", _dark: "yellow.500" } }}
+        cursor={"pointer"}
+      >
+        <Text onClick={() => handleView(orderId)}>View Details</Text>
+        <Text>
+          <RightArrow />
+        </Text>
       </HStack>
     </Table.Cell>
   </Table.Row>
 );
 
-const UserRow = ({ name, role, status }: any) => {
+const UserRow = ({
+  name,
+  role,
+  status,
+}: {
+  name: string;
+  role: string;
+  status: string;
+}) => {
   const isBanned = status === "BANNED";
   return (
     <Table.Row>

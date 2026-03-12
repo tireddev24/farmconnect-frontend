@@ -1,5 +1,5 @@
 import { TrendingUp, Package, TrendingDown } from "lucide-react";
-import type { Product } from "../types/productTypes";
+import type { Product } from "@/types/types";
 import { Box, Text } from "@chakra-ui/react";
 import type { NavigateFunction } from "react-router-dom";
 

@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { User, Lock, ArrowLeft } from "lucide-react";
-import { toaster } from "../components/ui/toaster";
+import { Toaster, toaster } from "../components/ui/toaster";
 import { Wheat } from "lucide-react";
 import Spin from "../components/ui/spinner";
 import useLogin from "../hooks/useLogin";
@@ -71,13 +71,14 @@ export default function Login() {
       position="relative"
       p={6}
     >
+      <Toaster />
       <Box
         position="absolute"
         top="-10%"
         left="-10%"
         w="500px"
         h="500px"
-        bg="green.200"
+        bg={{ base: "green.200", _dark: "yellow.300/30" }}
         filter="blur(80px)"
         opacity={0.6}
         rounded="full"
@@ -99,7 +100,7 @@ export default function Login() {
             size="xl"
             fontWeight="800"
             letterSpacing="tight"
-            color="gray.800"
+            color={{ base: "gray.800", _dark: "gray.200" }}
           >
             Welcome Back
           </Heading>
@@ -111,24 +112,18 @@ export default function Login() {
         {/* Login Card */}
         <Container
           maxW="md"
-          bg="white"
+          bg={{ base: "white", _dark: "gray.800" }}
           p={10}
           rounded="3xl"
           shadow="0 20px 25px -5px rgba(0, 0, 0, 0.05)"
           border="1px solid"
-          borderColor="gray.100"
+          borderColor={{ base: "gray.100", _dark: "gray.800" }}
         >
           <form>
-            <Stack gap={6}>
+            <Stack gap={6} color={"white"}>
               {/* Username */}
               <Box>
-                <Text
-                  fontSize="xs"
-                  fontWeight="bold"
-                  color="gray.500"
-                  mb={2}
-                  ml={1}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={2} ml={1}>
                   Email
                 </Text>
                 <InputGroup>
@@ -137,16 +132,15 @@ export default function Login() {
                       <Icon as={User} color="gray.400" />
                     </InputElement>
                     <Input
-                      placeholder="Enter your username"
+                      placeholder="Enter your email"
                       pl="11"
                       h="12"
                       rounded="xl"
-                      bg="white"
                       borderColor="gray.200"
                       _focus={{
-                        borderColor: "#10a37f",
+                        borderColor: { base: "#10a37f", _dark: "yellow.500" },
                         ring: "2px",
-                        ringColor: "emerald.50",
+                        ringColor: { base: "emerald.50", _dark: "yellow.50" },
                       }}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -157,13 +151,7 @@ export default function Login() {
 
               {/* Password */}
               <Box>
-                <Text
-                  fontSize="xs"
-                  fontWeight="bold"
-                  color="gray.500"
-                  mb={2}
-                  ml={1}
-                >
+                <Text fontSize="xs" fontWeight="bold" mb={2} ml={1}>
                   Password
                 </Text>
                 <InputGroup>
@@ -177,12 +165,11 @@ export default function Login() {
                       pl="11"
                       h="12"
                       rounded="xl"
-                      bg="white"
                       borderColor="gray.200"
                       _focus={{
-                        borderColor: "#10a37f",
+                        borderColor: { base: "#10a37f", _dark: "yellow.500" },
                         ring: "2px",
-                        ringColor: "emerald.50",
+                        ringColor: { base: "emerald.50", _dark: "yellow.50" },
                       }}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -207,7 +194,7 @@ export default function Login() {
                   // to="/forgot-password"
                   fontSize="sm"
                   fontWeight="bold"
-                  color="#10a37f"
+                  color={{ base: "#10a37f", _dark: "yellow.400" }}
                 >
                   Forgot Password?
                 </Link>
@@ -215,15 +202,21 @@ export default function Login() {
 
               <Button
                 type="submit"
-                bg="#10a37f"
-                color="white"
+                color={{ base: " white", _dark: "black" }}
                 h="14"
                 fontSize="md"
                 fontWeight="bold"
                 rounded="2xl"
-                _hover={{ bg: "#0e8c6d", shadow: "lg" }}
+                bg={{ base: "#10a37f", _dark: "yellow.500" }}
+                _hover={{
+                  bg: { base: "#0e8c6d", _dark: "yellow.600" },
+                  shadow: "md",
+                }}
                 _active={{ transform: "scale(0.98)" }}
-                shadow="0 8px 15px rgba(16, 163, 127, 0.25)"
+                shadow={{
+                  base: "0 8px 15px rgba(16, 163, 127, 0.25)",
+                  _dark: "none",
+                }}
                 onClick={handleSubmit}
               >
                 {loading ? <Spin /> : "Log In"}
@@ -239,7 +232,7 @@ export default function Login() {
               <Link
                 as={Link}
                 href="/register"
-                color="#10a37f"
+                color={{ base: "#10a37f", _dark: "yellow.400" }}
                 fontWeight="bold"
               >
                 Create Account

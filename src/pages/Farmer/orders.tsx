@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { Truck, Box as BoxIcon, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { Product } from "../../types/productTypes";
+import type { Product } from "../../types/types";
 
 export default function FarmerOrders() {
   const navigate = useNavigate();

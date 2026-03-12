@@ -7,11 +7,11 @@ export const Root = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (window.location.pathname === "/") {
+    if (window.location.pathname == "/admin") {
       navigate("/dashboard");
     }
     //navigate to dashboard on load
-  }, [navigate]);
+  }, []);
 
   return (
     <Box

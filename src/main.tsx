@@ -7,13 +7,13 @@ import { AuthProvider } from "./context/AuthProvider.tsx";
 import { Provider } from "./components/ui/provider.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <AuthProvider>
-      <Provider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </Provider>
-    </AuthProvider>
-  </StrictMode>,
+  // <StrictMode>
+  <AuthProvider>
+    <Provider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </AuthProvider>,
+  // </StrictMode>,
 );

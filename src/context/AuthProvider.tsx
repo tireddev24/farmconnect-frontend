@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     sessionStorage.removeItem("refreshToken");
     setUser(null);
     setIsAuthenticated(false);
+    window.location.replace("/login");
   };
 
   console.log("User in AuthProvider:", user);

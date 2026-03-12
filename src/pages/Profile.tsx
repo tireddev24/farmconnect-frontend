@@ -291,9 +291,17 @@ const Profile = () => {
 
                 {/* Order Item 1 */}
 
-                {orders.map((o) => (
-                  <OrderCard key={o.orderid} order={o} />
-                ))}
+                {orders && orders.length > 0 ? (
+                  orders.map((i: Product) => {
+                    return <>Return table of orders{i.name}</>;
+                  })
+                ) : (
+                  <Box w={"full"}>
+                    <Text fontSize={"2xl"} textAlign={"center"}>
+                      No orders in progress
+                    </Text>
+                  </Box>
+                )}
 
                 {/* Recent Purchases */}
                 <VStack {...cardStyle} align="stretch" gap={6}>
@@ -302,9 +310,9 @@ const Profile = () => {
                       <History color="green" />
                       <Text fontWeight="bold">Recent Purchases</Text>
                     </HStack>
-                    <Text color="gray.500" fontSize="sm" cursor="pointer">
+                    {/* <Text color="gray.500" fontSize="sm" cursor="pointer">
                       Download History
-                    </Text>
+                    </Text> */}
                   </HStack>
 
                   <HStack
