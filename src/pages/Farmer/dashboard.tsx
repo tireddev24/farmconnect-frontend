@@ -17,6 +17,7 @@ import {
   TableBody,
   Badge,
   Center,
+  Loader,
 } from "@chakra-ui/react";
 import {
   LayoutDashboard,
@@ -35,6 +36,11 @@ import {
   Droplet,
 } from "lucide-react";
 import AvatarCard from "../../components/avatar";
+import { useEffect, useState } from "react";
+import { useFarmerStore } from "store/store";
+import type { FarmerOrders, OrderRecord } from "types/types";
+import { formatDate } from "helpers/function";
+import Unexpected from "error/unexpected";
 // import {
 //   AreaChart,
 //   Area,
@@ -70,6 +76,34 @@ const salesFocusData = [
 ];
 
 export default function FarmerDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const { orders, fetchOrders, users, fetchUsers } = useFarmerStore();
+  const path = location.pathname;
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchOrders();
+        await fetchUsers();
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    data();
+  }, []);
+
+  if (error) {
+    <Unexpected error={error} />;
+  }
+
+  if (loading) {
+    <Loader />;
+  }
+
   return (
     <Flex minH="100vh" bg="#f8fafb">
       {/* Sidebar */}
@@ -87,9 +121,6 @@ export default function FarmerDashboard() {
           </Box>
           <InputGroup maxW="500px">
             <>
-              <InputElement pointerEvents="none">
-                <Icon as={Search} color="gray.400" fontSize={18} />
-              </InputElement>
               <Input
                 placeholder="Search orders, products..."
                 bg="white"
@@ -113,7 +144,7 @@ export default function FarmerDashboard() {
         </Flex>
 
         {/* Stats Grid */}
-        <SimpleGrid columns={4} spaceX={6} mb={8}>
+        <SimpleGrid display={"none"} columns={4} spaceX={6} mb={8}>
           <MetricCard
             label="Total Sales"
             value="₦2,435,000"
@@ -145,7 +176,7 @@ export default function FarmerDashboard() {
         </SimpleGrid>
 
         {/* Charts Section */}
-        <SimpleGrid columns={3} spaceX={6} mb={8}>
+        <SimpleGrid display={"none"} columns={3} spaceX={6} mb={8}>
           {/* Revenue Area Chart */}
           <Box gridColumn="span 2" bg="white" p={6} rounded="2xl" shadow="sm">
             <Flex justify="space-between" mb={6}>
@@ -234,7 +265,7 @@ export default function FarmerDashboard() {
           {/* Sales Focus Doughnut */}
           <Box bg="white" p={6} rounded="2xl" shadow="sm">
             <Heading size="sm" mb={1}>
-              Sales Focus{" "}
+              Sales Focus
               <Text as="span" color="gray.400" fontWeight="normal">
                 This Month
               </Text>
@@ -283,8 +314,8 @@ export default function FarmerDashboard() {
         <SimpleGrid columns={3} spaceX={6}>
           <Box gridColumn="span 2" bg="white" p={6} rounded="2xl" shadow="sm">
             <Heading size="sm" mb={6}>
-              Recent Orders{" "}
-              <Text as="span" color="gray.400" fontWeight="normal">
+              Recent Orders
+              <Text as="span" ml={4} color="gray.400" fontWeight="normal">
                 This Week
               </Text>
             </Heading>
@@ -306,34 +337,28 @@ export default function FarmerDashboard() {
                 </Table.ColumnHeader>
               </Table.Header>
               <TableBody>
-                <OrderRow
-                  id="#0218076"
-                  name="Branice Hayse"
-                  date="21 Aug 2025"
-                  amount="₦125,000"
-                  status="Received"
-                  tracking="DF0HJY"
-                />
-                <OrderRow
-                  id="#0234078"
-                  name="Toll Holder"
-                  date="24 Jun 2025"
-                  amount="₦45,600"
-                  status="Cancelled"
-                  tracking="JH8KL"
-                />
+                {orders.map((order: FarmerOrders) => (
+                  <OrderRow
+                    id={order.orderNumber}
+                    name={order.buyerName}
+                    date={formatDate(order.createdAt)}
+                    amount={`₦${order.totalAmount}`}
+                    status={order.status}
+                    tracking={order.delivery.trackingCode}
+                  />
+                ))}
               </TableBody>
             </Table.Root>
           </Box>
 
           <Box bg="white" p={6} rounded="2xl" shadow="sm">
             <Heading size="sm" mb={6}>
-              Delivery{" "}
-              <Text as="span" color="gray.400" fontWeight="normal">
+              Delivery
+              <Text as="span" ml={6} color="gray.400" fontWeight="normal">
                 In Progress
               </Text>
             </Heading>
-            <VStack align="stretch" spaceX={6}>
+            <VStack align="stretch">
               <DeliveryItem
                 label="50kg Premium Rice"
                 progress={65}

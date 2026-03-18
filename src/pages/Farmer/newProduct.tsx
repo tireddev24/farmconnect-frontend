@@ -28,54 +28,28 @@ import {
 } from "lucide-react";
 import CustomSelect from "../../components/customselect";
 import { useState } from "react";
+import { BackCaret, LeftArrow } from "components/ui/icons";
+import { ProductCard } from "components/productcard";
 
 export default function ListNewProduct() {
-  const [produce, setProduce] = useState("");
+  const string = "string";
+  const number = 10;
+  const boolean = false;
+  const [produce, setProduce] = useState({
+    name: "",
+    description: "",
+    pricePerUnit: 1000, // In JS/TS, all numbers are 'number'
+    unit: "string",
+    quantityAvailable: number,
+    isAvailable: boolean,
+
+    createdAt: Date,
+    categoryName: string,
+    imageUrls: string, // Array of strings
+  });
 
   return (
     <Flex minH="100vh" bg="#f8fafb">
-      {/* --- Global Farmer Sidebar --- */}
-      <VStack
-        w="80px"
-        bg="white"
-        borderRight="1px solid"
-        borderColor="gray.100"
-        py={8}
-        align="center"
-        spaceX={8}
-      >
-        <Center bg="#10a37f" p={2} rounded="lg">
-          <Icon as={Wheat} color="white" fontSize={24} />
-        </Center>
-        <VStack spaceX={6}>
-          <Icon
-            as={LayoutDashboard}
-            color="gray.400"
-            fontSize={20}
-            cursor="pointer"
-          />
-          <Icon
-            as={TrendingUp}
-            color="gray.400"
-            fontSize={20}
-            cursor="pointer"
-          />
-          <Icon
-            as={BarChart3}
-            color="gray.400"
-            fontSize={20}
-            cursor="pointer"
-          />
-          <Icon as={Settings} color="gray.400" fontSize={20} cursor="pointer" />
-          <Icon as={Users} color="#10a37f" fontSize={20} cursor="pointer" />
-        </VStack>
-        <Spacer />
-        <VStack spaceX={6}>
-          <Icon as={Sun} color="gray.400" fontSize={20} cursor="pointer" />
-          <Icon as={LogOut} color="red.400" fontSize={20} cursor="pointer" />
-        </VStack>
-      </VStack>
-
       {/* --- Main Content --- */}
       <Container maxW="container.xl" py={12}>
         <VStack align="start" mb={10} spaceX={1}>
@@ -84,7 +58,9 @@ export default function ListNewProduct() {
             cursor="pointer"
             _hover={{ color: "gray.700" }}
           >
-            <Icon as={LayoutDashboard} fontSize={14} />
+            <Text>
+              <LeftArrow />
+            </Text>
             <Text fontSize="sm">Back to Profile</Text>
           </HStack>
           <Heading size="lg" color="#1a202c">
@@ -95,7 +71,7 @@ export default function ListNewProduct() {
           </Text>
         </VStack>
 
-        <Flex gap={12}>
+        <Flex gap={12} w={"full"} flexDirection={"column"}>
           {/* --- Input Form --- */}
           <Box
             flex={1.5}
@@ -122,14 +98,14 @@ export default function ListNewProduct() {
                   value={produce}
                   onChange={(e) => setProduce(e)}
                 />
-                <Text fontSize="10px" color="gray.400" mt={2}>
+                <Text fontSize="sm" color="gray.400" my={4}>
                   Choosing a base automatically fills standard market details.
                 </Text>
               </Box>
 
               <HStack spaceX={6}>
                 <Box flex={1}>
-                  <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
                     Your Selling Price (₦)
                   </Text>
                   <Input
@@ -141,7 +117,7 @@ export default function ListNewProduct() {
                   />
                 </Box>
                 <Box flex={1}>
-                  <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3}>
+                  <Text fontWeight="bold" color="gray.500" mb={3}>
                     Stock Level / Quantity
                   </Text>
                   <Input
@@ -155,7 +131,7 @@ export default function ListNewProduct() {
               </HStack>
 
               <Box>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3}>
+                <Text fontWeight="bold" color="gray.500" mb={3}>
                   Measurement Unit
                 </Text>
                 <Input
@@ -168,7 +144,7 @@ export default function ListNewProduct() {
               </Box>
 
               <Box>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3}>
+                <Text fontWeight="bold" color="gray.500" mb={3}>
                   Farm Details & Quality Description
                 </Text>
                 <Textarea
@@ -195,73 +171,7 @@ export default function ListNewProduct() {
           </Box>
 
           {/* --- Live Card Preview --- */}
-          <Box flex={1}>
-            <Text
-              fontSize="xs"
-              fontWeight="bold"
-              color="gray.500"
-              mb={6}
-              letterSpacing="widest"
-            >
-              LIVE CARD PREVIEW
-            </Text>
-            <Card.Root
-              maxW="320px"
-              rounded="3xl"
-              overflow="hidden"
-              shadow="xl"
-              border="1px solid"
-              borderColor="gray.100"
-            >
-              <Box p={6}>
-                <HStack spaceX={4} mb={6}>
-                  <Center bg="gray.50" boxSize="12" rounded="xl">
-                    <Icon as={Wheat} color="#10a37f" fontSize={24} />
-                  </Center>
-                  <Box>
-                    <Text fontWeight="bold" fontSize="md">
-                      Guinea Corn (Sorghum)
-                    </Text>
-                    <Text fontSize="xs" color="gray.500">
-                      per 100kg Bag
-                    </Text>
-                    <Badge
-                      colorScheme="gray"
-                      variant="subtle"
-                      fontSize="10px"
-                      px={2}
-                      rounded="full"
-                      mt={1}
-                    >
-                      Grains
-                    </Badge>
-                  </Box>
-                </HStack>
-
-                <Box
-                  bg="emerald.50"
-                  p={4}
-                  rounded="2xl"
-                  border="1px solid"
-                  borderColor="emerald.100"
-                  mb={6}
-                >
-                  <Text fontSize="10px" fontWeight="bold" color="emerald.600">
-                    Buy Now
-                  </Text>
-                  <Text fontSize="xl" fontWeight="800" color="#10a37f">
-                    ₦12,000
-                  </Text>
-                </Box>
-
-                <Separator mb={4} />
-                <HStack color="gray.500">
-                  <Icon as={Package} fontSize={14} />
-                  <Text fontSize="xs">Medium in stock</Text>
-                </HStack>
-              </Box>
-            </Card.Root>
-          </Box>
+          <ProductCard product={produce} />
         </Flex>
       </Container>
     </Flex>

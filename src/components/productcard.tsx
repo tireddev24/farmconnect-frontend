@@ -1,5 +1,5 @@
 import { TrendingUp, Package, TrendingDown } from "lucide-react";
-import type { Product } from "@/types/types";
+import type { Product } from "types/types";
 import { Box, Text } from "@chakra-ui/react";
 import type { NavigateFunction } from "react-router-dom";
 
@@ -8,7 +8,7 @@ export const ProductCard = ({
   navigate,
 }: {
   product: Product;
-  navigate: NavigateFunction;
+  navigate?: NavigateFunction;
 }) => (
   <Box
     padding={4}
@@ -26,7 +26,7 @@ export const ProductCard = ({
         bg={{ base: "gray.300/40", _dark: "#252525" }}
         className="w-14 h-14 rounded-2xl  flex items-center justify-center text-2xl"
       >
-        {product.icon}
+        {product.imageUrls[0]}
       </Box>
       <Box className="flex flex-col items-start">
         <h3 className="font-semibold text-gray-200">
@@ -56,12 +56,12 @@ export const ProductCard = ({
           fontWeight={"bold"}
           fontSize={"xs"}
         >
-          Tubers
+          {product.categoryName}
         </Text>
       </Box>
     </Box>
 
-    <Box mt={4} className="grid mt-10 grid-cols-2 gap-3 mb-4">
+    <Box mt={4} className="grid mt-10 grid-cols-1 gap-3 mb-4">
       <Box
         p={2}
         bg={{ base: "green.100/50", _dark: "green.300/10" }}
@@ -82,7 +82,7 @@ export const ProductCard = ({
           fontWeight={"semibold"}
           fontSize={"lg"}
         >
-          ₦{product.price.toLocaleString()}
+          ₦{product.pricePerUnit.toLocaleString()}
         </Text>
       </Box>
       <Box
@@ -91,6 +91,7 @@ export const ProductCard = ({
         border={"1px solid"}
         borderColor={{ base: "red.300/50", _dark: "red.400/30" }}
         rounded={"xl"}
+        display={"none"}
       >
         <Text
           color={{ base: "", _dark: "" }}
@@ -104,7 +105,7 @@ export const ProductCard = ({
           fontSize={"lg"}
           fontWeight={"semibold"}
         >
-          ₦{(product.price * 0.95).toLocaleString()}
+          ₦{(product.pricePerUnit * 0.95).toLocaleString()}
         </Text>
       </Box>
     </Box>
@@ -120,17 +121,17 @@ export const ProductCard = ({
       className="flex items-center justify-between  border-t border-[#252525]"
     >
       <span className="flex items-center gap-1">
-        <Package size={14} /> {product.stock} in stock
+        <Package size={14} /> {product.quantityAvailable} in stock
       </span>
       <span
-        className={`text-xs font-medium flex items-center gap-1 ${product.trend === "up" ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
+        className={`text-xs font-medium flex items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
       >
-        {product.trend === "up" ? (
+        {product.quantityAvailable > 0 ? (
           <TrendingUp size={14} />
         ) : (
           <TrendingDown size={14} />
         )}
-        {product.trend === "up" ? "Rising" : "Falling"}
+        {product.quantityAvailable > 0 ? "Rising" : "Falling"}
       </span>
     </Box>
   </Box>

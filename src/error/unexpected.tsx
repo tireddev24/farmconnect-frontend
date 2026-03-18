@@ -2,7 +2,7 @@ import { VStack, Text } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
 const Unexpected = ({ error }: { error: boolean }) => {
-  const [count, setCount] = useState<number>(10);
+  const [count, setCount] = useState<number>(30);
 
   useEffect(() => {
     let timer: any;

@@ -1,11 +1,13 @@
 import { Box, Flex, Heading, Text, VStack, SimpleGrid } from "@chakra-ui/react";
-import { Users, UserCheck, AlertTriangle, Loader } from "lucide-react";
+import { Users, UserCheck, AlertTriangle } from "lucide-react";
 
 import AlertItem from "components/alertitem";
 import StatCard from "components/statcard";
 import { useEffect, useState } from "react";
 import { ColorModeButton } from "components/ui/color-mode";
 import { useAdminStore } from "store/store";
+import Spin from "components/ui/spinner";
+import Unexpected from "error/unexpected";
 
 const AdminDashboard = () => {
   // Chart Data
@@ -16,6 +18,7 @@ const AdminDashboard = () => {
   //   ];
 
   const [load, setLoad] = useState<boolean>(true);
+  const [error, setError] = useState<boolean>(false);
 
   const { users, fetchUsers } = useAdminStore();
 
@@ -25,7 +28,8 @@ const AdminDashboard = () => {
         await fetchUsers();
       } catch (error) {
         console.log(error);
-        // setError(true);
+
+        setError(true);
       } finally {
         setLoad(false);
       }
@@ -33,8 +37,15 @@ const AdminDashboard = () => {
     data();
   }, []);
 
-  if (load) {
-    <Loader />;
+  if (load)
+    return (
+      <VStack minH={"100dvh"} justifyContent={"center"}>
+        <Spin />
+      </VStack>
+    );
+
+  if (error) {
+    return <Unexpected error={error} />;
   }
 
   return (

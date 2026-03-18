@@ -13,6 +13,7 @@ import {
   Link,
   Circle,
   Separator,
+  Loader,
 } from "@chakra-ui/react";
 import {
   ArrowLeft,
@@ -23,53 +24,68 @@ import {
 } from "lucide-react";
 import CustomSelect from "../components/customselect";
 import { ColorModeButton } from "../components/ui/color-mode";
-import { MOCK_PRODUCTS as products } from "../data/mockdata";
+// import { MOCK_PRODUCTS as products } from "../data/mockdata";
 import { useNavigate, useParams } from "react-router-dom";
 import { Star } from "../components/ui/icons";
 import Spin from "../components/ui/spinner";
-import { useState } from "react";
-import type { Order } from "@/types/types";
-import { useAuth } from "../context/AuthContext";
+import { useEffect, useState } from "react";
+import { useProductStore } from "store/store";
+import Unexpected from "error/unexpected";
+import type { CreateOrderPayload } from "types/types";
 
 const ProductDetails = () => {
-  const { user } = useAuth();
   const { id } = useParams();
 
-  const [loading, setLoading] = useState(false);
-  //   const [product, setProduct] = useState<any>(null);
-
-  const p = products.filter((prod) => prod.id === id);
-  const product = p[0];
+  const { product, fetchProductById } = useProductStore();
 
   const navigate = useNavigate();
 
-  const [orders, setOrders] = useState<Array<Order>>(
-    JSON.parse(localStorage.getItem("orders")!),
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<boolean>(false);
+  //   const [product, setProduct] = useState<any>(null);
+
+  // const p = products?.items?.find((prod: Product) => prod.id === id);
+  // const product: Product = p[0];
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchProductById(id);
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    data();
+  }, []);
 
   const handleOrder = (item: string) => {
     //function to generate order id
-    const rand = Math.floor(Math.random() * 900000 + 100000);
+    // const rand = Math.floor(Math.random() * 900000 + 100000);
 
-    const order: Order = {
-      id: "1",
-      orderId: `FC-${rand}`,
-      name: product.name,
-      unit: product.unit,
-      category: product.category,
-      price: product.price,
-      status: "awaiting-confirmation",
-      icon: product.icon,
-      location: product.location,
-      seller: product.seller,
-      buyer: user?.firstName + " " + user?.lastName,
-      quantity: 1,
-      totalAmount: product.price,
+    const order: CreateOrderPayload = {
+      items: [
+        {
+          productId: product.id,
+          quantity: 1,
+        },
+      ],
+      deliveryAddress: "Kano",
+      deliveryLatitude: 0,
+      deliveryLongitude: 0,
+      notes: "Perishables",
     };
 
+    console.log(order);
     setLoading(true);
-    alert("Order for " + item + " has been sent for processing");
+    // alert("Order for " + item + " has been sent for processing");
 
+    sessionStorage.setItem("order", JSON.stringify(order));
+    sessionStorage.setItem("product", JSON.stringify(product));
+
+    setLoading(false);
     //create a modal to enter rest of details
 
     //generate payment id - payment page
@@ -85,14 +101,37 @@ const ProductDetails = () => {
     //   sessionStorage.setItem("orders", JSON.stringify(orders));
     // }
 
-    localStorage.setItem("orders", JSON.stringify([order]));
+    // localStorage.setItem("orders", JSON.stringify([order]));
 
-    setLoading(false);
-    navigate(`/checkout/${order.orderId}`);
+    // setLoading(false);
+    navigate(`/checkout/${product.id}`);
 
     //send order placed to backend
     //fetch it on order page load
   };
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <Unexpected error={error} />;
+  }
+
+  if (!product) {
+    return (
+      <Center minH="100vh">
+        <VStack>
+          <Text fontSize="lg" color="gray.500">
+            Product not found
+          </Text>
+          <Button onClick={() => navigate("/dashboard")}>
+            Return to Market
+          </Button>
+        </VStack>
+      </Center>
+    );
+  }
 
   return (
     <Box bg={{ base: "#f8fafb", _dark: "black" }} minH="100vh" w={"full"}>
@@ -258,7 +297,7 @@ const ProductDetails = () => {
                       bg={{ base: "gray.300/40", _dark: "#252525" }}
                       className=" rounded-2xl  flex items-center justify-center text-2xl"
                     >
-                      {product.icon}
+                      {product?.imageUrls[0] || "🥕"}
                     </Box>
                     <Heading size="2xl">{product.name}</Heading>
                   </HStack>
@@ -278,7 +317,7 @@ const ProductDetails = () => {
                     Price
                   </Text>
                   <Text fontSize="3xl" fontWeight="700" color={"green.600"}>
-                    ₦{product.price}
+                    ₦{product.pricePerUnit}
                   </Text>
                 </VStack>
               </Flex>
@@ -324,7 +363,7 @@ const ProductDetails = () => {
                   <VStack align="start" spaceX={0}>
                     <HStack>
                       <Text fontWeight="bold" fontSize="lg">
-                        Verified Farmer
+                        {product.farmerName}
                       </Text>
                       <Icon as={CheckCircle} fill="#10a37f" color="white" />
                     </HStack>
@@ -332,9 +371,17 @@ const ProductDetails = () => {
                       <Text fontSize="sm" color="gray.500">
                         Oyo •
                       </Text>
-                      <HStack color={"green.400"}>
-                        <Star />
-                        <Text color={"green.500"}>4.9/5.0</Text>
+                      <HStack>
+                        <Text
+                          color={
+                            product.farmerRating > 4
+                              ? "green.500"
+                              : "yellow.500"
+                          }
+                        >
+                          <Star />
+                        </Text>
+                        <Text>{product.farmerRating}/5.0</Text>
                       </HStack>
                     </HStack>
                   </VStack>
@@ -375,17 +422,17 @@ const ProductDetails = () => {
                     >
                       Stock
                     </Text>
-                    <Text fontWeight="bold">High</Text>
+                    <Text fontWeight="bold">{product.quantityAvailable}</Text>
                   </VStack>
                 </HStack>
 
                 <VStack spaceX={3} w={"200px"} py={10}>
                   <HStack w={"full"} justifyContent={"flex-end"}>
                     <Text fontSize="xl" fontWeight="700">
-                      ₦{product.price}
+                      ₦{product.pricePerUnit}
                     </Text>
                     <Text fontSize="xs" color="gray.400">
-                      /Per Tuber
+                      /Per {product.unit}
                     </Text>
                   </HStack>
 

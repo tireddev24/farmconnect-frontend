@@ -1,0 +1,15 @@
+role
+0 - Farmer
+1 - Buyer
+2 - Transporter
+3 - Admin
+
+
+Category Id
+0 - 
+1 -
+2 - Vegetables
+3 - 
+4 -
+5 - 
+6 - Poultry and Live Stock

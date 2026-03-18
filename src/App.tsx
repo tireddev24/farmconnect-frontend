@@ -22,6 +22,7 @@ import SupportTickets from "./pages/Admin/SupportTickets";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import Action from "pages/Admin/action";
+import ListNewProduct from "pages/Farmer/newProduct";
 
 function App() {
   return (
@@ -86,6 +87,7 @@ function App() {
         <Route path="/farmer" element={<FarmerRoot />}>
           <Route path="dashboard" element={<FarmerDashboard />} />
           <Route path="orders" element={<FarmerOrders />} />
+          <Route path="newProduct" element={<ListNewProduct />} />
           <Route path="profile" element={<FarmerProfile />} />
         </Route>
         <Route path="*" element={<Nopage />} />

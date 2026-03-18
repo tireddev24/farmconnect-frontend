@@ -135,6 +135,7 @@ export default function Login() {
                       placeholder="Enter your email"
                       pl="11"
                       h="12"
+                      color={{ base: "black", _dark: "white" }}
                       rounded="xl"
                       borderColor="gray.200"
                       _focus={{
@@ -162,6 +163,7 @@ export default function Login() {
                     <Input
                       type="password"
                       placeholder="••••••••"
+                      color={{ base: "black", _dark: "white" }}
                       pl="11"
                       h="12"
                       rounded="xl"

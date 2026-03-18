@@ -16,58 +16,59 @@ import { ArrowLeft } from "lucide-react";
 import { ColorModeButton } from "components/ui/color-mode";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
-import type { Order } from "types/types";
 import Spin from "components/ui/spinner";
+import { type CreateOrderPayload, type Product } from "types/types";
+import { useOrderStore } from "store/store";
+import { Toaster, toaster } from "components/ui/toaster";
 
 const Checkout = () => {
   const { id } = useParams();
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   //   const [product, setProduct] = useState<any>(null);
 
-  const [orders] = useState<Array<Order>>(
-    JSON.parse(localStorage.getItem("orders")!),
-  );
+  const { createOrder } = useOrderStore();
 
-  const p = orders.filter((prod) => prod.orderId === id);
-  const order = p[0];
+  const [order, setOrder] = useState<CreateOrderPayload>(
+    JSON.parse(sessionStorage.getItem("order")!),
+  );
+  const [product] = useState<Product>(
+    JSON.parse(sessionStorage.getItem("product")!),
+  );
+  // const [order] = useState(JSON.parse(sessionStorage.getItem("order")!).order);
 
   const navigate = useNavigate();
 
-  const handleNext = () => {
+  // const checkProduct = (id: string) => {
+  //   if (product.id !== id) {
+  //     setError(true);
+  //   }
+  // };
+
+  // checkProduct(id!);
+
+  const handleNext = async () => {
     setLoading(true);
     //send order placed to backend
 
-    const updatedOrder = [
-      {
-        ...order,
-        quantity: quantity,
-        totalAmount: quantity * order.price,
-      },
-    ];
+    const { success, message } = await createOrder(order);
 
-    localStorage.setItem("orders", JSON.stringify(updatedOrder));
-    //fetch it on order page load
+    toaster.create({
+      type: success ? "success" : "error",
+      title: success ? "Success" : "Error",
+      description: message,
+    });
 
-    navigate("payment");
+    setLoading(false);
+    // navigate("payment");
   };
-
-  const [quantity, setQuantity] = useState<number>(order.quantity);
 
   const path = location.pathname;
 
-  const handleBack = () => {
-    // Check if there is a page to go back to in the current tab
-    if (window.history.length > 2) {
-      navigate(-1);
-    } else {
-      // Fallback: If they arrived via a direct link, send them to the dashboard
-      navigate("/dashboard");
-    }
-  };
-
   return (
     <Box bg={{ base: "#f8fafb", _dark: "black" }} minH="100vh" w={"full"}>
+      <Toaster />
       {/* Navbar */}
       {path.includes("payment") && <Outlet />}
 
@@ -83,13 +84,12 @@ const Checkout = () => {
           borderColor="gray.100"
         >
           <Link
-            href="../"
+            href={`../product/${product.id}`}
             display="flex"
             alignItems="center"
             gap={2}
             color="gray.500"
             fontSize="sm"
-            onClick={handleBack}
           >
             <Icon as={ArrowLeft} /> Back
           </Link>
@@ -124,9 +124,12 @@ const Checkout = () => {
                       bg={{ base: "gray.300/40", _dark: "#252525" }}
                       className=" rounded-2xl  flex items-center justify-center text-2xl"
                     >
-                      {order.icon}
+                      {/* {order.icon} */}
+                      {product?.imageUrls[0] || "🥕"}
                     </Box>
-                    <Heading size="2xl">{order.name}</Heading>
+                    <Heading size="2xl" textTransform={"capitalize"}>
+                      {product.name}
+                    </Heading>
                   </HStack>
                   {/* <HStack fontSize="sm">
                   <Text fontSize={18} color={"green.600"}>
@@ -141,21 +144,26 @@ const Checkout = () => {
                 </VStack>
                 <VStack align="end" spaceX={0}>
                   <Text fontSize="sm" fontWeight="bold" color="gray.400">
-                    Price
+                    Price Per Unit
                   </Text>
-                  <Text fontSize="3xl" fontWeight="700" color={"green.600"}>
-                    ₦{order.price}
+                  <Text
+                    fontSize="3xl"
+                    fontWeight="700"
+                    textTransform={"capitalize"}
+                    color={"green.600"}
+                  >
+                    ₦{product.pricePerUnit}
                   </Text>
                 </VStack>
               </Flex>
 
               <Box>
                 <Text>Order Breakdown</Text>
-                <Text>Buyer: {order.buyer}</Text>
-                <Text>Seller: {order.seller}</Text>
-                <Text>Item: {order.name}</Text>
+                <Text>Buyer: {"Buyer"}</Text>
+                <Text>Seller: {product.farmerName}</Text>
+                <Text>Item: {product.name}</Text>
                 <HStack justifyContent={"space-between"} m={4}>
-                  <Text>Quantity (in tubers) </Text>
+                  <Text>Quantity (in {product.unit}) </Text>
                   <Input
                     placeholder=""
                     h="12"
@@ -170,15 +178,28 @@ const Checkout = () => {
                       ring: "2px",
                       ringColor: "emerald.50",
                     }}
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    value={order.items[0].quantity}
+                    onChange={(e) => {
+                      const newQuantity = parseFloat(e.target.value) || 0;
+
+                      setOrder((prevOrder) => ({
+                        ...prevOrder, // Keep address, notes, etc.
+                        items: [
+                          {
+                            ...prevOrder.items[0], // Keep the productId
+                            quantity: newQuantity, // Update the quantity
+                          },
+                          ...prevOrder.items.slice(1), // Keep any other items if they exist
+                        ],
+                      }));
+                    }}
                   />
                 </HStack>
                 <HStack justifyContent={"space-between"} m={4}>
                   <Text>Total Amount: </Text>
 
                   <Input
-                    placeholder="Enter your username"
+                    placeholder=""
                     h="12"
                     w={"max"}
                     rounded="xl"
@@ -189,7 +210,7 @@ const Checkout = () => {
                       ring: "2px",
                       ringColor: "emerald.50",
                     }}
-                    value={order.totalAmount * quantity}
+                    value={product.pricePerUnit * order.items[0].quantity}
                     disabled
                   />
                 </HStack>

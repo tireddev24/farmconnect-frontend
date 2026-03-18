@@ -15,21 +15,49 @@ import {
   TableBody,
   Badge,
 } from "@chakra-ui/react";
-import { Check, Search } from "lucide-react";
-import { useState } from "react";
+import { Check, Loader } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import type { Order } from "types/types";
+import type { OrderRecord, UserProfile } from "types/types";
+import { useAdminStore } from "store/store";
+import Unexpected from "error/unexpected";
+import { formatDate } from "helpers/function";
 
 const UserManagement = () => {
-  const [orders] = useState(JSON.parse(localStorage.getItem("orders")!));
-
   const navigate = useNavigate();
 
   const handleView = (id: string) => {
     navigate(id);
   };
 
+  const [loading, setLoading] = useState(true);
+
+  const [error, setError] = useState(false);
+  const { orders, fetchOrders, users, fetchUsers } = useAdminStore();
   const path = location.pathname;
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchOrders();
+        await fetchUsers();
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    data();
+  }, []);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <Unexpected error={error} />;
+  }
 
   if (path.includes("FC")) {
     return <Outlet />;
@@ -70,9 +98,9 @@ const UserManagement = () => {
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Name
               </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
+              {/* <Table.ColumnHeader color="gray.400" textTransform="none">
                 Location
-              </Table.ColumnHeader>
+              </Table.ColumnHeader> */}
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Seller
               </Table.ColumnHeader>
@@ -85,6 +113,9 @@ const UserManagement = () => {
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Date
               </Table.ColumnHeader>
+              <Table.ColumnHeader color="gray.400" textTransform="none">
+                Amount
+              </Table.ColumnHeader>
               <Table.ColumnHeader
                 color="gray.400"
                 textTransform="none"
@@ -94,14 +125,15 @@ const UserManagement = () => {
               </Table.ColumnHeader>
             </Table.Header>
             <TableBody>
-              {orders.map((o: Order) => (
+              {orders.map((o: OrderRecord) => (
                 <VerificationRow
-                  name={o.name}
-                  location={o.location!}
-                  seller={o.seller!}
+                  key={o.id}
+                  name={o.orderNumber}
+                  seller={o.farmerName!}
                   status={o.status!}
-                  orderId={o.orderId}
-                  date={o.date!}
+                  orderId={o.orderNumber}
+                  date={formatDate(o.createdAt!)}
+                  amount={o.totalAmount}
                   handleView={handleView}
                 />
               ))}
@@ -122,11 +154,8 @@ const UserManagement = () => {
             <Heading size="md" color="gray.800">
               All Users
             </Heading>
-            <InputGroup maxW="300px">
+            {/* <InputGroup maxW="300px">
               <>
-                <InputElement pointerEvents="none">
-                  <Icon as={Search} color="gray.400" fontSize={18} />
-                </InputElement>
                 <Input
                   placeholder="Search users..."
                   bg="gray.50"
@@ -135,7 +164,7 @@ const UserManagement = () => {
                   fontSize="sm"
                 />
               </>
-            </InputGroup>
+            </InputGroup> */}
           </Flex>
 
           <Table.Root size="sm">
@@ -158,11 +187,13 @@ const UserManagement = () => {
               </Table.ColumnHeader>
             </Table.Header>
             <TableBody>
-              <UserRow name="Farmer John" role="Farmer" status="ACTIVE" />
-              <UserRow name="Buyer Sarah" role="Buyer" status="ACTIVE" />
-              <UserRow name="Logistics Co." role="Logistics" status="BANNED" />
-              <UserRow name="Admin User" role="Admin" status="ACTIVE" />
-              <UserRow name="Iya Basit" role="Buyer" status="ACTIVE" />
+              {users.data.items.map((user: UserProfile) => (
+                <UserRow
+                  name={user.firstName + " " + user.lastName}
+                  role={user.role}
+                  status={user.status}
+                />
+              ))}
             </TableBody>
           </Table.Root>
         </Box>
@@ -175,19 +206,19 @@ const UserManagement = () => {
 
 const VerificationRow = ({
   name,
-  location,
-  nin,
+
   status,
   orderId,
+  amount,
   date,
   seller,
   handleView,
 }: {
   name: string;
-  location: string;
   nin?: string;
   orderId: string;
   date: string;
+  amount: string | number;
   status: string;
   handleView: (arg0: string) => void;
 
@@ -197,13 +228,16 @@ const VerificationRow = ({
     <Table.Cell fontWeight="bold" py={4}>
       {name}
     </Table.Cell>
-    <Table.Cell color="gray.500">{location}</Table.Cell>
-    <Table.Cell color="gray.500">{seller}</Table.Cell>
+    {/* <Table.Cell color="gray.500">{location}</Table.Cell> */}
+    <Table.Cell textTransform={"capitalize"} color="gray.500">
+      {seller}
+    </Table.Cell>
     <Table.Cell color="gray.500">{orderId}</Table.Cell>
     <Table.Cell textTransform={"capitalize"} color="gray.500">
       {status.replace("-", " ")}
     </Table.Cell>
     <Table.Cell color="gray.500">{date}</Table.Cell>
+    <Table.Cell color="gray.500">{amount}</Table.Cell>
     <Table.Cell textAlign={"right"}>
       <HStack
         justifyContent={"end"}
