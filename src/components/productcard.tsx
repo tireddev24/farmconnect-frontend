@@ -25,8 +25,9 @@ export const ProductCard = ({
       <Box
         bg={{ base: "gray.300/40", _dark: "#252525" }}
         className="w-14 h-14 rounded-2xl  flex items-center justify-center text-2xl"
+        fontSize={30}
       >
-        {product.imageUrls[0]}
+        {product.imageUrls ? product.imageUrls![0] || "🌽" : "🌽"}
       </Box>
       <Box className="flex flex-col items-start">
         <h3 className="font-semibold text-gray-200">
@@ -34,6 +35,7 @@ export const ProductCard = ({
             fontSize={"lg"}
             fontWeight={"semibold"}
             color={{ base: "#252525", _dark: "white" }}
+            textTransform={"capitalize"}
           >
             {product.name}
           </Text>
@@ -124,7 +126,7 @@ export const ProductCard = ({
         <Package size={14} /> {product.quantityAvailable} in stock
       </span>
       <span
-        className={`text-xs font-medium flex items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
+        className={`text-xs hidden font-medium flex items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
       >
         {product.quantityAvailable > 0 ? (
           <TrendingUp size={14} />

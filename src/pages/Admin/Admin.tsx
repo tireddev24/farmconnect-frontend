@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Text, VStack, SimpleGrid } from "@chakra-ui/react";
-import { Users, UserCheck, AlertTriangle } from "lucide-react";
+import { Users, UserCheck } from "lucide-react";
 
 import AlertItem from "components/alertitem";
 import StatCard from "components/statcard";
@@ -8,6 +8,7 @@ import { ColorModeButton } from "components/ui/color-mode";
 import { useAdminStore } from "store/store";
 import Spin from "components/ui/spinner";
 import Unexpected from "error/unexpected";
+import PieChartComp from "components/chart";
 
 const AdminDashboard = () => {
   // Chart Data
@@ -54,16 +55,16 @@ const AdminDashboard = () => {
       <Box flex={1} p={10}>
         <Flex justify="space-between" align="center" mb={8}>
           <Box>
-            <Heading size="lg">Dashboard Overview</Heading>
+            <Heading size="xl">Dashboard Overview</Heading>
             <Text color="gray.500" fontSize="sm">
-              System status and key metrics.
+              System Information
             </Text>
           </Box>
           <ColorModeButton />
         </Flex>
 
         {/* Metric Cards */}
-        <SimpleGrid columns={3} spaceX={6} mb={8}>
+        <SimpleGrid columns={2} spaceX={6} mb={8}>
           <StatCard
             label="Total Users"
             value={users.data.totalCount}
@@ -79,16 +80,16 @@ const AdminDashboard = () => {
             iconColor="orange.500"
             iconBg="orange.50"
           />
-          <StatCard
+          {/* <StatCard
             label="Security Flags"
             value="0"
             icon={AlertTriangle}
             iconColor="red.500"
             iconBg="red.50"
-          />
+          /> */}
         </SimpleGrid>
 
-        <SimpleGrid columns={2} spaceX={8}>
+        <SimpleGrid columns={1} spaceX={8}>
           {/* User Distribution Chart */}
           <Box
             bg={{ base: "white", _dark: "gray.800" }}
@@ -101,23 +102,8 @@ const AdminDashboard = () => {
             <Heading size="md" mb={6}>
               User Distribution
             </Heading>
-            <Box h="300px">
-              {/* <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    innerRadius={80}
-                    outerRadius={120}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Legend verticalAlign="bottom" height={36} />
-                </PieChart>
-              </ResponsiveContainer> */}
+            <Box>
+              <PieChartComp />
             </Box>
           </Box>
 
@@ -125,6 +111,7 @@ const AdminDashboard = () => {
           <Box
             bg={{ base: "white", _dark: "gray.800" }}
             p={8}
+            display={"none"}
             rounded="3xl"
             shadow="sm"
             border="1px solid"

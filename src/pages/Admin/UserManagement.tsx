@@ -8,20 +8,19 @@ import {
   HStack,
   Icon,
   Button,
-  Input,
-  InputGroup,
-  InputElement,
   Table,
   TableBody,
   Badge,
+  VStack,
 } from "@chakra-ui/react";
-import { Check, Loader } from "lucide-react";
+import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import type { OrderRecord, UserProfile } from "types/types";
 import { useAdminStore } from "store/store";
 import Unexpected from "error/unexpected";
 import { formatDate } from "helpers/function";
+import Spin from "components/ui/spinner";
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -52,7 +51,11 @@ const UserManagement = () => {
   }, []);
 
   if (loading) {
-    return <Loader />;
+    return (
+      <VStack minH={"100dvh"} justifyContent={"center"}>
+        <Spin />
+      </VStack>
+    );
   }
 
   if (error) {
@@ -178,6 +181,9 @@ const UserManagement = () => {
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Status
               </Table.ColumnHeader>
+              <Table.ColumnHeader color="gray.400" textTransform="none">
+                Date
+              </Table.ColumnHeader>
               <Table.ColumnHeader
                 color="gray.400"
                 textTransform="none"
@@ -187,13 +193,16 @@ const UserManagement = () => {
               </Table.ColumnHeader>
             </Table.Header>
             <TableBody>
-              {users.data.items.map((user: UserProfile) => (
-                <UserRow
-                  name={user.firstName + " " + user.lastName}
-                  role={user.role}
-                  status={user.status}
-                />
-              ))}
+              {users.data.items
+                .filter((o) => o.role.toLowerCase() !== "admin")
+                .map((user: UserProfile) => (
+                  <UserRow
+                    name={user.firstName + " " + user.lastName}
+                    role={user.role}
+                    status={user.status}
+                    date={user.createdAt}
+                  />
+                ))}
             </TableBody>
           </Table.Root>
         </Box>
@@ -256,10 +265,12 @@ const VerificationRow = ({
 const UserRow = ({
   name,
   role,
+  date,
   status,
 }: {
   name: string;
   role: string;
+  date: string;
   status: string;
 }) => {
   const isBanned = status === "BANNED";
@@ -280,6 +291,7 @@ const UserRow = ({
           {status}
         </Badge>
       </Table.Cell>
+      <Table.Cell>{formatDate(date)}</Table.Cell>
       <Table.Cell textAlign="right">
         <Button
           variant="ghost"

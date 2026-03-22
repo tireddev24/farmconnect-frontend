@@ -156,12 +156,14 @@ const ProductDetails = () => {
         >
           <Icon as={ArrowLeft} /> Back to Market
         </Link>
-        <Heading color="#10a37f">
+        <Heading color="#10a37f" mx={"auto"}>
           <Text fontSize={"lg"} fontWeight={"bold"}>
             FARMCONNECT
           </Text>
         </Heading>
-        <ColorModeButton />
+        <Box display={"none"}>
+          <ColorModeButton />
+        </Box>
       </Flex>
 
       {product ? (
@@ -460,7 +462,7 @@ const ProductDetails = () => {
               </Box>
 
               {/* More Offers Section */}
-              <VStack align={"stretch"} mt={10}>
+              <VStack align={"stretch"} display={"none"} mt={10}>
                 <HStack justify="space-between" align="center">
                   <Text fontWeight="bold" color="gray.800">
                     More Offers (2)

@@ -22,7 +22,7 @@ import SidebarItem from "./sidebaritem";
 import { useAuth } from "../context/AuthContext";
 
 const AdminSidebar = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   return (
     <VStack
       //   w="280px"
@@ -73,11 +73,8 @@ const AdminSidebar = () => {
             <Icon as={Users} fontSize={18} color="gray.500" />
           </Circle>
           <Box>
-            <Text fontSize="sm" fontWeight="bold">
-              Admin
-            </Text>
-            <Text fontSize="xs" color="gray.500">
-              Super User
+            <Text fontSize="sm" fontWeight="bold" textTransform={"capitalize"}>
+              {user?.firstName + " " + user?.lastName}
             </Text>
           </Box>
         </Flex>

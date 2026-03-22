@@ -14,7 +14,8 @@
 // }
 
 export interface Product {
-  id: string;
+  id?: string;
+  categoryId: number;
   name: string;
   description: string;
   pricePerUnit: number; // In JS/TS, all numbers are 'number'
@@ -26,11 +27,11 @@ export interface Product {
   longitude?: number;
   harvestDate?: Date; // Converted from string to Date object
   expiryDate?: Date;
-  createdAt: Date;
-  categoryName: string;
-  farmerName: string;
-  farmerRating: number;
-  imageUrls: string[]; // Array of strings
+  createdAt?: Date;
+  categoryName?: string;
+  farmerName?: string;
+  farmerRating?: number;
+  imageUrls?: string[]; // Array of strings
 }
 
 export interface Order {

@@ -104,9 +104,9 @@ export default function Register() {
         cursor={"pointer"}
       > */}
 
-      <Box>
+      {/* <Box>
         <ColorModeButton />
-      </Box>
+      </Box> */}
       {/* </Box> */}
 
       {/* Decorative Background Elements */}

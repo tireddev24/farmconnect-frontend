@@ -78,7 +78,7 @@ const FarmConnect: React.FC = () => {
         setFilter={setFilter}
       />
 
-      <MarketBar />
+      {/* <MarketBar /> */}
 
       {/* PRODUCT GRID */}
 

@@ -7,9 +7,11 @@ role
 
 Category Id
 0 - 
-1 -
+1 - Grains & Cereals
 2 - Vegetables
-3 - 
-4 -
-5 - 
+3 - Fruits
+4 - Tubers and Roots
+5 - Legumes
 6 - Poultry and Live Stock
+7 - Dairy & Eggs
+8 - Herbs & Spices 
