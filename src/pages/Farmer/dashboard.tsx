@@ -5,17 +5,14 @@ import {
   Text,
   VStack,
   HStack,
-  Icon,
   SimpleGrid,
-  Spacer,
   Circle,
   Input,
   InputGroup,
   Table,
   TableBody,
-  Badge,
-  Center,
   Loader,
+  Center,
 } from "@chakra-ui/react";
 import { Banknote, Eye, ShoppingBag, UserPlus } from "lucide-react";
 import AvatarCard from "../../components/avatar";
@@ -24,6 +21,7 @@ import { useFarmerStore } from "store/store";
 import type { FarmerOrders } from "types/types";
 import { formatDate } from "helpers/function";
 import Unexpected from "error/unexpected";
+import { LegendItem, MetricCard, OrderRow } from "./farmercomps";
 
 export default function FarmerDashboard() {
   const [loading, setLoading] = useState(true);
@@ -53,7 +51,7 @@ export default function FarmerDashboard() {
   }
 
   return (
-    <Flex minH="100vh" bg="#f8fafb">
+    <Flex minH="100vh" bg={{ base: "#f8fafb", _dark: "black" }}>
       {/* Sidebar */}
       {/* Main Content */}
       <Box flex={1} p={8} overflowY="auto">
@@ -157,104 +155,38 @@ export default function FarmerDashboard() {
                 </HStack>
               </HStack>
             </Flex>
-            <Box h="300px">
-              {/* <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={revenueData}>
-                  <defs>
-                    <linearGradient
-                      id="colorIncome"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop offset="5%" stopColor="#10a37f" stopOpacity={0.1} />
-                      <stop offset="95%" stopColor="#10a37f" stopOpacity={0} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    vertical={false}
-                    stroke="#f0f0f0"
-                  />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: "#A0AEC0" }}
-                    dy={10}
-                  />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fontSize: 10, fill: "#A0AEC0" }}
-                  />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    stroke="#10a37f"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorIncome)"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="expenses"
-                    stroke="#E2E8F0"
-                    strokeWidth={3}
-                    fill="transparent"
-                  />
-                </AreaChart>
-              </ResponsiveContainer> */}
-            </Box>
-          </Box>
 
-          {/* Sales Focus Doughnut */}
-          <Box bg="white" p={6} rounded="2xl" shadow="sm">
-            <Heading size="sm" mb={1}>
-              Sales Focus
-              <Text as="span" color="gray.400" fontWeight="normal">
-                This Month
-              </Text>
-            </Heading>
-            <Box h="300px" position="relative">
-              {/* <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={salesFocusData}
-                    innerRadius={70}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {salesFocusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer> */}
-              <Center
-                position="absolute"
-                top="0"
-                left="0"
-                w="full"
-                h="full"
-                flexDirection="column"
-              >
-                <Text fontSize="2xl" fontWeight="800">
-                  45%
+            {/* Sales Focus Doughnut */}
+            <Box bg="white" p={6} rounded="2xl" shadow="sm">
+              <Heading size="sm" mb={1}>
+                Sales Focus
+                <Text as="span" color="gray.400" fontWeight="normal">
+                  This Month
                 </Text>
-                <Text fontSize="xs" color="gray.400" fontWeight="bold">
-                  TUBERS
-                </Text>
-              </Center>
+              </Heading>
+              <Box h="300px" position="relative">
+                <Center
+                  position="absolute"
+                  top="0"
+                  left="0"
+                  w="full"
+                  h="full"
+                  flexDirection="column"
+                >
+                  <Text fontSize="2xl" fontWeight="800">
+                    45%
+                  </Text>
+                  <Text fontSize="xs" color="gray.400" fontWeight="bold">
+                    TUBERS
+                  </Text>
+                </Center>
+              </Box>
+              <HStack justify="center" spaceX={8} mt={-4}>
+                <LegendItem color="#10a37f" label="Tubers" />
+                <LegendItem color="#2563eb" label="Grains" />
+                <LegendItem color="#a855f7" label="Veg" />
+              </HStack>
             </Box>
-            <HStack justify="center" spaceX={8} mt={-4}>
-              <LegendItem color="#10a37f" label="Tubers" />
-              <LegendItem color="#2563eb" label="Grains" />
-              <LegendItem color="#a855f7" label="Veg" />
-            </HStack>
           </Box>
         </SimpleGrid>
 
@@ -297,7 +229,7 @@ export default function FarmerDashboard() {
                     id={order.orderNumber}
                     name={order.buyerName}
                     date={formatDate(order.createdAt)}
-                    amount={`₦${order.totalAmount}`}
+                    amount={order.totalAmount}
                     status={order.status}
                     tracking={order.delivery.trackingCode}
                   />
@@ -325,105 +257,3 @@ export default function FarmerDashboard() {
     </Flex>
   );
 }
-
-// Sub-components
-const MetricCard = ({ label, value, change, icon, color }: any) => (
-  <Box
-    bg="white"
-    p={6}
-    rounded="2xl"
-    shadow="sm"
-    border="1px solid"
-    borderColor="gray.50"
-  >
-    <Flex justify="space-between" align="start">
-      <VStack align="start" spaceX={1}>
-        <Text color="gray.500" fontSize="xs" fontWeight="bold">
-          {label}
-        </Text>
-        <Text fontSize="xl" fontWeight="800">
-          {value}
-        </Text>
-        <HStack spaceX={1}>
-          <Text
-            fontSize="xs"
-            color={change.startsWith("+") ? "green.400" : "red.400"}
-            fontWeight="bold"
-          >
-            {change}
-          </Text>
-          <Text fontSize="xs" color="gray.400">
-            Last Week
-          </Text>
-        </HStack>
-      </VStack>
-      <Circle boxSize="10" bg={`${color}.50`}>
-        <Icon as={icon} color={`${color}.400`} fontSize={20} />
-      </Circle>
-    </Flex>
-  </Box>
-);
-
-const LegendItem = ({ color, label }: { color: string; label: string }) => (
-  <HStack spaceX={2}>
-    <Circle size="2" bg={color} />
-    <Text fontSize="xs" color="gray.500">
-      {label}
-    </Text>
-  </HStack>
-);
-
-const OrderRow = ({ id, name, date, amount, status, tracking }: any) => (
-  <Table.Row textTransform={"capitalize"}>
-    <Table.Cell fontSize="xs" fontWeight="bold" py={4}>
-      {id}
-    </Table.Cell>
-    <Table.Cell fontSize="xs" color="gray.600">
-      {name}
-    </Table.Cell>
-    <Table.Cell fontSize="xs" color="gray.500">
-      {date}
-    </Table.Cell>
-    <Table.Cell fontSize="xs" fontWeight="bold">
-      {amount}
-    </Table.Cell>
-    <Table.Cell>
-      <Badge
-        colorScheme={status === "Received" ? "green" : "red"}
-        variant="subtle"
-        px={2}
-        rounded="md"
-        textTransform="none"
-      >
-        {status}
-      </Badge>
-    </Table.Cell>
-    <Table.Cell fontSize="xs" color="gray.400" fontWeight="bold">
-      {tracking}
-    </Table.Cell>
-  </Table.Row>
-);
-
-export const DeliveryItem = ({
-  label,
-  progress,
-  icon,
-}: {
-  label: string;
-  progress: string;
-  icon: string;
-}) => (
-  <Box border="1px solid" borderColor="emerald.100" p={4} rounded="xl">
-    <HStack mb={3}>
-      <Icon name={icon} color="emerald.500" fontSize={16} />
-      <Text fontSize="xs" fontWeight="bold">
-        {label}
-      </Text>
-      <Spacer />
-      <Text fontSize="xs" fontWeight="bold" color="emerald.500">
-        {progress}%
-      </Text>
-    </HStack>
-    {/* <Progresss value={progress} size="xs" colorScheme="emerald" rounded="full" /> */}
-  </Box>
-);

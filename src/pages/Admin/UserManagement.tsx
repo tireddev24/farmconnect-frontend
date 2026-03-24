@@ -55,7 +55,7 @@ const UserManagement = () => {
   }
 
   return (
-    <Flex minH="100vh">
+    <Flex minH="100vh" bg={{ base: "#f8fafb", _dark: "black" }}>
       {/* --- Main Content --- */}
       <Box flex={1} p={10}>
         <Flex justify="space-between" align="center" mb={8}>
@@ -106,10 +106,10 @@ const UserManagement = () => {
             </Table.Header>
             <TableBody>
               {users.data.items
-                .filter((o) => o.role.toLowerCase() !== "admin")
+                .filter((o: UserProfile) => o.role.toLowerCase() !== "admin")
                 .map((user: UserProfile, i: number) => (
                   <UserRow
-                    key={i}
+                    index={i}
                     name={user.firstName + " " + user.lastName}
                     role={user.role}
                     status={user.status}
@@ -127,13 +127,13 @@ const UserManagement = () => {
 // --- Sub-components to keep code clean ---
 
 const UserRow = ({
-  key,
+  index,
   name,
   role,
   date,
   status,
 }: {
-  key: number;
+  index: number;
   name: string;
   role: string;
   date: string;
@@ -141,7 +141,7 @@ const UserRow = ({
 }) => {
   const isBanned = status === "BANNED";
   return (
-    <Table.Row key={key}>
+    <Table.Row key={index}>
       <Table.Cell fontWeight="bold" py={4}>
         {name}
       </Table.Cell>

@@ -34,6 +34,20 @@ export interface Product {
   imageUrls?: string[]; // Array of strings
 }
 
+export interface CreateProductPayload {
+  categoryId: number;
+  name: string;
+  description: string;
+  pricePerUnit: number;
+  unit: "bag" | "kg" | "crate" | "ton" | "tubers"; // Using specific units for better validation
+  quantityAvailable: number;
+  location: string;
+  latitude?: number;
+  longitude?: number;
+  harvestDate?: string; // ISO 8601 string
+  expiryDate?: string; // ISO 8601 string
+}
+
 export interface Order {
   id: string;
   orderId: string;
@@ -170,4 +184,48 @@ export interface UserProfile {
 export interface category {
   id: number;
   name: string;
+}
+
+export interface ProfileProductCard {
+  name: string;
+  category: string;
+  pricePerUnit: number;
+  unit: string;
+  quantityAvailable: number;
+  harvestDate: string;
+  id: string;
+}
+
+export interface Quicklink {
+  icon: JSX.Element;
+  label: string;
+  sub: string;
+  link?: string;
+  disabled?: boolean;
+}
+
+export type OrderActivityStatus =
+  | "Pending"
+  | "Processing"
+  | "Dispatched"
+  | "Delivered"
+  | "Cancelled";
+
+export interface OrderActivity {
+  id: string; // UUID from backend
+  name: string; // Product name (e.g., "25L Palm Oil")
+  date: string; // ISO Date string (e.g., "2026-03-24T...")
+  amount: number; // Numeric value for calculations
+  status: OrderActivityStatus | string;
+  tracking: string; // Unique tracking reference
+}
+
+import type { LucideIcon } from "lucide-react"; // Or your preferred icon library
+
+export interface DashboardStat {
+  label: string; // e.g., "Total Orders"
+  value: string | number; // e.g., "1,250" or 1250
+  change: number | string; // e.g., 12 (represents +12% increase)
+  icon: LucideIcon; // The component itself: Leaf, ShoppingCart, etc.
+  color: string; // The theme color: "green", "orange", "blue"
 }

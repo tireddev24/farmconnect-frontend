@@ -6,7 +6,7 @@ import { Box, Loader } from "@chakra-ui/react";
 
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useProductStore } from "../store/store";
+import { useProductStore } from "store/store";
 import type { Product } from "types/types";
 import Unexpected from "error/unexpected";
 

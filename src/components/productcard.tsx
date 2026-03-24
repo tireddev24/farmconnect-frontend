@@ -9,7 +9,7 @@ export const ProductCard = ({
   navigate,
 }: {
   product: Product;
-  navigate?: NavigateFunction;
+  navigate: NavigateFunction;
 }) => (
   <Box
     padding={4}
@@ -59,7 +59,7 @@ export const ProductCard = ({
           fontWeight={"bold"}
           fontSize={"xs"}
         >
-          {returnCategoryName(product.categoryId)}
+          {returnCategoryName(product.categoryId) || product.categoryName}
         </Text>
       </Box>
     </Box>

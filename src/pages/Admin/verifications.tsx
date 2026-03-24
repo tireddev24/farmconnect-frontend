@@ -94,10 +94,10 @@ const Verify = () => {
                     Location
                   </Table.ColumnHeader> */}
               <Table.ColumnHeader color="gray.400" textTransform="none">
-                Seller
+                Order Id
               </Table.ColumnHeader>
               <Table.ColumnHeader color="gray.400" textTransform="none">
-                Order Id
+                Seller
               </Table.ColumnHeader>
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Status
@@ -117,18 +117,20 @@ const Verify = () => {
               </Table.ColumnHeader>
             </Table.Header>
             <TableBody>
-              {orders.map((o: OrderRecord) => (
-                <VerificationRow
-                  key={o.id}
-                  //   name={o.items[0].productName}
-                  seller={o.farmerName!}
-                  status={o.status!}
-                  orderId={o.orderNumber}
-                  date={formatDate(o.createdAt!)}
-                  amount={o.totalAmount}
-                  handleView={handleView}
-                />
-              ))}
+              {orders
+                .filter((o: OrderRecord) => o.status.toLowerCase() == "pending")
+                .map((o: OrderRecord) => (
+                  <VerificationRow
+                    key={o.id}
+                    //   name={o.items[0].productName}
+                    seller={o.farmerName!}
+                    status={o.status!}
+                    orderId={o.orderNumber}
+                    date={formatDate(o.createdAt!)}
+                    amount={o.totalAmount}
+                    handleView={handleView}
+                  />
+                ))}
             </TableBody>
           </Table.Root>
         </Box>

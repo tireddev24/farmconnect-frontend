@@ -18,17 +18,13 @@ export const Root = () => {
       rounded={"md"}
       display={"flex"}
       minH={"dvh"}
-      //   alignContent={"flex-start"}
+      bg={{ base: "#f8fafb", _dark: "black" }}
     >
       {/* Sidebar */}
       <AdminSidebar />
 
       {/* Main content */}
-      <Box
-        minH={"dvh"}
-        w={"full"}
-        bg={{ base: "colorPalette.muted/70", _dark: "black" }}
-      >
+      <Box minH={"dvh"} w={"full"} bg={{ base: "#f8fafb", _dark: "black" }}>
         <Outlet />
       </Box>
     </Box>

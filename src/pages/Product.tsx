@@ -80,7 +80,6 @@ const ProductDetails = () => {
 
     console.log(order);
     setLoading(true);
-    // alert("Order for " + item + " has been sent for processing");
 
     sessionStorage.setItem("order", JSON.stringify(order));
     sessionStorage.setItem("product", JSON.stringify(product));
@@ -88,26 +87,7 @@ const ProductDetails = () => {
     setLoading(false);
     //create a modal to enter rest of details
 
-    //generate payment id - payment page
-
-    // if (!orders) {
-    //   setOrders([order]);
-    //   console.log(orders);
-    //   sessionStorage.setItem("orders", JSON.stringify([order]));
-    // } else {
-    //   setOrders([...orders, order]);
-    //   console.log(orders);
-
-    //   sessionStorage.setItem("orders", JSON.stringify(orders));
-    // }
-
-    // localStorage.setItem("orders", JSON.stringify([order]));
-
-    // setLoading(false);
     navigate(`/checkout/${product.id}`);
-
-    //send order placed to backend
-    //fetch it on order page load
   };
 
   if (loading) {

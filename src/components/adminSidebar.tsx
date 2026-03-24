@@ -16,6 +16,7 @@ import {
   Notebook,
   VerifiedIcon,
   Wheat,
+  ScrollText,
 } from "lucide-react";
 import SidebarItem from "./sidebaritem";
 import { useAuth } from "../context/AuthContext";
@@ -68,7 +69,7 @@ const AdminSidebar = () => {
           link="orders"
         />
         {/* <SidebarItem icon={Ticket} label="Support Tickets" link="support" /> */}
-        {/* <SidebarItem icon={ScrollText} label="System Logs" link="logs" /> */}
+        <SidebarItem icon={ScrollText} label="System Logs" link="logs" />
       </VStack>
 
       <Box>

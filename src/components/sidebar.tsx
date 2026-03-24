@@ -15,7 +15,7 @@ import { Logout, ShoppingBag } from "./ui/icons";
 export const Sidebar = () => {
   const { logout, user } = useAuth();
   return (
-    <Box bg={{ base: "white", _dark: "#141414" }} zIndex={"30"}>
+    <Box bg={{ base: "white", _dark: "black" }} zIndex={"30"}>
       <Box
         position={"fixed"}
         px={1}

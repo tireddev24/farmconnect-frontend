@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import { ColorModeButton } from "components/ui/color-mode";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import Spin from "components/ui/spinner";
 import { type CreateOrderPayload, type Product } from "types/types";
@@ -22,12 +22,7 @@ import { useOrderStore } from "store/store";
 import { Toaster, toaster } from "components/ui/toaster";
 
 const Checkout = () => {
-  const { id } = useParams();
-
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  //   const [product, setProduct] = useState<any>(null);
-
   const { createOrder } = useOrderStore();
 
   const [order, setOrder] = useState<CreateOrderPayload>(
@@ -36,17 +31,6 @@ const Checkout = () => {
   const [product] = useState<Product>(
     JSON.parse(sessionStorage.getItem("product")!),
   );
-  // const [order] = useState(JSON.parse(sessionStorage.getItem("order")!).order);
-
-  const navigate = useNavigate();
-
-  // const checkProduct = (id: string) => {
-  //   if (product.id !== id) {
-  //     setError(true);
-  //   }
-  // };
-
-  // checkProduct(id!);
 
   const handleNext = async () => {
     setLoading(true);

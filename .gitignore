@@ -24,7 +24,4 @@ dist-ssr
 *.sw?
 
 
-
-store
-
 .env

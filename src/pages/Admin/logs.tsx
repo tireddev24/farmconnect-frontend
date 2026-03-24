@@ -8,8 +8,40 @@ import {
   Circle,
   Container,
 } from "@chakra-ui/react";
+import Unexpected from "error/unexpected";
+import { formatDate } from "helpers/function";
+import { Loader } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAdminStore } from "store/store";
 
 const SystemLogs = () => {
+  const { logs, fetchLogs } = useAdminStore();
+
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchLogs();
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    data();
+  }, []);
+
+  if (error) {
+    return <Unexpected error={error} />;
+  }
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Flex minH="100vh" bg="#f8fafb">
       {/* --- Main Content --- */}
@@ -62,27 +94,9 @@ const SystemLogs = () => {
             {/* Log Content Area */}
             <Box p={8} fontFamily="monospace" fontSize="sm">
               <VStack align="stretch" spaceX={2}>
-                <LogLine
-                  type="INFO"
-                  message="System boot sequence initiated..."
-                />
-                <LogLine
-                  type="INFO"
-                  message="Database connection established (Latency: 24ms)"
-                />
-                <LogLine
-                  type="AUTH"
-                  message="User 'Farmer John' logged in from 192.168.1.45"
-                />
-                <LogLine
-                  type="TRANS"
-                  message="Payment ID #99023 processed successfully"
-                />
-                <LogLine
-                  type="WARN"
-                  message="High latency detected on /api/market-data"
-                />
-                <LogLine type="AUTH" message="Admin accessed dashboard" />
+                {logs.map((log: Log) => (
+                  <LogLine log={log} />
+                ))}
               </VStack>
             </Box>
           </Box>
@@ -92,7 +106,17 @@ const SystemLogs = () => {
   );
 };
 
-const LogLine = ({ type, message }: { type: string; message: string }) => {
+interface Log {
+  type: string;
+  message: string;
+  userId: string;
+  action: string;
+  ipAddress: string;
+  userAgent: string;
+  timestamp: string;
+}
+
+const LogLine = ({ log }: { log: Log }) => {
   // Define colors based on log type
   const colors: Record<string, string> = {
     INFO: "gray.400",
@@ -103,12 +127,13 @@ const LogLine = ({ type, message }: { type: string; message: string }) => {
 
   return (
     <HStack spaceX={4} align="flex-start">
-      <Text color={colors[type]} fontWeight="bold" minW="60px">
-        [{type}]
+      <Text color={colors[log.type]} fontWeight="bold" minW="60px">
+        [{log.type}]
       </Text>
-      <Text color={type === "TRANS" ? "gray.800" : colors[type]}>
-        {message}
-      </Text>
+      <Text>{log.userId}</Text>
+      <Text>{log.ipAddress}</Text>
+      <Text>{log.userAgent}</Text>
+      <Text>{formatDate(log.timestamp)}</Text>
     </HStack>
   );
 };

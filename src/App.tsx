@@ -24,6 +24,7 @@ import ListNewProduct from "pages/Farmer/newProduct";
 import FarmerProducts from "pages/Farmer/products";
 import Verify from "pages/Admin/verifications";
 import AdminProducts from "pages/Admin/products";
+import SystemLogs from "pages/Admin/logs";
 
 function App() {
   return (
@@ -85,6 +86,7 @@ function App() {
           <Route path="orders" element={<Verify />} />
           <Route path="orders/:id" element={<Action />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="logs" element={<SystemLogs />} />
         </Route>
         <Route path="/farmer" element={<FarmerRoot />}>
           <Route path="dashboard" element={<FarmerDashboard />} />

@@ -8,6 +8,7 @@ import {
   VStack,
   Grid,
   GridItem,
+  Link,
 } from "@chakra-ui/react";
 
 import Badge from "../../components/ui/badge";
@@ -21,21 +22,19 @@ import {
   Contact,
   Phone,
   Calendar,
-  Leaf,
   Pen,
   History,
   RightChevron,
   Check,
-  Headset,
-  Heart,
-  Star,
   Plus,
 } from "../../components/ui/icons";
-import { useEffect, useState, type JSX } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useFarmerStore } from "store/store";
 import Loader from "components/ui/load";
 import Unexpected from "error/unexpected";
+import { ProductCard, QuickLink } from "./farmercomps";
+import type { OrderRecord, ProfileProductCard } from "types/types";
 
 const orders = [
   {
@@ -309,8 +308,8 @@ const Profile = () => {
 
                 {/* Order Item 1 */}
 
-                {orders.map((o) => (
-                  <OrderCard key={o.orderid} order={o} />
+                {products.slice(0, 2).map((o: ProfileProductCard) => (
+                  <ProductCard key={o.id} product={o} />
                 ))}
 
                 {/* Recent Purchases */}
@@ -320,40 +319,19 @@ const Profile = () => {
                       <History color="green" />
                       <Text fontWeight="bold">Recent Sales</Text>
                     </HStack>
-                    <Text color="gray.500" fontSize="sm" cursor="pointer">
-                      View Payouts
-                    </Text>
+                    <HStack _hover={{ color: "green.400" }}>
+                      <Link href="/farmer/orders" cursor="pointer">
+                        View All Orders
+                      </Link>
+                      <RightChevron />
+                    </HStack>
                   </HStack>
 
-                  <HStack
-                    justifyContent="space-between"
-                    cursor={"pointer"}
-                    _hover={{ bg: { base: "#f8fafb", _dark: "#2a2a2a" } }}
-                    p={4}
-                  >
-                    <HStack gap={4} rounded={"xl"}>
-                      <Box p={2} bg="green.500/10" rounded="full">
-                        <Check color="green" size={14} />
-                      </Box>
-                      <VStack alignItems="flex-start" gap={0}>
-                        <Text fontWeight="semibold">25L Palm Oil</Text>
-                        <Text fontSize="xs" color="gray.500">
-                          Jan 28, 2026 • Delivered
-                        </Text>
-                      </VStack>
-                    </HStack>
-                    <VStack
-                      alignItems="flex-end"
-                      justifyContent={"flex-end"}
-                      gap={1}
-                    >
-                      <Text fontWeight="bold" fontSize="sm">
-                        ₦35,000
-                      </Text>
-                      <Badge size="xs" color="green" text="Completed" />{" "}
-                    </VStack>
-                  </HStack>
-                  {/* Add more recent items here... */}
+                  {orders
+                    .filter((o) => o.status.toLowerCase() == "accepted")
+                    .map((o) => <SalesItem sale={o} />) || (
+                    <Box>No Recents Sales to Show</Box>
+                  )}
                 </VStack>
 
                 {/* Bottom Quick Links */}
@@ -363,24 +341,6 @@ const Profile = () => {
                     label="Add Product"
                     sub="List to market"
                     link="newProduct"
-                  />
-                  <QuickLink
-                    icon={<Headset />}
-                    label="Payouts"
-                    sub="Get help"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Heart />}
-                    label="Negotiations"
-                    sub="Saved items"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Star />}
-                    label="Reviews"
-                    sub="Customer Feedback"
-                    disabled={true}
                   />
                 </Grid>
               </VStack>
@@ -392,90 +352,62 @@ const Profile = () => {
   );
 };
 
-interface quicklink {
-  icon: JSX.Element;
-  label: string;
-  sub: string;
-  link?: string;
-  disabled?: boolean;
-}
-
-const QuickLink = ({ icon, label, sub, link, disabled }: quicklink) => {
-  const navigate = useNavigate();
-  return (
-    <VStack
-      bg={{ base: "white", _dark: "#121212" }}
-      p={4}
-      rounded="xl"
-      border="1px solid #262626"
-      align="start"
-      cursor="pointer"
-      _hover={{ bg: { _dark: "#1a1a1a" } }}
-      onClick={() => link && navigate(`../${link}`)}
-      opacity={disabled ? 0.5 : 1}
-      pointerEvents={disabled ? "none" : "auto"}
-    >
-      <Box color={{ base: "green.400", _dark: "orange.400" }} mb={2}>
-        {icon}
-      </Box>
-      <Text fontWeight="bold" fontSize="sm">
-        {label}
-      </Text>
-      <Text fontSize="xs" color="gray.500">
-        {sub}
-      </Text>
-    </VStack>
-  );
-};
-
-interface ProfileOrderCard {
-  orderid: number;
-  orderItem: string;
-  ordernum: string;
-  quantity: number;
-  date: string;
-  amount: string;
-  status: "processing" | "shipped" | "delivered" | "cancelled" | string;
-}
-
-const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
-  const badgecolor = order.status === "processing" ? "yellow" : "blue";
-  return (
-    <Box
-      w={"full"}
-      bg={{ base: "white", _dark: "#1a1a1a" }}
-      rounded="xl"
-      boxShadow="0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
-      //   border="1px solid"
-      borderColor={{ _dark: "#262626" }}
-    >
-      <HStack justifyContent="space-between" p={4}>
-        <HStack gap={4}>
-          <Box p={3} bg="orange.500/10" rounded="lg">
-            <Leaf color="orange" />
-          </Box>
-          <VStack align="start" gap={0}>
-            <Text fontWeight="bold">{order.orderItem}</Text>
-            <Text fontSize="sm" color="gray.500">
-              Ref: YAM-001
-            </Text>
-          </VStack>
-        </HStack>
-        <HStack alignItems="center" gap={2}>
-          <Badge color={badgecolor} text={order.status} />
-          <RightChevron cursor={"pointer"} fontSize={"sm"} color="gray" />
-        </HStack>
-      </HStack>
-      <HStack justifyContent="space-between" p={4}>
-        <Text fontSize={15} fontWeight={"bold"} color="gray.500">
-          Date Added: {order.date}
-        </Text>
-        <Text fontWeight="bold" className="tracking-wider">
-          ₦{order.amount.toLocaleString()}
-        </Text>
-      </HStack>
-    </Box>
-  );
-};
-
 export default Profile;
+
+const SalesItem = (o: OrderRecord) => (
+  <HStack
+    justifyContent="space-between"
+    cursor="pointer"
+    p={4}
+    transition="all 0.2s"
+    _hover={{
+      bg: { base: "gray.50", _dark: "whiteAlpha.50" },
+      transform: "translateX(4px)", // Subtle movement on hover
+    }}
+    borderBottom="1px solid"
+    borderColor={{ base: "gray.100", _dark: "whiteAlpha.100" }}
+  >
+    {/* Left Section: Icon & Main Details */}
+    <HStack gap={4}>
+      <Box
+        p={2.5}
+        bg="green.500/10"
+        rounded="xl" // Changed to squircle for a modern look
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Check color="#22C55E" size={16} fontWeight="bold" />
+      </Box>
+
+      <VStack alignItems="flex-start">
+        <Text fontWeight="bold" fontSize="md" letterSpacing="-0.01em">
+          {} {o.items.length > 0 && o.items[0].productName}
+        </Text>
+        <HStack>
+          <Text fontSize="xs" color="gray.500" fontWeight="medium">
+            Jan 28, 2026
+          </Text>
+          <Box w={1} h={1} bg="gray.300" rounded="full" />{" "}
+          {/* Visual separator dot */}
+          <Text fontSize="xs" color="gray.500" fontWeight="medium">
+            Delivered
+          </Text>
+        </HStack>
+      </VStack>
+    </HStack>
+
+    {/* Right Section: Price & Status Tag */}
+    <VStack alignItems="flex-end">
+      <Text
+        fontWeight="800"
+        fontSize="sm"
+        color={{ base: "gray.800", _dark: "white" }}
+      >
+        ₦35,000
+      </Text>
+      {/* Using your status color map logic here */}
+      <Badge color="green.700" text="Completed" />
+    </VStack>
+  </HStack>
+);

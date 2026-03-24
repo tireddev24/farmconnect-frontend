@@ -16,11 +16,8 @@ import { useAdminStore } from "store/store";
 import Unexpected from "error/unexpected";
 import Loader from "components/ui/load";
 import { formatDate } from "helpers/function";
-import { useAuth } from "context/AuthContext";
-
 export default function AdminProducts() {
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
