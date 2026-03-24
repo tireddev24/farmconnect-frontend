@@ -22,21 +22,20 @@ import {
   Phone,
   Calendar,
   Leaf,
-  RightArrow,
-  // Dot,
-  // Download,
   Pen,
   History,
   RightChevron,
   Check,
-  ShoppingBag,
   Headset,
   Heart,
   Star,
   Plus,
 } from "../../components/ui/icons";
-import type { JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useFarmerStore } from "store/store";
+import Loader from "components/ui/load";
+import Unexpected from "error/unexpected";
 
 const orders = [
   {
@@ -63,6 +62,27 @@ const orders = [
 const Profile = () => {
   const { user: User } = useAuth();
 
+  const navigate = useNavigate();
+
+  const { products, fetchProducts } = useFarmerStore();
+
+  const [error, setError] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchProducts();
+      } catch (error) {
+        console.log(error);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    data();
+  }, []);
+
   const user = {
     ...User,
     name: User?.firstName + " " + User?.lastName,
@@ -72,7 +92,13 @@ const Profile = () => {
     stats: { orders: 12, spent: "₦450K", rating: 4.8 },
   };
 
-  const navigate = useNavigate();
+  if (error) {
+    return <Unexpected error={error} />;
+  }
+
+  if (loading) {
+    return <Loader />;
+  }
 
   // Reusable card style
   const cardStyle = {
@@ -85,19 +111,6 @@ const Profile = () => {
 
   return (
     <Box minH="100vh" p={10} fontFamily="sans-serif">
-      {/* <Box
-        position="absolute"
-        zIndex={0}
-        top="10%"
-        right={"50%"}
-        w="500px"
-        h="500px"
-        bg="green.200"
-        filter="blur(80px)"
-        opacity={0.3}
-        rounded="full"
-      /> */}
-
       {/* BUYERS Profile */}
       <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
@@ -115,6 +128,7 @@ const Profile = () => {
             </Text>
           </VStack>
           <Button
+            display={"none"}
             variant="outline"
             color={{ base: "black", _dark: "whiteAlpha.100" }}
             rounded={"lg"}
@@ -167,7 +181,7 @@ const Profile = () => {
                 <HStack justify="space-around" w="full" textAlign="center">
                   <VStack gap={0} color={{ base: "black", _dark: "white" }}>
                     <Text fontWeight="bold" fontSize="lg">
-                      {user.stats.orders}
+                      {products.length}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
                       Listings
@@ -314,21 +328,15 @@ const Profile = () => {
                   <HStack
                     justifyContent="space-between"
                     cursor={"pointer"}
-                    _hover={{ bg: "#2a2a2a" }}
+                    _hover={{ bg: { base: "#f8fafb", _dark: "#2a2a2a" } }}
                     p={4}
-                    rounded={"xl"}
                   >
-                    <HStack gap={4}>
+                    <HStack gap={4} rounded={"xl"}>
                       <Box p={2} bg="green.500/10" rounded="full">
                         <Check color="green" size={14} />
                       </Box>
                       <VStack alignItems="flex-start" gap={0}>
-                        <Text
-                          fontWeight="semibold"
-                          // _hover={{ color: "yellow.500" }}
-                        >
-                          25L Palm Oil
-                        </Text>
+                        <Text fontWeight="semibold">25L Palm Oil</Text>
                         <Text fontSize="xs" color="gray.500">
                           Jan 28, 2026 • Delivered
                         </Text>
@@ -460,7 +468,7 @@ const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
       </HStack>
       <HStack justifyContent="space-between" p={4}>
         <Text fontSize={15} fontWeight={"bold"} color="gray.500">
-          Views: {order.date}
+          Date Added: {order.date}
         </Text>
         <Text fontWeight="bold" className="tracking-wider">
           ₦{order.amount.toLocaleString()}

@@ -10,24 +10,25 @@ import {
 } from "@chakra-ui/react";
 import { Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { OrderRecord } from "../../types/types";
+import type { Product } from "../../types/types";
 import { useEffect, useState } from "react";
 import { useFarmerStore } from "store/store";
 import Unexpected from "error/unexpected";
 import Loader from "components/ui/load";
 import { formatDate } from "helpers/function";
+import { Pen, Trash } from "components/ui/icons";
 
-export default function FarmerOrders() {
+export default function FarmerProducts() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const { orders, fetchOrders } = useFarmerStore();
+  const { products, fetchProducts } = useFarmerStore();
 
   useEffect(() => {
     const data = async () => {
       try {
-        await fetchOrders();
+        await fetchProducts();
       } catch (error) {
         console.log(error);
         setError(true);
@@ -53,6 +54,7 @@ export default function FarmerOrders() {
       flex={1}
       //   w={"full"}
       color={{ base: "black", _dark: "white" }}
+      bg="#f8fafb"
     >
       <Box
         display={"flex"}
@@ -71,10 +73,10 @@ export default function FarmerOrders() {
           >
             <Box>
               <Heading size="xl" mb={1}>
-                Order Management
+                Product Management
               </Heading>
               <Text color="gray.500" fontSize="sm">
-                Manage placed orders.
+                Manage your product listings.
               </Text>
             </Box>
             <HStack spaceX={4}>
@@ -116,10 +118,6 @@ export default function FarmerOrders() {
                 Outbound Shipments (2)
               </Text>
             </HStack>
-
-            {orders.map((o: OrderRecord) => (
-              <OrderCard order={o} />
-            ))}
           </VStack>
           {/* History Section */}
           <VStack align="stretch" spaceX={6}>
@@ -135,34 +133,36 @@ export default function FarmerOrders() {
                   borderBottom="1px solid"
                   borderColor="whiteAlpha.100"
                 >
-                  <Table.Row>
+                  <Table.Row textTransform={"capitalize"}>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      ORDER ID
+                      Product Name
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      ITEMS
+                      Category
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      Buyer
+                      unit
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      DATE
+                      price per unit
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      AMOUNT
+                      Quantity Available
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      STATUS
+                      date
                     </Table.Cell>
                     <Table.Cell color="gray.600" fontSize="xs">
-                      ACTION
+                      Actions
                     </Table.Cell>
                   </Table.Row>
                 </Table.Header>
                 <TableBody>
-                  {orders.map((order: OrderRecord, i: number) => (
-                    <Order key={i} order={order} />
-                  ))}
+                  {products
+                    .filter((p: Product) => p.isAvailable == true)
+                    .map((p: Product, index: number) => (
+                      <ProductRow key={index} product={p} />
+                    ))}
                 </TableBody>
               </Table.Root>
             </Box>
@@ -173,7 +173,7 @@ export default function FarmerOrders() {
   );
 }
 
-const Order = ({ order, key }: { order: OrderRecord; key: number }) => {
+const ProductRow = ({ product, key }: { product: Product; key: number }) => {
   return (
     <Table.Row
       borderBottom="1px solid"
@@ -182,144 +182,31 @@ const Order = ({ order, key }: { order: OrderRecord; key: number }) => {
       key={key}
     >
       <Table.Cell color="gray.500" fontSize="sm">
-        {order.orderNumber}
+        {product.name}
       </Table.Cell>
       <Table.Cell fontWeight="bold" fontSize="sm">
-        {/* {order.name} */}
+        {product.categoryName}
       </Table.Cell>
       <Table.Cell color="gray.500" fontSize="sm">
-        {order.buyerName}
+        {product.unit}
       </Table.Cell>
       <Table.Cell fontWeight="bold" fontSize="sm">
-        {formatDate(order.createdAt)}
+        {product.pricePerUnit}
       </Table.Cell>
-      <Table.Cell>{order.totalAmount}</Table.Cell>
+      <Table.Cell>{product.quantityAvailable}</Table.Cell>
       <Table.Cell>
-        <Text>{order.status}</Text>
+        <Text>{formatDate(String(product.createdAt))}</Text>
       </Table.Cell>
       <Table.Cell>
         <HStack gap={2}>
-          <Approve />
-          <Decline />
+          <Text p={2} bg={"green.200"} rounded={"lg"} cursor={"pointer"}>
+            <Pen />
+          </Text>
+          <Text p={2} bg={"red.300"} rounded={"lg"} cursor={"pointer"}>
+            <Trash />
+          </Text>
         </HStack>
       </Table.Cell>
     </Table.Row>
-  );
-};
-
-import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
-
-const Approve = () => {
-  return (
-    <Dialog.Root role="alertdialog">
-      <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm" _hover={{ bg: "green.300" }}>
-          Accept
-        </Button>
-      </Dialog.Trigger>
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>Are you sure?</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>
-              <p>This action cannot be undone. You will accept this order.</p>
-            </Dialog.Body>
-            <Dialog.Footer>
-              <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
-              </Dialog.ActionTrigger>
-              <Button colorPalette="red">Accept Order</Button>
-            </Dialog.Footer>
-            <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
-  );
-};
-
-const Decline = () => {
-  return (
-    <Dialog.Root role="alertdialog">
-      <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm" _hover={{ bg: "red.300" }}>
-          Decline
-        </Button>
-      </Dialog.Trigger>
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>Are you sure?</Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>
-              <p>This action cannot be undone. You will decline this order.</p>
-            </Dialog.Body>
-            <Dialog.Footer>
-              <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
-              </Dialog.ActionTrigger>
-              <Button colorPalette="red">Decline</Button>
-            </Dialog.Footer>
-            <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
-  );
-};
-
-const OrderCard = ({ order }: { order: OrderRecord }) => {
-  return (
-    <Box
-      display={"flex"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      gap={2}
-      bg={"whiteAlpha.300/50"}
-      p={4}
-      //   border={"1px solid"}
-      boxShadow="0px 10px 15px -3px rgba(0, 0, 0, 0.1)"
-      borderColor={{ base: "", _dark: "#8a7557/40" }}
-      py={6}
-      rounded={"xl"}
-    >
-      <Box
-        bg={{ base: "gray.200", _dark: "#252525" }}
-        fontSize={"2xl"}
-        className="w-16 h-16 rounded-2xl  flex items-center justify-center text-2xl"
-      >
-        {order.id}
-      </Box>
-      <Box
-        display={"flex"}
-        flexDir={"column"}
-        alignItems={"flex-start"}
-        mr={"auto "}
-      >
-        <Text fontSize={18} fontWeight={"bold"}>
-          {/* {order.items[0].orderName} */}
-        </Text>
-        <Text fontSize={14}>Buyer: {order.buyerName} Lagos </Text>
-        <Text
-          fontSize={12}
-          color={{ base: "gray.400", _dark: "gray.500" }}
-          fontWeight={"bold"}
-        >
-          Order {order.orderNumber}
-        </Text>
-      </Box>
-      <Box>
-        <Text>Order Range Slider</Text>
-      </Box>
-    </Box>
   );
 };

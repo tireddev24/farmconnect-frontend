@@ -1,3 +1,6 @@
+import { categories } from "data/constant";
+import type { Product } from "types/types";
+
 export const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString || dateString.startsWith("0001")) {
     return "Not Available";
@@ -13,4 +16,28 @@ export const formatDate = (dateString: string | null | undefined): string => {
     month: "short",
     year: "numeric",
   }).format(date);
+};
+
+export const returnCategory = (
+  text: string,
+  setProduce?: React.Dispatch<React.SetStateAction<Product>>,
+) => {
+  categories.find((cat) => {
+    if (cat.name.toLowerCase() == text.toLowerCase()) {
+      setProduce!((prevProduce) => ({
+        ...prevProduce,
+        categoryId: Number(cat.id),
+      }));
+    }
+  });
+};
+
+export const returnCategoryName = (id: number) => {
+  const catname = categories.find((cat) => {
+    if (cat.id == id) {
+      return cat.name;
+    }
+  });
+
+  return catname?.name;
 };

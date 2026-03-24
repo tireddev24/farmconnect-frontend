@@ -18,12 +18,15 @@ import { useState } from "react";
 import { LeftArrow } from "components/ui/icons";
 import { ProductCard } from "components/productcard";
 import { type Product } from "types/types";
+import { Toaster, toaster } from "components/ui/toaster";
+import { categories } from "data/constant";
+import { returnCategory } from "helpers/function";
 
 export default function ListNewProduct() {
   const date = new Date();
 
   const [produce, setProduce] = useState<Product>({
-    categoryId: 3,
+    categoryId: 0,
     name: "",
     description: "",
     pricePerUnit: 3,
@@ -34,29 +37,22 @@ export default function ListNewProduct() {
     harvestDate: date,
     expiryDate: date,
   });
-  const categories = [
-    { id: 3, name: "Fruits" },
-    { id: 2, name: "Vegetables" },
-    { id: 6, name: "Livestock and Poultry" },
-  ];
 
   const [categoryName, setCategoryName] = useState(categories[0].name);
 
-  const returnCategory = (text: string) => {
-    const catName = categories.map((cat) => {
-      if (cat.name == text) {
-        setProduce((prevProduce) => ({
-          ...prevProduce,
-          categoryId: Number(cat.id),
-        }));
-      }
-    });
-
-    return catName;
+  const handleCreateProduct = () => {
+    if (produce.categoryId == 0) {
+      toaster.create({
+        type: "error",
+        description: "You have not chosen a category",
+      });
+      return;
+    }
   };
 
   return (
     <Flex minH="100vh" bg="#f8fafb" justify={"center"}>
+      <Toaster />
       {/* --- Main Content --- */}
       <Container py={12}>
         <VStack align="start" mb={10}>
@@ -117,8 +113,8 @@ export default function ListNewProduct() {
                     options={categories.map((cat) => cat.name)}
                     value={categoryName}
                     onChange={(e) => {
+                      returnCategory(e, setProduce);
                       setCategoryName(e);
-                      returnCategory(categoryName);
                     }}
                   />
                 </SimpleGrid>
@@ -215,6 +211,7 @@ export default function ListNewProduct() {
                 rounded="2xl"
                 fontSize="md"
                 _hover={{ bg: "#0d8a6b" }}
+                onClick={handleCreateProduct}
               >
                 Publish Listing
               </Button>
@@ -233,7 +230,7 @@ export default function ListNewProduct() {
 
 // Helper Center component for layout consistency
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Center = ({ children, ...props }: any) => (
+export const Center = ({ children, ...props }: any) => (
   <Flex align="" w={"full"} justify="center" {...props}>
     {children}
   </Flex>

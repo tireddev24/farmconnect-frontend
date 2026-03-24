@@ -10,7 +10,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { ColorModeButton } from "./ui/color-mode";
 import { useAuth } from "../context/AuthContext";
-import { Logout } from "./ui/icons";
+import { Logout, ShoppingBag } from "./ui/icons";
 
 export const Sidebar = () => {
   const { logout, user } = useAuth();
@@ -42,7 +42,11 @@ export const Sidebar = () => {
         <NavItem link="dashboard" icon={<Home />} />
 
         {/* <NavItem link="market" icon={<TrendingUp />} /> */}
-        <NavItem link="orders" icon={<ClipboardList />} />
+        <NavItem link={"orders"} icon={<ClipboardList />} />
+        {user?.role.toLowerCase() === "farmer" && (
+          <NavItem link={"products"} icon={<ShoppingBag />} />
+        )}
+
         <NavItem link="profile" icon={<User />} />
 
         <VStack bg={"none"} mt={"auto"} w={"max-content"} gap={4} mb={4}>

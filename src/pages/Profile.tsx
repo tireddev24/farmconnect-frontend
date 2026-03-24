@@ -30,34 +30,12 @@ import {
   RightChevron,
   Check,
   ShoppingBag,
-  Headset,
-  Heart,
-  Star,
 } from "../components/ui/icons";
-import type { JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { useAuth } from "../context/AuthContext";
-
-const orders = [
-  {
-    orderid: 2,
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "processing",
-  },
-  {
-    orderid: 1,
-
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "in transit",
-  },
-];
+import { OrderTable } from "components/orders/ordersComps";
+import { useOrderStore } from "store/store";
+import { Loader } from "lucide-react";
 
 const Profile = () => {
   const { user: User } = useAuth();
@@ -71,6 +49,9 @@ const Profile = () => {
     stats: { orders: 12, spent: "₦450K", rating: 4.8 },
   };
 
+  const { orders, fetchOrders } = useOrderStore();
+  const [load, setLoad] = useState<boolean>(true);
+
   const navigate = useNavigate();
 
   // Reusable card style
@@ -82,23 +63,28 @@ const Profile = () => {
     w: "full",
   };
 
-  return (
-    <Box minH="100vh" p={10} fontFamily="sans-serif">
-      {/* <Box
-        position="absolute"
-        zIndex={0}
-        top="10%"
-        right={"50%"}
-        w="500px"
-        h="500px"
-        bg="green.200"
-        filter="blur(80px)"
-        opacity={0.3}
-        rounded="full"
-      /> */}
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchOrders();
+      } catch (error) {
+        console.log(error);
+        // setError(true);
+      } finally {
+        setLoad(false);
+      }
+    };
+    data();
+  }, []);
 
+  if (load) {
+    return <Loader />;
+  }
+
+  return (
+    <Box minH="100vh" p={10} bg={"white/70"} fontFamily="sans-serif">
       {/* BUYERS Profile */}
-      <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
+      <VStack maxW="7xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
         <HStack justifyContent="space-between">
           <VStack align="start" gap={0}>
@@ -164,7 +150,7 @@ const Profile = () => {
                 <HStack justify="space-around" w="full" textAlign="center">
                   <VStack gap={0} color={{ base: "black", _dark: "white" }}>
                     <Text fontWeight="bold" fontSize="lg">
-                      {user.stats.orders}
+                      {orders.length}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
                       Orders
@@ -182,7 +168,7 @@ const Profile = () => {
                       Spent
                     </Text>
                   </VStack>
-                  <VStack gap={0}>
+                  <VStack gap={0} display={"none"}>
                     <Text
                       fontWeight="bold"
                       fontSize="lg"
@@ -291,20 +277,20 @@ const Profile = () => {
 
                 {/* Order Item 1 */}
 
-                {orders && orders.length > 0 ? (
-                  orders.map((i: Product) => {
-                    return <>Return table of orders{i.name}</>;
-                  })
-                ) : (
-                  <Box w={"full"}>
-                    <Text fontSize={"2xl"} textAlign={"center"}>
-                      No orders in progress
-                    </Text>
-                  </Box>
-                )}
+                <Box p={4}>
+                  {orders && orders.length > 0 ? (
+                    <OrderTable orders={orders} />
+                  ) : (
+                    <Box w={"full"}>
+                      <Text fontSize={"2xl"} textAlign={"center"}>
+                        No orders in progress
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
 
                 {/* Recent Purchases */}
-                <VStack {...cardStyle} align="stretch" gap={6}>
+                <VStack {...cardStyle} align="stretch" gap={6} display={"none"}>
                   <HStack justifyContent="space-between">
                     <HStack>
                       <History color="green" />
@@ -318,7 +304,7 @@ const Profile = () => {
                   <HStack
                     justifyContent="space-between"
                     cursor={"pointer"}
-                    _hover={{ bg: "#2a2a2a" }}
+                    // _hover={{ bg: "#2a2a2a" }}
                     p={4}
                     rounded={"xl"}
                   >
@@ -353,30 +339,12 @@ const Profile = () => {
                 </VStack>
 
                 {/* Bottom Quick Links */}
-                <Grid templateColumns="repeat(4, 1fr)" gap={4} w="full">
+                <Grid templateColumns="repeat(1, 1fr)" gap={4} w="full">
                   <QuickLink
                     icon={<ShoppingBag />}
                     label="New Order"
                     sub="Browse market"
-                    link="market"
-                  />
-                  <QuickLink
-                    icon={<Headset />}
-                    label="Support"
-                    sub="Get help"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Heart />}
-                    label="Wishlist"
-                    sub="Saved items"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Star />}
-                    label="Reviews"
-                    sub="Rate orders"
-                    disabled={true}
+                    link="dashboard"
                   />
                 </Grid>
               </VStack>
@@ -434,7 +402,7 @@ interface ProfileOrderCard {
   status: "processing" | "shipped" | "delivered" | "cancelled" | string;
 }
 
-const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
+export const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
   const badgecolor = order.status === "processing" ? "yellow" : "blue";
   return (
     <Box

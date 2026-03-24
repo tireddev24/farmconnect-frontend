@@ -8,14 +8,13 @@ import {
   Icon,
   Circle,
   Button,
-  Center,
   Separator,
 } from "@chakra-ui/react";
 import {
   LayoutDashboard,
   Users,
-  Ticket,
-  ScrollText,
+  Notebook,
+  VerifiedIcon,
   Wheat,
 } from "lucide-react";
 import SidebarItem from "./sidebaritem";
@@ -60,10 +59,16 @@ const AdminSidebar = () => {
           icon={Users}
           label="User Management"
           link="usermanagement"
-          badge="3"
+          // badge="3"
         />
-        <SidebarItem icon={Ticket} label="Support Tickets" link="support" />
-        <SidebarItem icon={ScrollText} label="System Logs" link="logs" />
+        <SidebarItem icon={Notebook} label="Products" link="products" />
+        <SidebarItem
+          icon={VerifiedIcon}
+          label="Order Verification"
+          link="orders"
+        />
+        {/* <SidebarItem icon={Ticket} label="Support Tickets" link="support" /> */}
+        {/* <SidebarItem icon={ScrollText} label="System Logs" link="logs" /> */}
       </VStack>
 
       <Box>

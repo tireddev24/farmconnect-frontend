@@ -1,14 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Chart, useChart } from "@chakra-ui/charts";
 import { Legend, Pie, PieChart, Sector } from "recharts";
 
-const PieChartComp = () => {
+const PieChartComp = ({ users }: { users: any }) => {
+  console.log(users);
+  const userCounts = users.reduce((acc: any, user: any) => {
+    // acc stands for "accumulator" (the object we are building)
+    const role = user.role; // e.g., 'Farmer', 'Buyer', or 'Admin'
+
+    // Initialize the role in the object if it doesn't exist, then increment
+    acc[role] = (acc[role] || 0) + 1;
+
+    return acc;
+  }, {});
+
   const chart = useChart({
     data: [
-      { name: "Farmer", value: 400, color: "teal.solid" },
-      { name: "Buyer", value: 300, color: "orange.solid" },
-      { name: "Transporter", value: 300, color: "blue.solid" },
+      { name: "Farmer", value: userCounts.Farmer, color: "teal.solid" },
+      { name: "Buyer", value: userCounts.Buyer, color: "orange.solid" },
+      {
+        name: "Transporter",
+        value: userCounts.Transporter,
+        color: "blue.solid",
+      },
     ],
   });
 

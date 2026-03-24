@@ -3,13 +3,12 @@ import React, { useState, useEffect } from "react";
 import { ProductCard } from "../components/productcard";
 import { Header } from "../components/header";
 import { Box, Loader } from "@chakra-ui/react";
-import MarketBar from "../components/marketbar";
 
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useProductStore } from "../store/store";
-import Unexpected from "error/unexpected";
 import type { Product } from "types/types";
+import Unexpected from "error/unexpected";
 
 const FarmConnect: React.FC = () => {
   const navigate = useNavigate();
@@ -42,27 +41,14 @@ const FarmConnect: React.FC = () => {
   const { user } = useAuth();
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Simulation of your localStorage auth logic
-
-  // Filter Logic
-  // const filteredProducts = useMemo(() => {
-  //   return MOCK_PRODUCTS.filter((p) => {
-  //     const matchesFilter = filter === "all" || p.category === filter;
-  //     const matchesSearch = p.name.toLowerCase();
-  //     // .includes(searchQuery.toLowerCase());
-  //     return matchesFilter && matchesSearch;
-  //   });
-  // }, [filter]);
 
   if (load) {
     return <Loader />;
   }
 
-  // if (error) {
-  //   return <Unexpected error={error} />;
-  // }
+  if (error) {
+    return <Unexpected error={error} />;
+  }
 
   return (
     <Box className="flex-1  flex-col" zIndex={50}>

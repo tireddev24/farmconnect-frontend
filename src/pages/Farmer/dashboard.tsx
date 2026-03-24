@@ -9,83 +9,31 @@ import {
   SimpleGrid,
   Spacer,
   Circle,
-  Button,
   Input,
   InputGroup,
-  InputElement,
   Table,
   TableBody,
   Badge,
   Center,
   Loader,
 } from "@chakra-ui/react";
-import {
-  LayoutDashboard,
-  TrendingUp,
-  BarChart3,
-  Users,
-  Settings,
-  Search,
-  Banknote,
-  Eye,
-  ShoppingBag,
-  UserPlus,
-  LogOut,
-  Sun,
-  Wheat,
-  Droplet,
-} from "lucide-react";
+import { Banknote, Eye, ShoppingBag, UserPlus } from "lucide-react";
 import AvatarCard from "../../components/avatar";
 import { useEffect, useState } from "react";
 import { useFarmerStore } from "store/store";
-import type { FarmerOrders, OrderRecord } from "types/types";
+import type { FarmerOrders } from "types/types";
 import { formatDate } from "helpers/function";
 import Unexpected from "error/unexpected";
-// import {
-//   AreaChart,
-//   Area,
-//   XAxis,
-//   YAxis,
-//   CartesianGrid,
-//   Tooltip,
-//   ResponsiveContainer,
-//   PieChart,
-//   Pie,
-//   Cell,
-// } from "recharts";
-
-// Mock Data for Revenue Area Chart
-const revenueData = [
-  { name: "Jan", income: 40, expenses: 25 },
-  { name: "Feb", income: 55, expenses: 35 },
-  { name: "Mar", income: 45, expenses: 30 },
-  { name: "Apr", income: 75, expenses: 50 },
-  { name: "May", income: 80, expenses: 55 },
-  { name: "Jun", income: 95, expenses: 65 },
-  { name: "Jul", income: 100, expenses: 70 },
-  { name: "Aug", income: 85, expenses: 60 },
-  { name: "Sep", income: 50, expenses: 35 },
-  { name: "Oct", income: 60, expenses: 40 },
-];
-
-// Mock Data for Sales Focus Pie Chart
-const salesFocusData = [
-  { name: "Tubers", value: 45, color: "#10a37f" },
-  { name: "Grains", value: 35, color: "#2563eb" },
-  { name: "Veg", value: 20, color: "#a855f7" },
-];
 
 export default function FarmerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const { orders, fetchOrders, users, fetchUsers } = useFarmerStore();
-  const path = location.pathname;
+  const { orders, fetchOrders } = useFarmerStore();
 
   useEffect(() => {
     const data = async () => {
       try {
         await fetchOrders();
-        await fetchUsers();
       } catch (error) {
         console.log(error);
         setError(true);
@@ -97,11 +45,11 @@ export default function FarmerDashboard() {
   }, []);
 
   if (error) {
-    <Unexpected error={error} />;
+    return <Unexpected error={error} />;
   }
 
   if (loading) {
-    <Loader />;
+    return <Loader />;
   }
 
   return (
@@ -312,7 +260,14 @@ export default function FarmerDashboard() {
 
         {/* Bottom Section: Recent Orders & Delivery */}
         <SimpleGrid columns={3} spaceX={6}>
-          <Box gridColumn="span 2" bg="white" p={6} rounded="2xl" shadow="sm">
+          <Box
+            gridColumn="span 2"
+            minH={"70dvh"}
+            bg="white"
+            p={6}
+            rounded="2xl"
+            shadow="sm"
+          >
             <Heading size="sm" mb={6}>
               Recent Orders
               <Text as="span" ml={4} color="gray.400" fontWeight="normal">
@@ -351,20 +306,18 @@ export default function FarmerDashboard() {
             </Table.Root>
           </Box>
 
-          <Box bg="white" p={6} rounded="2xl" shadow="sm">
+          <Box bg="white" p={6} h={"20dvh"} rounded="2xl" shadow="sm">
             <Heading size="sm" mb={6}>
               Delivery
-              <Text as="span" ml={6} color="gray.400" fontWeight="normal">
-                In Progress
-              </Text>
+              <Text
+                as="span"
+                ml={6}
+                color="gray.400"
+                fontWeight="normal"
+              ></Text>
             </Heading>
             <VStack align="stretch">
-              <DeliveryItem
-                label="50kg Premium Rice"
-                progress={65}
-                icon={Wheat}
-              />
-              <DeliveryItem label="25L Palm Oil" progress={30} icon={Droplet} />
+              <Box mx={"auto"}>No deliveries at the moment.</Box>
             </VStack>
           </Box>
         </SimpleGrid>
@@ -411,7 +364,7 @@ const MetricCard = ({ label, value, change, icon, color }: any) => (
   </Box>
 );
 
-const LegendItem = ({ color, label }: any) => (
+const LegendItem = ({ color, label }: { color: string; label: string }) => (
   <HStack spaceX={2}>
     <Circle size="2" bg={color} />
     <Text fontSize="xs" color="gray.500">
@@ -421,7 +374,7 @@ const LegendItem = ({ color, label }: any) => (
 );
 
 const OrderRow = ({ id, name, date, amount, status, tracking }: any) => (
-  <Table.Row>
+  <Table.Row textTransform={"capitalize"}>
     <Table.Cell fontSize="xs" fontWeight="bold" py={4}>
       {id}
     </Table.Cell>
@@ -451,10 +404,18 @@ const OrderRow = ({ id, name, date, amount, status, tracking }: any) => (
   </Table.Row>
 );
 
-const DeliveryItem = ({ label, progress, icon }: any) => (
+export const DeliveryItem = ({
+  label,
+  progress,
+  icon,
+}: {
+  label: string;
+  progress: string;
+  icon: string;
+}) => (
   <Box border="1px solid" borderColor="emerald.100" p={4} rounded="xl">
     <HStack mb={3}>
-      <Icon as={icon} color="emerald.500" fontSize={16} />
+      <Icon name={icon} color="emerald.500" fontSize={16} />
       <Text fontSize="xs" fontWeight="bold">
         {label}
       </Text>

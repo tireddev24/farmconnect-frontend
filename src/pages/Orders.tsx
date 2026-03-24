@@ -1,7 +1,7 @@
-import { Box, Text, Button, HStack } from "@chakra-ui/react";
+import { Box, Text, Button, HStack, VStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-import { History, Truck } from "components/ui/icons";
+import { Truck } from "components/ui/icons";
 
 import { useOrderStore } from "store/store";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ import type { Order } from "types/types";
 const Orders = () => {
   const navigate = useNavigate();
 
-  const { orders: deliveries, fetchOrders } = useOrderStore();
+  const { orders, fetchOrders } = useOrderStore();
   const [load, setLoad] = useState<boolean>(true);
 
   useEffect(() => {
@@ -38,6 +38,7 @@ const Orders = () => {
       display={"flex"}
       flex={1}
       minH={"dvh"}
+      bg={"white/70"}
       // w={"full"}
       color={{ base: "black", _dark: "white" }}
     >
@@ -67,7 +68,13 @@ const Orders = () => {
             </div>
 
             <Box>
-              <Button mr={4} colorPalette={"gray"} variant={"outline"} disabled>
+              <Button
+                display={"none"}
+                mr={4}
+                colorPalette={"gray"}
+                variant={"outline"}
+                disabled
+              >
                 Support
               </Button>
               <Button
@@ -79,35 +86,42 @@ const Orders = () => {
               </Button>
             </Box>
           </HStack>
-          <HStack alignSelf={"flex-start"}>
-            <Text
-              fontWeight={"bold"}
-              fontSize={20}
-              color={{ base: "green.600", _dark: "yellow.400/80" }}
-            >
-              <Truck />
-            </Text>
-            <Text fontSize={18} fontWeight={"semibold"}>
-              Active Deliveries ({deliveries ? deliveries.length : 0})
-            </Text>
-          </HStack>
-          {deliveries && deliveries.length > 0 ? (
-            deliveries.map((i: Order) => {
-              return <>Return table of orders{i.name}</>;
-            })
+          <VStack display={"none"}>
+            <HStack alignSelf={"flex-start"} display={"none"}>
+              <Text
+                fontWeight={"bold"}
+                fontSize={20}
+                color={{ base: "green.600", _dark: "yellow.400/80" }}
+              >
+                <Truck />
+              </Text>
+              <Text fontSize={18} fontWeight={"semibold"}>
+                Active Deliveries ({orders ? orders.length : 0})
+              </Text>
+            </HStack>
+            {orders && orders.length > 0 ? (
+              orders.map((i: Order) => {
+                return <>Return table of orders{i.name}</>;
+              })
+            ) : (
+              <Box w={"full"}>
+                <Text fontSize={"2xl"} textAlign={"center"}>
+                  No deliveries in progress
+                </Text>
+              </Box>
+            )}
+          </VStack>
+
+          <HStack fontWeight={"bold"} alignItems={"center"}></HStack>
+          {orders ? (
+            <OrderTable orders={orders} />
           ) : (
             <Box w={"full"}>
-              <Text fontSize={"2xl"} textAlign={"center"}>
-                No deliveries in progress
+              <Text fontSize={"xl"} textAlign={"center"}>
+                No orders to display here
               </Text>
             </Box>
           )}
-
-          <HStack fontWeight={"bold"} alignItems={"center"}>
-            <History className="text-2xl text-gray-600" />
-            <Text>History</Text>
-          </HStack>
-          <OrderTable />
         </Box>
       </Box>
     </Box>

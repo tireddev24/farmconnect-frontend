@@ -17,12 +17,13 @@ import UserManagement from "./pages/Admin/UserManagement";
 import FarmerDashboard from "./pages/Farmer/dashboard";
 import FarmerOrders from "./pages/Farmer/orders";
 import FarmerProfile from "./pages/Farmer/profile";
-import SystemLogs from "./pages/Admin/logs";
-import SupportTickets from "./pages/Admin/SupportTickets";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import Action from "pages/Admin/action";
 import ListNewProduct from "pages/Farmer/newProduct";
+import FarmerProducts from "pages/Farmer/products";
+import Verify from "pages/Admin/verifications";
+import AdminProducts from "pages/Admin/products";
 
 function App() {
   return (
@@ -81,11 +82,13 @@ function App() {
           <Route path="usermanagement" element={<UserManagement />}>
             <Route path=":id" element={<Action />} />
           </Route>
-          <Route path="support" element={<SupportTickets />} />
-          <Route path="logs" element={<SystemLogs />} />
+          <Route path="orders" element={<Verify />} />
+          <Route path="orders/:id" element={<Action />} />
+          <Route path="products" element={<AdminProducts />} />
         </Route>
         <Route path="/farmer" element={<FarmerRoot />}>
           <Route path="dashboard" element={<FarmerDashboard />} />
+          <Route path="products" element={<FarmerProducts />} />
           <Route path="orders" element={<FarmerOrders />} />
           <Route path="newProduct" element={<ListNewProduct />} />
           <Route path="profile" element={<FarmerProfile />} />

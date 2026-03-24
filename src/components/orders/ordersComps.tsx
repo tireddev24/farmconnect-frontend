@@ -1,9 +1,10 @@
 import { Box, Text, Table, TableBody } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 
 import Badge from "../../components/ui/badge";
-import type { Order } from "../../types/types";
-import { useState } from "react";
+import type { Order, OrderRecord } from "../../types/types";
+
+import { formatDate } from "helpers/function";
+import { ORDER_STATUS_COLORS } from "data/constant";
 
 export const OrderCard = ({ order }: { order: Order }) => {
   return (
@@ -51,16 +52,10 @@ export const OrderCard = ({ order }: { order: Order }) => {
   );
 };
 
-export const OrderTable = () => {
-  const navigate = useNavigate();
-
-  // const { orders: items } = useOrderStore();
-
-  const [items] = useState(JSON.parse(localStorage.getItem("orders")!));
-
+export const OrderTable = ({ orders }) => {
   return (
     <>
-      <Table.Root mt={-6} colorPalette={"gray"}>
+      <Table.Root colorPalette={"gray"}>
         <Table.Header
           rounded={"2xl"}
           color={{ base: "black", _dark: "gray.500" }}
@@ -77,71 +72,57 @@ export const OrderTable = () => {
             <Table.ColumnHeader color={"gray.500"}>order id</Table.ColumnHeader>
             <Table.ColumnHeader color={"gray.500"}>Items</Table.ColumnHeader>
             <Table.ColumnHeader color={"gray.500"}>Date</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>
-              Price ( per unit )
-            </Table.ColumnHeader>
+            <Table.ColumnHeader color={"gray.500"}>Quantity</Table.ColumnHeader>
             <Table.ColumnHeader color={"gray.500"}>Amount</Table.ColumnHeader>
             <Table.ColumnHeader color={"gray.500"}>Status</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Action</Table.ColumnHeader>
+            {/* <Table.ColumnHeader color={"gray.500"}>Action</Table.ColumnHeader> */}
           </Table.Row>
         </Table.Header>
         <TableBody>
-          {items && items.length > 0 ? (
-            items.map((order: Order) => {
-              return (
-                <Table.Row
-                  alignContent={"center"}
-                  key={order.orderId}
-                  // border={"none"}
-                  rounded={"xl"}
-                  bg={{ base: "whiteAlpha.100", _dark: "whiteAlpha.200" }}
+          {orders.map((order: OrderRecord) => (
+            <Table.Row
+              alignContent={"center"}
+              key={order.id}
+              // border={"none"}
+              rounded={"xl"}
+              bg={{ base: "whiteAlpha.100", _dark: "whiteAlpha.200" }}
+            >
+              <Table.Cell>
+                <Text>{order.orderNumber}</Text>
+              </Table.Cell>
+              <Table.Cell textTransform={"capitalize"}>
+                <Text>
+                  {order.items.length > 0 && order.items[0].productName}
+                </Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text>{formatDate(order.createdAt)}</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text>{order.items.length > 0 && order.items[0].quantity}</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text>{order.totalAmount}</Text>
+              </Table.Cell>
+              <Table.Cell>
+                <Text>
+                  <Badge
+                    text={order.status!.replace("-", " ")}
+                    color={ORDER_STATUS_COLORS[order.status]}
+                  />
+                </Text>
+              </Table.Cell>
+              <Table.Cell>
+                {/* <Text
+                  cursor={"pointer"}
+                  onClick={() => navigate("../")}
+                  color={{ base: "green.600", _dark: "yellow.300/60" }}
                 >
-                  <Table.Cell>
-                    <Text>{order.id}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{order.name}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{order.date}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{order.price}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{order.totalAmount}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>
-                      <Badge
-                        text={order.status!.replace("-", " ")}
-                        color={
-                          order.status?.includes("delivered")
-                            ? "green"
-                            : "yellow"
-                        }
-                      />
-                    </Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text
-                      cursor={"pointer"}
-                      onClick={() => navigate("../")}
-                      color={{ base: "green.600", _dark: "yellow.300/60" }}
-                    >
-                      View Details
-                    </Text>
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })
-          ) : (
-            <Box w={"full"}>
-              <Text fontSize={"2xl"} textAlign={"center"}>
-                No orders to display here
-              </Text>
-            </Box>
-          )}
+                  View Details
+                </Text> */}
+              </Table.Cell>
+            </Table.Row>
+          ))}
         </TableBody>
       </Table.Root>
     </>

@@ -166,3 +166,8 @@ export interface UserProfile {
   isEmailVerified: boolean;
   createdAt: string; // ISO 8601 Date string
 }
+
+export interface category {
+  id: number;
+  name: string;
+}

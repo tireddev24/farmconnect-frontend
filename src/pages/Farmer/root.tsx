@@ -15,7 +15,7 @@ export const Root = () => {
   }, [navigate]);
 
   return (
-    <Box rounded={"md"} alignContent={"flex-start"}>
+    <Box rounded={"md"} alignContent={"flex-start"} bg="#f8fafb">
       {/* Sidebar */}
       <Sidebar />
 

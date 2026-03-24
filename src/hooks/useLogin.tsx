@@ -1,6 +1,8 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
+export let token: string;
+
 const useLogin = () => {
   const { login, url } = useAuth();
   const [error, setError] = useState<null | string>(null);

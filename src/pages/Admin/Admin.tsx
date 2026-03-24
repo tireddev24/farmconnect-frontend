@@ -9,6 +9,7 @@ import { useAdminStore } from "store/store";
 import Spin from "components/ui/spinner";
 import Unexpected from "error/unexpected";
 import PieChartComp from "components/chart";
+import type { OrderRecord } from "types/types";
 
 const AdminDashboard = () => {
   // Chart Data
@@ -21,12 +22,13 @@ const AdminDashboard = () => {
   const [load, setLoad] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const { users, fetchUsers } = useAdminStore();
+  const { users, fetchUsers, orders, fetchOrders } = useAdminStore();
 
   useEffect(() => {
     const data = async () => {
       try {
         await fetchUsers();
+        await fetchOrders();
       } catch (error) {
         console.log(error);
 
@@ -75,7 +77,11 @@ const AdminDashboard = () => {
 
           <StatCard
             label="Pending Approvals"
-            value="3"
+            value={
+              orders.filter(
+                (p: OrderRecord) => p.status.toLowerCase() == "pending",
+              ).length
+            }
             icon={UserCheck}
             iconColor="orange.500"
             iconBg="orange.50"
@@ -103,7 +109,7 @@ const AdminDashboard = () => {
               User Distribution
             </Heading>
             <Box>
-              <PieChartComp />
+              <PieChartComp users={users.data.items} />
             </Box>
           </Box>
 

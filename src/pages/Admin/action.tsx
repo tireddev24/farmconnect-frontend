@@ -2,7 +2,7 @@ import { Box, Button, Flex, HStack, Input, Text } from "@chakra-ui/react";
 import CustomSelect from "components/customselect";
 
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import type { Order } from "types/types";
 
 const Action = () => {
@@ -12,7 +12,6 @@ const Action = () => {
   const o = orders.filter((prod: Order) => prod.orderId === id);
   const order = o[0];
 
-  const navigate = useNavigate();
   const [newStatus, setNewStatus] = useState(order.status);
 
   const handleChange = () => {

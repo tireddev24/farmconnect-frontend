@@ -2,6 +2,7 @@ import { TrendingUp, Package, TrendingDown } from "lucide-react";
 import type { Product } from "types/types";
 import { Box, Text } from "@chakra-ui/react";
 import type { NavigateFunction } from "react-router-dom";
+import { returnCategoryName } from "helpers/function";
 
 export const ProductCard = ({
   product,
@@ -45,7 +46,7 @@ export const ProductCard = ({
           color={{ base: "gray.400", _dark: "gray.500" }}
           textTransform={"capitalize"}
         >
-          {product.unit}
+          per {product.unit}
         </Text>
         <Text
           rounded={"2xl"}
@@ -58,7 +59,7 @@ export const ProductCard = ({
           fontWeight={"bold"}
           fontSize={"xs"}
         >
-          {product.categoryName}
+          {returnCategoryName(product.categoryId)}
         </Text>
       </Box>
     </Box>
@@ -123,7 +124,9 @@ export const ProductCard = ({
       className="flex items-center justify-between  border-t border-[#252525]"
     >
       <span className="flex items-center gap-1">
-        <Package size={14} /> {product.quantityAvailable} in stock
+        <Package size={14} />{" "}
+        {`${product.quantityAvailable} ${product.unit}${product.quantityAvailable > 1 && product.unit != "" ? "s" : ""} `}{" "}
+        in stock
       </span>
       <span
         className={`text-xs hidden font-medium flex items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
