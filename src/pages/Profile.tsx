@@ -30,34 +30,12 @@ import {
   RightChevron,
   Check,
   ShoppingBag,
-  Headset,
-  Heart,
-  Star,
 } from "../components/ui/icons";
-import type { JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { useAuth } from "../context/AuthContext";
-
-const orders = [
-  {
-    orderid: 2,
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "processing",
-  },
-  {
-    orderid: 1,
-
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "in transit",
-  },
-];
+import { OrderTable } from "components/orders/ordersComps";
+import { useOrderStore } from "store/store";
+import { Loader } from "lucide-react";
 
 const Profile = () => {
   const { user: User } = useAuth();
@@ -71,6 +49,9 @@ const Profile = () => {
     stats: { orders: 12, spent: "₦450K", rating: 4.8 },
   };
 
+  const { orders, fetchOrders } = useOrderStore();
+  const [load, setLoad] = useState<boolean>(true);
+
   const navigate = useNavigate();
 
   // Reusable card style
@@ -82,23 +63,28 @@ const Profile = () => {
     w: "full",
   };
 
-  return (
-    <Box minH="100vh" p={10} fontFamily="sans-serif">
-      {/* <Box
-        position="absolute"
-        zIndex={0}
-        top="10%"
-        right={"50%"}
-        w="500px"
-        h="500px"
-        bg="green.200"
-        filter="blur(80px)"
-        opacity={0.3}
-        rounded="full"
-      /> */}
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchOrders();
+      } catch (error) {
+        console.log(error);
+        // setError(true);
+      } finally {
+        setLoad(false);
+      }
+    };
+    data();
+  }, []);
 
+  if (load) {
+    return <Loader />;
+  }
+
+  return (
+    <Box minH="100vh" p={10} bg={"white/70"} fontFamily="sans-serif">
       {/* BUYERS Profile */}
-      <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
+      <VStack maxW="7xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
         <HStack justifyContent="space-between">
           <VStack align="start" gap={0}>
@@ -164,7 +150,7 @@ const Profile = () => {
                 <HStack justify="space-around" w="full" textAlign="center">
                   <VStack gap={0} color={{ base: "black", _dark: "white" }}>
                     <Text fontWeight="bold" fontSize="lg">
-                      {user.stats.orders}
+                      {orders.length}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
                       Orders
@@ -182,7 +168,7 @@ const Profile = () => {
                       Spent
                     </Text>
                   </VStack>
-                  <VStack gap={0}>
+                  <VStack gap={0} display={"none"}>
                     <Text
                       fontWeight="bold"
                       fontSize="lg"
@@ -198,33 +184,32 @@ const Profile = () => {
               </VStack>
 
               {/* Contact Info */}
-              <VStack {...cardStyle} align="start" gap={5}>
-                <HStack color="gray.400">
+              <VStack
+                {...cardStyle}
+                color={{ base: "black", _dark: "gray.400" }}
+                align="start"
+                gap={5}
+              >
+                <HStack>
                   <Contact size={18} />
                   <Text fontWeight="bold">CONTACT INFO</Text>
                 </HStack>
                 <VStack align="start" gap={1}>
-                  <Text fontSize="xs" color="gray.500">
-                    Phone Number
-                  </Text>
+                  <Text fontSize="xs">Phone Number</Text>
                   <HStack>
                     <Phone size={16} color="orange" />
                     <Text>{user.phoneNumber}</Text>
                   </HStack>
                 </VStack>
                 <VStack align="start" gap={1}>
-                  <Text fontSize="xs" color="gray.500">
-                    Location
-                  </Text>
+                  <Text fontSize="xs">Location</Text>
                   <HStack>
                     <Location size={16} color="orange" />
                     <Text>{user.address}</Text>
                   </HStack>
                 </VStack>
                 <VStack align="start" gap={1}>
-                  <Text fontSize="xs" color="gray.500">
-                    Member Since
-                  </Text>
+                  <Text fontSize="xs">Member Since</Text>
                   <HStack>
                     <Calendar size={16} color="orange" />
                     <Text>{user.memberSince}</Text>
@@ -233,14 +218,19 @@ const Profile = () => {
               </VStack>
 
               {/* Verification */}
-              <VStack {...cardStyle} align="start" borderColor="green.900/30">
-                <Text fontSize="xs" color="gray.500" fontWeight="bold">
+              <VStack
+                {...cardStyle}
+                color={{ base: "black", _dark: "gray.400" }}
+                align="start"
+                borderColor="green.900/30"
+              >
+                <Text fontSize="xs" fontWeight="bold">
                   VERIFICATION
                 </Text>
                 <HStack
                   justify="between"
                   w="full"
-                  bg="green.900/30"
+                  bg={{ _dark: "green.900/30" }}
                   p={2}
                   rounded={"xl"}
                 >
@@ -257,14 +247,13 @@ const Profile = () => {
                       </Text>
                     </VStack>
                   </HStack>
-                  <Check color="#48BB78" />
                 </HStack>
               </VStack>
             </VStack>
           </GridItem>
 
           {/* Right Column */}
-          <GridItem colSpan={8}>
+          <GridItem colSpan={8} color={{ base: "black", _dark: "gray.400" }}>
             <VStack gap={6}>
               {/* Active Orders */}
               <VStack {...cardStyle} align="stretch" gap={6}>
@@ -288,26 +277,34 @@ const Profile = () => {
 
                 {/* Order Item 1 */}
 
-                {orders.map((o) => (
-                  <OrderCard key={o.orderid} order={o} />
-                ))}
+                <Box p={4}>
+                  {orders && orders.length > 0 ? (
+                    <OrderTable orders={orders} />
+                  ) : (
+                    <Box w={"full"}>
+                      <Text fontSize={"2xl"} textAlign={"center"}>
+                        No orders in progress
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
 
                 {/* Recent Purchases */}
-                <VStack {...cardStyle} align="stretch" gap={6}>
+                <VStack {...cardStyle} align="stretch" gap={6} display={"none"}>
                   <HStack justifyContent="space-between">
                     <HStack>
                       <History color="green" />
                       <Text fontWeight="bold">Recent Purchases</Text>
                     </HStack>
-                    <Text color="gray.500" fontSize="sm" cursor="pointer">
+                    {/* <Text color="gray.500" fontSize="sm" cursor="pointer">
                       Download History
-                    </Text>
+                    </Text> */}
                   </HStack>
 
                   <HStack
                     justifyContent="space-between"
                     cursor={"pointer"}
-                    _hover={{ bg: "#2a2a2a" }}
+                    // _hover={{ bg: "#2a2a2a" }}
                     p={4}
                     rounded={"xl"}
                   >
@@ -342,30 +339,12 @@ const Profile = () => {
                 </VStack>
 
                 {/* Bottom Quick Links */}
-                <Grid templateColumns="repeat(4, 1fr)" gap={4} w="full">
+                <Grid templateColumns="repeat(1, 1fr)" gap={4} w="full">
                   <QuickLink
                     icon={<ShoppingBag />}
                     label="New Order"
                     sub="Browse market"
-                    link="market"
-                  />
-                  <QuickLink
-                    icon={<Headset />}
-                    label="Support"
-                    sub="Get help"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Heart />}
-                    label="Wishlist"
-                    sub="Saved items"
-                    disabled={true}
-                  />
-                  <QuickLink
-                    icon={<Star />}
-                    label="Reviews"
-                    sub="Rate orders"
-                    disabled={true}
+                    link="dashboard"
                   />
                 </Grid>
               </VStack>
@@ -389,18 +368,18 @@ const QuickLink = ({ icon, label, sub, link, disabled }: quicklink) => {
   const navigate = useNavigate();
   return (
     <VStack
-      bg="#121212"
+      bg={{ base: "white", _dark: "#121212" }}
       p={4}
       rounded="xl"
       border="1px solid #262626"
       align="start"
       cursor="pointer"
-      _hover={{ bg: "#1a1a1a" }}
+      _hover={{ bg: { _dark: "#1a1a1a" } }}
       onClick={() => link && navigate(`../${link}`)}
       opacity={disabled ? 0.5 : 1}
       pointerEvents={disabled ? "none" : "auto"}
     >
-      <Box color="orange.400" mb={2}>
+      <Box color={{ base: "green.400", _dark: "orange.400" }} mb={2}>
         {icon}
       </Box>
       <Text fontWeight="bold" fontSize="sm">
@@ -423,10 +402,16 @@ interface ProfileOrderCard {
   status: "processing" | "shipped" | "delivered" | "cancelled" | string;
 }
 
-const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
+export const OrderCard = ({ order }: { order: ProfileOrderCard }) => {
   const badgecolor = order.status === "processing" ? "yellow" : "blue";
   return (
-    <Box w={"full"} bg="#1a1a1a" rounded="xl" border="1px solid #262626">
+    <Box
+      w={"full"}
+      bg={{ base: "white", _dark: "#1a1a1a" }}
+      rounded="xl"
+      border="1px solid"
+      borderColor={{ _dark: "#262626" }}
+    >
       <HStack justifyContent="space-between" p={4}>
         <HStack gap={4}>
           <Box p={3} bg="orange.500/10" rounded="lg">

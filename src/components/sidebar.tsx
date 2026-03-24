@@ -2,7 +2,7 @@ import { Box, Button, VStack } from "@chakra-ui/react";
 import {
   Wheat,
   Home,
-  TrendingUp,
+  // TrendingUp,
   ClipboardList,
   User,
   Settings,
@@ -10,7 +10,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { ColorModeButton } from "./ui/color-mode";
 import { useAuth } from "../context/AuthContext";
-import { Logout } from "./ui/icons";
+import { Logout, ShoppingBag } from "./ui/icons";
 
 export const Sidebar = () => {
   const { logout, user } = useAuth();
@@ -41,8 +41,12 @@ export const Sidebar = () => {
 
         <NavItem link="dashboard" icon={<Home />} />
 
-        <NavItem link="market" icon={<TrendingUp />} />
-        <NavItem link="orders" icon={<ClipboardList />} />
+        {/* <NavItem link="market" icon={<TrendingUp />} /> */}
+        <NavItem link={"orders"} icon={<ClipboardList />} />
+        {user?.role.toLowerCase() === "farmer" && (
+          <NavItem link={"products"} icon={<ShoppingBag />} />
+        )}
+
         <NavItem link="profile" icon={<User />} />
 
         <VStack bg={"none"} mt={"auto"} w={"max-content"} gap={4} mb={4}>
@@ -87,9 +91,14 @@ const NavItem = ({
   const location = useLocation();
 
   const path = location.pathname;
+  let farmerLink = false;
 
   if (path.includes(link)) {
     active = true;
+  }
+
+  if (path.includes("farmer")) {
+    farmerLink = true;
   }
 
   return (
@@ -120,7 +129,9 @@ const NavItem = ({
       borderLeft={active ? "2px solid" : "none"}
       borderLeftColor={{ base: "green.600", _dark: "#8a7557" }}
       rounded={"lg"}
-      onClick={() => navigate(`../${link}`)}
+      onClick={() =>
+        farmerLink ? navigate(`${link}`) : navigate(`../${link}`)
+      }
       // ${active ? "bg-[#a38d6d]/10 text-[#c9a962]" : "text-gray-500 hover:bg-[#252525] hover:text-[#c9a962]"}`}
     >
       {icon}

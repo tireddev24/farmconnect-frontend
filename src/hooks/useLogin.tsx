@@ -1,6 +1,8 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
+export let token: string;
+
 const useLogin = () => {
   const { login, url } = useAuth();
   const [error, setError] = useState<null | string>(null);
@@ -23,15 +25,18 @@ const useLogin = () => {
 
       // Fetch doesn't throw an error on 404/500, so we check response.ok
 
+      if (response.status === 401) {
+        return { success: false, message: "Invalid Credentials" };
+      }
+
       if (!response.ok) {
         return { success: false, message: "Fetch threw an error " };
       }
-
       const resData = await response.json();
-      const { user } = resData.data;
+      const { user, accessToken, refreshToken } = resData.data;
 
       if (response.status === 200) {
-        login(user);
+        login(user, accessToken, refreshToken);
       }
 
       return { success: true, message: "Login successful" };

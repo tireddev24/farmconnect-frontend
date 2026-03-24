@@ -7,7 +7,9 @@ export interface AuthContextType {
   loading: boolean;
   url: string;
   isAuthenticated: boolean;
-  login: (arg0: User) => void;
+  accessToken?: string;
+  refreshToken?: string;
+  login: (arg0: User, arg1: string, arg2: string) => void;
   logout: () => void;
 }
 

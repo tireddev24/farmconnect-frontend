@@ -1,18 +1,43 @@
 // products.js
 // Database of Nigerian Market Crops
 
-export interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  unit: string;
-  stock: string;
-  trend: "up" | "down" | "stable";
-  icon: string;
-  location: string;
-  desc: string;
-}
+import { type Order, type Product } from "../types/types";
+
+export const orders: Order[] = [
+  {
+    id: "1",
+    orderId: "#JRJ241",
+    name: "Cocoa",
+    unit: "per kg",
+    category: "grains",
+    price: 4500,
+    totalAmount: 4500,
+    date: "2026-01-23",
+    quantity: 1,
+    status: "awaiting-confirmation",
+    trend: "up",
+    icon: "🍫",
+    location: "Somolu",
+    seller: " Farmer John",
+  },
+  {
+    id: "2",
+    orderId: "#JRJ242",
+    name: "Yam",
+    unit: "per tuber",
+    category: "Tubers",
+    price: 4500,
+    quantity: 1,
+    totalAmount: 4500,
+    date: "2026-01-23",
+
+    stock: "120",
+    trend: "up",
+    location: "Somolu",
+    icon: "🍫",
+    seller: " Farmer John",
+  },
+];
 
 export const products: Product[] = [
   // --- TUBERS ---

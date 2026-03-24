@@ -6,8 +6,23 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "types": ["vite/client"],
+
     "skipLibCheck": true,
 
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@api": ["./src/api"],
+      "@components/*": ["./src/components"],
+      "@ui/*": ["./src/components/ui"],
+      "@context/*": ["./src/context"],
+      "@data/*": ["./src/data"],
+      "@error/*": ["./src/error"],
+      "@hooks/*": ["./src/hooks"],
+      "@pages/*": ["./src/pages"],
+      "@store/*": ["./src/store"],
+      "@types/*": ["./src/types"]
+    },
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -24,5 +39,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src", "src/**/*.ts", "src/**/*.tsx"]
 }

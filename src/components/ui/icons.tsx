@@ -4,6 +4,7 @@ import {
   BsEyeSlash,
   BsHourglassTop,
   BsLaptop,
+  BsPlus,
 } from "react-icons/bs";
 import { FaTools, FaTruck } from "react-icons/fa";
 import { IoMdSettings } from "react-icons/io";
@@ -34,6 +35,7 @@ import { BsBoxSeam } from "react-icons/bs";
 import { VscLockSmall } from "react-icons/vsc";
 import { LuUserRound } from "react-icons/lu";
 import { TbClockHour4 } from "react-icons/tb";
+import { FaRegTrashAlt } from "react-icons/fa";
 import { LuShieldCheck } from "react-icons/lu";
 
 export const BackCaret = IoCaretBack;
@@ -76,6 +78,8 @@ export const ClosedBox = BsBoxSeam;
 export const Clock4 = TbClockHour4;
 export const PadLock = VscLockSmall;
 export const User = LuUserRound;
+export const Plus = BsPlus;
+export const Trash = FaRegTrashAlt;
 
 export const ShieldCheck = LuShieldCheck;
 //colors

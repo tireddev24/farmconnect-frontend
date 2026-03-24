@@ -12,13 +12,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const storedData = JSON.parse(sessionStorage.getItem("user_data")!);
+  const storedToken1 = JSON.parse(sessionStorage.getItem("accessToken")!);
+  const storedToken2 = JSON.parse(sessionStorage.getItem("refreshToken")!);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     storedData ? true : false,
   );
+  const [accessToken, setAccessToken] = useState("");
+  const [refreshToken, setRefreshToken] = useState("");
 
   useEffect(() => {
     if (storedData) {
       const user = storedData;
+      setAccessToken(storedToken1);
+      setRefreshToken(storedToken2);
+
       setUser(user);
       setIsAuthenticated(true);
       setLoading(false);
@@ -26,30 +33,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(false);
   }, []);
 
-  // useEffect(() => {
-  //   getMe()
-  //     .then((res) => {
-  //       setUser(res.data.data);
-  //       setIsAuthenticated(true);
-
-  //       // setAccessToken(res.data.accessToken);
-  //     })
-  //     .catch(() => setUser(null))
-  //     .finally(() => setLoading(false));
-  // }, []);
-
-  // console.log(loading);
-
-  const login = (newData: User) => {
+  const login = (newData: User, token1: string, token2: string) => {
     sessionStorage.setItem("user_data", JSON.stringify(newData));
+    sessionStorage.setItem("accessToken", JSON.stringify(token1));
+    sessionStorage.setItem("refreshToken", JSON.stringify(token2));
+    setAccessToken(token1);
+    setRefreshToken(token2);
     setUser(newData);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     sessionStorage.removeItem("user_data");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("refreshToken");
     setUser(null);
     setIsAuthenticated(false);
+    window.location.replace("/login");
   };
 
   console.log("User in AuthProvider:", user);
@@ -57,6 +57,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const value: AuthContextType = {
     user,
     isAuthenticated,
+    accessToken,
+    refreshToken,
     loading,
     url,
     login,
