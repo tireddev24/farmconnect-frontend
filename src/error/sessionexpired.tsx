@@ -16,7 +16,7 @@ const Sessionexpired = () => {
       logout();
       window.location.replace("../login");
     }, 1000);
-  }, []);
+  }, [logout]);
 
   return (
     <>
