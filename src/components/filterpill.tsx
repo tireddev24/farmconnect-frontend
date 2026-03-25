@@ -1,5 +1,5 @@
 import { Button } from "@chakra-ui/react";
-import type { MouseEventHandler } from "react";
+import type { JSX, MouseEventHandler } from "react";
 
 export const FilterPill = ({
   label,
@@ -8,8 +8,8 @@ export const FilterPill = ({
   onClick,
 }: {
   label: string;
-  icon: string;
-  active: string;
+  icon: JSX.Element;
+  active: boolean;
   onClick: MouseEventHandler;
 }) => (
   <Button
