@@ -18,7 +18,6 @@ import {
   Separator,
   InputElement,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
 import { User, Lock, ArrowLeft } from "lucide-react";
 import { Toaster, toaster } from "../components/ui/toaster";
 import { Wheat } from "lucide-react";
@@ -32,8 +31,6 @@ export default function Login() {
   //implement for loading, awaiting data
 
   const { loading, loginUser } = useLogin();
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

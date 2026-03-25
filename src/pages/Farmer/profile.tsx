@@ -44,34 +44,12 @@ import { Toaster, toaster } from "components/ui/toaster";
 import type { User, userRegister } from "types/userType";
 import { formatDate, returnFullName } from "helpers/function";
 
-const orders = [
-  {
-    orderid: 2,
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "processing",
-  },
-  {
-    orderid: 1,
-
-    orderItem: "50kg Rice",
-    ordernum: "#FC-0324",
-    quantity: 2,
-    date: "Feb 5, 2026",
-    amount: "85000",
-    status: "in transit",
-  },
-];
-
 const Profile = () => {
   const { user: User } = useAuth();
 
   const navigate = useNavigate();
 
-  const { products, fetchProducts } = useFarmerStore();
+  const { products, fetchProducts, orders, fetchOrders } = useFarmerStore();
   const { fetchUserDetails, user } = useUserStore();
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -80,6 +58,7 @@ const Profile = () => {
     const data = async () => {
       try {
         await fetchProducts();
+        await fetchOrders();
         await fetchUserDetails();
       } catch (error) {
         console.log(error);
@@ -127,7 +106,7 @@ const Profile = () => {
               Manage your produce listings and payouts
             </Text>
           </VStack>
-          <EditProfile user={User} />
+          <EditProfile user={User!} />
         </HStack>
 
         <Grid templateColumns="repeat(12, 1fr)" gap={6}>
@@ -318,8 +297,10 @@ const Profile = () => {
                   </HStack>
 
                   {orders
-                    .filter((o) => o.status.toLowerCase() == "accepted")
-                    .map((o) => <SalesItem sale={o} />) || (
+                    .filter(
+                      (o: OrderRecord) => o.status.toLowerCase() == "accepted",
+                    )
+                    .map((o: OrderRecord) => <SalesItem sale={o} />) || (
                     <Box>No Recents Sales to Show</Box>
                   )}
                 </VStack>
@@ -344,7 +325,7 @@ const Profile = () => {
 
 export default Profile;
 
-const SalesItem = (o: OrderRecord) => (
+const SalesItem = ({ sale: o }: { sale: OrderRecord }) => (
   <HStack
     justifyContent="space-between"
     cursor="pointer"

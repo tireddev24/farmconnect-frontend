@@ -1,7 +1,8 @@
 import { Box, Flex, Heading, Button } from "@chakra-ui/react";
 import { logout } from "../api/auth";
+import type { ReactNode } from "react";
 
-export default function Layout({ children }: any) {
+export default function Layout({ children }: { children: ReactNode }) {
   const handleLogout = () => {
     logout();
     window.location.href = "/login";

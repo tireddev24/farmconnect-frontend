@@ -129,7 +129,7 @@ export const ProductCard = ({
         in stock
       </span>
       <span
-        className={`text-xs hidden font-medium flex items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
+        className={`text-xs hidden font-medium  items-center gap-1 ${product.quantityAvailable > 0 ? "text-[#4ecca3]" : "text-[#e85d75]"}`}
       >
         {product.quantityAvailable > 0 ? (
           <TrendingUp size={14} />

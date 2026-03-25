@@ -1,7 +1,5 @@
 import { Header } from "../components/header";
-import { TableBody, Table, Text, Box } from "@chakra-ui/react";
-
-import { products } from "../data/products";
+import { TableBody, Table, Box } from "@chakra-ui/react";
 
 const Market = () => {
   return (
@@ -46,31 +44,7 @@ const Market = () => {
                 Status
               </Table.ColumnHeader>
             </Table.Header>
-            <TableBody>
-              {products.map((product) => (
-                <Table.Row
-                  key={product.id}
-                  border={"none"}
-                  bg={"whiteAlpha.100"}
-                >
-                  <Table.Cell>
-                    <Text>{product.name}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{product.price}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{product.stock}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{product.trend}</Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text>{product.trend}</Text>
-                  </Table.Cell>
-                </Table.Row>
-              ))}
-            </TableBody>
+            <TableBody></TableBody>
           </Table.Root>
         </Box>
       </main>

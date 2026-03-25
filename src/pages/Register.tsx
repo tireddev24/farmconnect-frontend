@@ -26,7 +26,6 @@ import {
   // ShieldCheck,
 } from "../components/ui/icons";
 import CustomSelect from "../components/customselect";
-import { ColorModeButton } from "../components/ui/color-mode";
 import Spin from "../components/ui/spinner";
 import { Wheat } from "lucide-react";
 import { Toaster, toaster } from "../components/ui/toaster";
@@ -318,7 +317,7 @@ export default function Register() {
                   <>
                     <CustomSelect
                       defaultValue="BUYER"
-                      options={["Buyer", "Farmer", "Transporter"]}
+                      options={["Buyer", "Farmer"]}
                       value={role}
                       onChange={(e) => setRole(e)}
                     />

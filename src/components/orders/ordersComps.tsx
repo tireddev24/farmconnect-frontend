@@ -3,8 +3,7 @@ import { Box, Text, Table, TableBody } from "@chakra-ui/react";
 import Badge from "../../components/ui/badge";
 import type { Order, OrderRecord } from "../../types/types";
 
-import { formatDate } from "helpers/function";
-import { ORDER_STATUS_COLORS } from "data/constant";
+import { formatDate, getStatusColor } from "helpers/function";
 
 export const OrderCard = ({ order }: { order: Order }) => {
   return (
@@ -52,7 +51,7 @@ export const OrderCard = ({ order }: { order: Order }) => {
   );
 };
 
-export const OrderTable = ({ orders }) => {
+export const OrderTable = ({ orders }: { orders: OrderRecord[] }) => {
   return (
     <>
       <Table.Root colorPalette={"gray"}>
@@ -108,7 +107,7 @@ export const OrderTable = ({ orders }) => {
                 <Text>
                   <Badge
                     text={order.status!.replace("-", " ")}
-                    color={ORDER_STATUS_COLORS[order.status]}
+                    color={getStatusColor(order.status)}
                   />
                 </Text>
               </Table.Cell>

@@ -1,4 +1,8 @@
-import { categories } from "data/constant";
+import {
+  categories,
+  ORDER_STATUS_COLORS,
+  type OrderStatus,
+} from "data/constant";
 import type { Product } from "types/types";
 
 export const formatDate = (dateString: string | null | undefined): string => {
@@ -54,4 +58,12 @@ export const returnCategoryId = (name: string) => {
 
 export const returnFullName = (name1: string, name2: string): string => {
   return name1 + " " + name2;
+};
+
+export const getStatusColor = (status: string): string => {
+  // Check if the status exists in our map
+  if (status in ORDER_STATUS_COLORS) {
+    return ORDER_STATUS_COLORS[status as OrderStatus];
+  }
+  return "gray"; // Fallback for unknown statuses
 };

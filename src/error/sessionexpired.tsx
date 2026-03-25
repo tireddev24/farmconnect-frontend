@@ -1,9 +1,9 @@
+import { Toaster, toaster } from "components/ui/toaster";
+import { useAuth } from "context/AuthContext";
 import { useEffect } from "react";
-import { toaster, Toaster } from "../ui/toaster";
-import useLogout from "@/hooks/useLogout";
 
 const Sessionexpired = () => {
-  const { logoutUser } = useLogout();
+  const { logout } = useAuth();
 
   useEffect(() => {
     toaster.create({
@@ -13,7 +13,7 @@ const Sessionexpired = () => {
     });
 
     setTimeout(() => {
-      logoutUser();
+      logout();
       window.location.replace("../login");
     }, 1000);
   }, []);

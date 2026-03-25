@@ -2,7 +2,6 @@ import {
   Button,
   CloseButton,
   Dialog,
-  For,
   HStack,
   Portal,
   type ConditionalValue,
@@ -16,6 +15,7 @@ const DialogComp = ({
 }: {
   placement?: ConditionalValue<"bottom" | "top" | "center" | undefined>;
   text: string;
+  title: string;
   action: () => void;
 }) => {
   return (
@@ -38,7 +38,7 @@ const DialogComp = ({
                 <Dialog.ActionTrigger asChild>
                   <Button variant="outline">Cancel</Button>
                 </Dialog.ActionTrigger>
-                <Button>Save</Button>
+                <Button onClick={action}>Save</Button>
               </Dialog.Footer>
               <Dialog.CloseTrigger asChild>
                 <CloseButton size="sm" />

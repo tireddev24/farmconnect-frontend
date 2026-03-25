@@ -10,7 +10,16 @@ export const categories = [
   { id: 8, name: "Herbs & Spices" },
 ];
 
-export const ORDER_STATUS_COLORS = {
+export type OrderStatus =
+  | "Pending"
+  | "Accepted"
+  | "Declined"
+  | "Processing"
+  | "Dispatched"
+  | "Delivered"
+  | "Cancelled";
+
+export const ORDER_STATUS_COLORS: Record<OrderStatus, string> = {
   Pending: "orange", // Awaiting action
   Accepted: "cyan", // Confirmed by farmer
   Declined: "red", // Rejected/Error

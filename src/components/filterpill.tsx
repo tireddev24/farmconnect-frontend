@@ -1,6 +1,17 @@
 import { Button } from "@chakra-ui/react";
+import type { MouseEventHandler } from "react";
 
-export const FilterPill = ({ label, icon, active, onClick }: any) => (
+export const FilterPill = ({
+  label,
+  icon,
+  active,
+  onClick,
+}: {
+  label: string;
+  icon: string;
+  active: string;
+  onClick: MouseEventHandler;
+}) => (
   <Button
     onClick={onClick}
     bg={{

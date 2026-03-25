@@ -11,7 +11,8 @@ import { Leaf, RightChevron } from "components/ui/icons";
 import Badge from "components/ui/badge";
 
 import { Icon, Spacer, Circle, Flex, Table } from "@chakra-ui/react";
-import { ORDER_STATUS_COLORS } from "data/constant";
+
+import { getStatusColor } from "helpers/function";
 
 export const QuickLink = ({ icon, label, sub, link, disabled }: Quicklink) => {
   const navigate = useNavigate();
@@ -143,7 +144,7 @@ export const OrderRow = ({
       ₦{amount}
     </Table.Cell>
     <Table.Cell>
-      <Badge text={status} color={ORDER_STATUS_COLORS[status]} />
+      <Badge text={status} color={getStatusColor(status)} />
     </Table.Cell>
     <Table.Cell fontSize="xs" color="gray.400" fontWeight="bold">
       {tracking}
@@ -178,7 +179,7 @@ export const DeliveryItem = ({
 export const MetricCard = ({
   label,
   value,
-  change,
+
   icon,
   color,
 }: DashboardStat) => (

@@ -206,6 +206,7 @@ export interface OrderActivity {
 }
 
 import type { LucideIcon } from "lucide-react"; // Or your preferred icon library
+import type { JSX } from "react";
 
 export interface DashboardStat {
   label: string; // e.g., "Total Orders"
