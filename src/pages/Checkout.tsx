@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
 import { ColorModeButton } from "components/ui/color-mode";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Spin from "components/ui/spinner";
 import { type CreateOrderPayload, type Product } from "types/types";
@@ -24,6 +24,8 @@ import { Toaster, toaster } from "components/ui/toaster";
 const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const { createOrder } = useOrderStore();
+
+  const navigate = useNavigate();
 
   const [order, setOrder] = useState<CreateOrderPayload>(
     JSON.parse(sessionStorage.getItem("order")!),
@@ -45,7 +47,8 @@ const Checkout = () => {
     });
 
     setLoading(false);
-    // navigate("payment");
+
+    navigate("../orders");
   };
 
   const path = location.pathname;
@@ -109,7 +112,7 @@ const Checkout = () => {
                       className=" rounded-2xl  flex items-center justify-center text-2xl"
                     >
                       {/* {order.icon} */}
-                      {product?.imageUrls[0] || "🥕"}
+                      {product?.imageUrls![0] || "🥕"}
                     </Box>
                     <Heading size="2xl" textTransform={"capitalize"}>
                       {product.name}
@@ -203,7 +206,7 @@ const Checkout = () => {
                   variant={"outline"}
                   onClick={handleNext}
                 >
-                  {loading ? <Spin /> : "Make Payments"}
+                  {loading ? <Spin /> : "Place Order"}
                 </Button>
               </Box>
             </Box>

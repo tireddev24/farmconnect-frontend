@@ -20,11 +20,6 @@ const PieChartComp = ({ users }: { users: any }) => {
     data: [
       { name: "Farmer", value: userCounts.Farmer, color: "teal.solid" },
       { name: "Buyer", value: userCounts.Buyer, color: "orange.solid" },
-      {
-        name: "Transporter",
-        value: userCounts.Transporter,
-        color: "blue.solid",
-      },
     ],
   });
 

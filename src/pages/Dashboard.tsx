@@ -33,9 +33,7 @@ const FarmConnect: React.FC = () => {
       }
     };
 
-    // setTimeout(() => {
     data();
-    // }, 700);
   }, []);
 
   const { user } = useAuth();

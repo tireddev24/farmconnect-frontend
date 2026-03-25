@@ -41,3 +41,17 @@ export const returnCategoryName = (id: number) => {
 
   return catname?.name;
 };
+
+export const returnCategoryId = (name: string) => {
+  const catname = categories.find((cat) => {
+    if (cat.name == name) {
+      return cat.id;
+    }
+  });
+
+  return catname?.id;
+};
+
+export const returnFullName = (name1: string, name2: string): string => {
+  return name1 + " " + name2;
+};

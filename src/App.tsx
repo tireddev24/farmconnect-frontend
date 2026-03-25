@@ -25,14 +25,29 @@ import FarmerProducts from "pages/Farmer/products";
 import Verify from "pages/Admin/verifications";
 import AdminProducts from "pages/Admin/products";
 import SystemLogs from "pages/Admin/logs";
+import PublicRoute from "components/PublicRoute";
 
 function App() {
   return (
     <Container maxW={"full"} p={0} m={0}>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
         <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Root />}>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Root />
+            </ProtectedRoute>
+          }
+        >
           <Route
             path="dashboard"
             element={

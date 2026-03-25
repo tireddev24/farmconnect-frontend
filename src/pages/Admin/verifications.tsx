@@ -79,6 +79,7 @@ const Verify = () => {
           borderColor={{ base: "gray.100", _dark: "gray.800" }}
           mb={8}
           color={{ base: "gray.800", _dark: "white" }}
+          // overflow={"scroll"}
         >
           <HStack mb={6} color="emerald.600">
             <Icon as={Check} fontSize={20} />
@@ -96,6 +97,9 @@ const Verify = () => {
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Order Id
               </Table.ColumnHeader>
+              <Table.ColumnHeader color="gray.400" textTransform="none">
+                Buyer
+              </Table.ColumnHeader>{" "}
               <Table.ColumnHeader color="gray.400" textTransform="none">
                 Seller
               </Table.ColumnHeader>
@@ -118,12 +122,15 @@ const Verify = () => {
             </Table.Header>
             <TableBody>
               {orders
-                .filter((o: OrderRecord) => o.status.toLowerCase() == "pending")
+                .filter(
+                  (o: OrderRecord) => o.status.toLowerCase() == "accepted",
+                )
                 .map((o: OrderRecord) => (
                   <VerificationRow
                     key={o.id}
                     //   name={o.items[0].productName}
                     seller={o.farmerName!}
+                    buyer={o.buyerName!}
                     status={o.status!}
                     orderId={o.orderNumber}
                     date={formatDate(o.createdAt!)}
@@ -147,6 +154,7 @@ export const VerificationRow = ({
   amount,
   date,
   seller,
+  buyer,
 }: {
   name?: string;
   nin?: string;
@@ -157,6 +165,7 @@ export const VerificationRow = ({
   handleView?: (arg0: string) => void;
 
   seller: string;
+  buyer: string;
 }) => (
   <Table.Row>
     {/* <Table.Cell fontWeight="bold" py={4}>
@@ -164,6 +173,9 @@ export const VerificationRow = ({
     </Table.Cell> */}
     {/* <Table.Cell color="gray.500">{location}</Table.Cell> */}
     <Table.Cell color="gray.500">{orderId}</Table.Cell>
+    <Table.Cell textTransform={"capitalize"} color="gray.500">
+      {buyer}
+    </Table.Cell>{" "}
     <Table.Cell textTransform={"capitalize"} color="gray.500">
       {seller}
     </Table.Cell>

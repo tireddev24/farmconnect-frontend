@@ -61,7 +61,7 @@ const ProductDetails = () => {
     data();
   }, []);
 
-  const handleOrder = (item: string) => {
+  const handleOrder = () => {
     //function to generate order id
     // const rand = Math.floor(Math.random() * 900000 + 100000);
 
@@ -424,7 +424,7 @@ const ProductDetails = () => {
                     color="white"
                     rounded="xl"
                     h="12"
-                    onClick={() => handleOrder(product.name)}
+                    onClick={handleOrder}
                   >
                     {loading ? <Spin /> : "Buy Now"}
                   </Button>

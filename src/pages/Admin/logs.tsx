@@ -7,6 +7,7 @@ import {
   HStack,
   Circle,
   Container,
+  Table,
 } from "@chakra-ui/react";
 import Unexpected from "error/unexpected";
 import { formatDate } from "helpers/function";
@@ -92,11 +93,35 @@ const SystemLogs = () => {
             </Flex>
 
             {/* Log Content Area */}
-            <Box p={8} fontFamily="monospace" fontSize="sm">
-              <VStack align="stretch" spaceX={2}>
-                {logs.map((log: Log) => (
-                  <LogLine log={log} />
-                ))}
+            <Box
+              w="full"
+              h={"90dvh"}
+              overflowY={"scroll"}
+              fontFamily="monospace"
+              fontSize="sm"
+            >
+              <VStack>
+                <Table.Root>
+                  <Table.Header>
+                    <Table.ColumnHeader>User Action </Table.ColumnHeader>
+                    <Table.ColumnHeader>User Id</Table.ColumnHeader>
+                    <Table.ColumnHeader>Port</Table.ColumnHeader>
+                    <Table.ColumnHeader>User Agent</Table.ColumnHeader>
+                    <Table.ColumnHeader w={"max-content"}>
+                      Date
+                    </Table.ColumnHeader>
+                  </Table.Header>
+                  <Table.Body>
+                    {logs
+                      .sort(
+                        (log: Log) =>
+                          Number(log.timestamp) - Number(log.timestamp),
+                      )
+                      .map((log: Log) => (
+                        <LogLine log={log} />
+                      ))}
+                  </Table.Body>
+                </Table.Root>
               </VStack>
             </Box>
           </Box>
@@ -126,15 +151,15 @@ const LogLine = ({ log }: { log: Log }) => {
   };
 
   return (
-    <HStack spaceX={4} align="flex-start">
-      <Text color={colors[log.type]} fontWeight="bold" minW="60px">
-        [{log.type}]
-      </Text>
-      <Text>{log.userId}</Text>
-      <Text>{log.ipAddress}</Text>
-      <Text>{log.userAgent}</Text>
-      <Text>{formatDate(log.timestamp)}</Text>
-    </HStack>
+    <Table.Row>
+      <Table.Cell color={colors[log.action]} fontWeight="bold" minW="60px">
+        [{log.action}]
+      </Table.Cell>
+      <Table.Cell>{log.userId}</Table.Cell>
+      <Table.Cell>{log.ipAddress}</Table.Cell>
+      <Table.Cell>{log.userAgent}</Table.Cell>
+      <Table.Cell w={36}>{formatDate(log.timestamp)}</Table.Cell>
+    </Table.Row>
   );
 };
 

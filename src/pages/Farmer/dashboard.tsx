@@ -14,7 +14,7 @@ import {
   Loader,
   Center,
 } from "@chakra-ui/react";
-import { Banknote, Eye, ShoppingBag, UserPlus } from "lucide-react";
+import { Check, FileWarning, ShoppingBag } from "lucide-react";
 import AvatarCard from "../../components/avatar";
 import { useEffect, useState } from "react";
 import { useFarmerStore } from "store/store";
@@ -58,14 +58,17 @@ export default function FarmerDashboard() {
         {/* Top Header */}
         <Flex justify="space-between" align="center" mb={10}>
           <Box>
-            <Heading size="md" color="#10a37f">
+            <Heading
+              size="md"
+              color={{ base: "green.500", _dark: "yellow.600" }}
+            >
               FARMER DASHBOARD
             </Heading>
             <Text fontSize="xs" color="gray.500">
               Store overview and analytics
             </Text>
           </Box>
-          <InputGroup maxW="500px">
+          <InputGroup maxW="500px" display={"none"}>
             <>
               <Input
                 placeholder="Search orders, products..."
@@ -90,20 +93,28 @@ export default function FarmerDashboard() {
         </Flex>
 
         {/* Stats Grid */}
-        <SimpleGrid display={"none"} columns={4} spaceX={6} mb={8}>
+        <SimpleGrid columns={3} spaceX={6} mb={8}>
           <MetricCard
-            label="Total Sales"
-            value="₦2,435,000"
+            label="Pending Orders"
+            value={
+              orders.filter(
+                (o: FarmerOrders) => o.status.toLowerCase() == "pending",
+              ).length
+            }
             change="+37%"
-            icon={Banknote}
-            color="green"
+            icon={FileWarning}
+            color="orange"
           />
           <MetricCard
-            label="Profile Views"
-            value="6,547"
+            label="Accepted Orders"
+            value={
+              orders.filter(
+                (o: FarmerOrders) => o.status.toLowerCase() == "accepted",
+              ).length
+            }
             change="+23%"
-            icon={Eye}
-            color="blue"
+            icon={Check}
+            color="cyan"
           />
           <MetricCard
             label="New Orders"
@@ -111,13 +122,6 @@ export default function FarmerDashboard() {
             change="+17%"
             icon={ShoppingBag}
             color="purple"
-          />
-          <MetricCard
-            label="Active Customers"
-            value="2,310"
-            change="-4%"
-            icon={UserPlus}
-            color="orange"
           />
         </SimpleGrid>
 
@@ -193,9 +197,9 @@ export default function FarmerDashboard() {
         {/* Bottom Section: Recent Orders & Delivery */}
         <SimpleGrid columns={3} spaceX={6}>
           <Box
-            gridColumn="span 2"
+            gridColumn="span 4"
             minH={"70dvh"}
-            bg="white"
+            // bg="white"
             p={6}
             rounded="2xl"
             shadow="sm"
@@ -206,7 +210,7 @@ export default function FarmerDashboard() {
                 This Week
               </Text>
             </Heading>
-            <Table.Root size="sm">
+            <Table.Root size="sm" color={{ base: "gray.500", _dark: "white" }}>
               <Table.Header>
                 <Table.ColumnHeader color="gray.400">
                   Invoice
@@ -238,7 +242,14 @@ export default function FarmerDashboard() {
             </Table.Root>
           </Box>
 
-          <Box bg="white" p={6} h={"20dvh"} rounded="2xl" shadow="sm">
+          <Box
+            display={"none"}
+            bg="white"
+            p={6}
+            h={"20dvh"}
+            rounded="2xl"
+            shadow="sm"
+          >
             <Heading size="sm" mb={6}>
               Delivery
               <Text

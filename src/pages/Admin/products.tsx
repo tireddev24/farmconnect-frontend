@@ -51,6 +51,7 @@ export default function AdminProducts() {
       display={"flex"}
       flex={1}
       //   w={"full"}
+      p={8}
       color={{ base: "black", _dark: "white" }}
       bg="#f8fafb"
     >
@@ -125,9 +126,9 @@ export default function AdminProducts() {
               rounded="2xl"
               border="1px solid"
               borderColor="whiteAlpha.100"
-              overflow="hidden"
+              overflow="scroll"
             >
-              <Table.Root size="lg">
+              <Table.Root>
                 <Table.Header
                   borderBottom="1px solid"
                   borderColor="whiteAlpha.100"

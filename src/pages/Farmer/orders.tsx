@@ -160,9 +160,13 @@ export default function FarmerOrders() {
                   </Table.Row>
                 </Table.Header>
                 <TableBody>
-                  {orders.map((order: OrderRecord, i: number) => (
-                    <Order key={i} order={order} />
-                  ))}
+                  {orders
+                    .filter(
+                      (o: OrderRecord) => o.status.toLowerCase() == "pending",
+                    )
+                    .map((order: OrderRecord, i: number) => (
+                      <Order key={i} order={order} />
+                    ))}
                 </TableBody>
               </Table.Root>
             </Box>

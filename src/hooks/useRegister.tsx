@@ -28,10 +28,10 @@ const useRegister = () => {
       }
 
       const resData = await response.json();
-      const { user } = resData.data;
+      const { user, accessToken, refreshToken } = resData.data;
 
       if (response.status === 200) {
-        login(user);
+        login(user, accessToken, refreshToken);
       }
 
       return { success: true, message: "Registration successful" };

@@ -11,6 +11,7 @@ import { Leaf, RightChevron } from "components/ui/icons";
 import Badge from "components/ui/badge";
 
 import { Icon, Spacer, Circle, Flex, Table } from "@chakra-ui/react";
+import { ORDER_STATUS_COLORS } from "data/constant";
 
 export const QuickLink = ({ icon, label, sub, link, disabled }: Quicklink) => {
   const navigate = useNavigate();
@@ -142,7 +143,7 @@ export const OrderRow = ({
       ₦{amount}
     </Table.Cell>
     <Table.Cell>
-      <Badge text={status} color="cyan" />
+      <Badge text={status} color={ORDER_STATUS_COLORS[status]} />
     </Table.Cell>
     <Table.Cell fontSize="xs" color="gray.400" fontWeight="bold">
       {tracking}
@@ -182,31 +183,28 @@ export const MetricCard = ({
   color,
 }: DashboardStat) => (
   <Box
-    bg="white"
+    // bg="white"
     p={6}
     rounded="2xl"
     shadow="sm"
     border="1px solid"
-    borderColor="gray.50"
+    borderColor={{ base: "gray.50", _dark: "yellow.600" }}
   >
-    <Flex justify="space-between" align="start">
+    <Flex
+      justify="space-between"
+      align="start"
+      color={{ base: "gray.500", _dark: "white" }}
+    >
       <VStack align="start" spaceX={1}>
-        <Text color="gray.500" fontSize="xs" fontWeight="bold">
+        <Text fontSize="xs" fontWeight="bold">
           {label}
         </Text>
         <Text fontSize="xl" fontWeight="800">
           {value}
         </Text>
-        <HStack spaceX={1}>
-          <Text fontSize="xs" color={"green.400"} fontWeight="bold">
-            {change}
-          </Text>
-          <Text fontSize="xs" color="gray.400">
-            Last Week
-          </Text>
-        </HStack>
+        <HStack spaceX={1}></HStack>
       </VStack>
-      <Circle boxSize="10" bg={`${color}.50`}>
+      <Circle boxSize="10">
         <Icon as={icon} color={`${color}.400`} fontSize={20} />
       </Circle>
     </Flex>

@@ -7,6 +7,11 @@ import {
   Button,
   Table,
   TableBody,
+  Dialog,
+  Portal,
+  CloseButton,
+  SimpleGrid,
+  Input,
 } from "@chakra-ui/react";
 import { Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -15,8 +20,9 @@ import { useEffect, useState } from "react";
 import { useFarmerStore } from "store/store";
 import Unexpected from "error/unexpected";
 import Loader from "components/ui/load";
-import { formatDate } from "helpers/function";
+import { formatDate, returnCategoryId } from "helpers/function";
 import { Pen, Trash } from "components/ui/icons";
+import { Toaster, toaster } from "components/ui/toaster";
 
 export default function FarmerProducts() {
   const navigate = useNavigate();
@@ -54,8 +60,8 @@ export default function FarmerProducts() {
       flex={1}
       //   w={"full"}
       color={{ base: "black", _dark: "white" }}
-      bg="#f8fafb"
     >
+      <Toaster />
       <Box
         display={"flex"}
         flexDir={"row"}
@@ -160,8 +166,8 @@ export default function FarmerProducts() {
                 <TableBody>
                   {products
                     .filter((p: Product) => p.isAvailable == true)
-                    .map((p: Product, index: number) => (
-                      <ProductRow key={index} product={p} />
+                    .map((p: Product) => (
+                      <ProductRow product={p} />
                     ))}
                 </TableBody>
               </Table.Root>
@@ -173,13 +179,13 @@ export default function FarmerProducts() {
   );
 }
 
-const ProductRow = ({ product, key }: { product: Product; key: number }) => {
+const ProductRow = ({ product }: { product: Product }) => {
   return (
     <Table.Row
       borderBottom="1px solid"
       borderColor="whiteAlpha.50"
       _last={{ border: 0 }}
-      key={key}
+      key={product.id}
     >
       <Table.Cell color="gray.500" fontSize="sm">
         {product.name}
@@ -199,14 +205,201 @@ const ProductRow = ({ product, key }: { product: Product; key: number }) => {
       </Table.Cell>
       <Table.Cell>
         <HStack gap={2}>
-          <Text p={2} bg={"green.200"} rounded={"lg"} cursor={"pointer"}>
-            <Pen />
+          <Text bg={"green.200"} rounded={"lg"} cursor={"pointer"}>
+            <Edit prod={product} />
           </Text>
-          <Text p={2} bg={"red.300"} rounded={"lg"} cursor={"pointer"}>
-            <Trash />
+          <Text bg={"red.300"} rounded={"lg"} cursor={"pointer"}>
+            <Delete prod={product} />
           </Text>
         </HStack>
       </Table.Cell>
     </Table.Row>
+  );
+};
+
+const Edit = ({ prod }: { prod: Product }) => {
+  const [editedProduce, setEditProduce] = useState<Product>({
+    ...prod,
+    categoryId: returnCategoryId(prod.categoryName!)!,
+  });
+
+  const { editProduct } = useFarmerStore();
+  const handleEdit = async (id: string, data: Product) => {
+    const { success, message } = await editProduct(id, data);
+
+    toaster.create({
+      type: success ? "info" : "warning",
+      description: success ? `${prod.name} details changed! ` : `${message}`,
+    });
+
+    if (success) {
+      setOpen(false);
+    }
+  };
+
+  const [open, setOpen] = useState(false);
+  return (
+    <Dialog.Root
+      role="dialog"
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
+      <Dialog.Trigger asChild>
+        <Button variant="outline" size="sm" _hover={{ bg: "green.300" }}>
+          <Pen />
+        </Button>
+      </Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>Edit {prod.name} ?</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <SimpleGrid gap={6} columns={2}>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Product Name (₦)
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    bg="gray.50"
+                    border="none"
+                    rounded="xl"
+                    h="12"
+                    value={editedProduce.name}
+                    disabled
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Product Category
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    bg="gray.50"
+                    border="none"
+                    rounded="xl"
+                    h="12"
+                    value={editedProduce.categoryName}
+                    disabled
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Your Selling Price (₦)
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    bg="gray.50"
+                    border="none"
+                    rounded="xl"
+                    h="12"
+                    value={editedProduce.pricePerUnit}
+                    onChange={(e) =>
+                      setEditProduce((prevProduce) => ({
+                        ...prevProduce,
+                        pricePerUnit: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Quantity Available (₦)
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    bg="gray.50"
+                    border="none"
+                    rounded="xl"
+                    h="12"
+                    type="number"
+                    value={editedProduce.quantityAvailable}
+                    onChange={(e) =>
+                      setEditProduce((prevProduce) => ({
+                        ...prevProduce,
+                        quantityAvailable: Number(e.target.value),
+                      }))
+                    }
+                  />
+                </Box>
+              </SimpleGrid>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.ActionTrigger asChild>
+                <Button variant="outline">Cancel</Button>
+              </Dialog.ActionTrigger>
+              <Button
+                colorPalette="red"
+                onClick={() => handleEdit(prod.id!, editedProduce)}
+              >
+                Update Product Details
+              </Button>
+            </Dialog.Footer>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size="sm" />
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  );
+};
+
+const Delete = ({ prod }: { prod: Product }) => {
+  const { deleteProduct } = useFarmerStore();
+
+  const [open, setOpen] = useState(false);
+  const handleDelete = async (id: string) => {
+    const { success, message } = await deleteProduct(id);
+
+    toaster.create({
+      type: success ? "success" : "warning",
+      description: success ? `${prod.name} deleted successfully! ` : message,
+    });
+
+    if (success) {
+      setOpen(false);
+    }
+  };
+  return (
+    <Dialog.Root
+      role="alertdialog"
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
+      <Dialog.Trigger asChild>
+        <Button variant="outline" size="sm" _hover={{ bg: "red.500" }}>
+          <Trash />
+        </Button>
+      </Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>Delete Product</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              Are you sure you want to remove {prod.name} from your product
+              listings?
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.ActionTrigger asChild>
+                <Button variant="outline">No</Button>
+              </Dialog.ActionTrigger>
+              <Button colorPalette="red" onClick={() => handleDelete(prod.id!)}>
+                Yes
+              </Button>
+            </Dialog.Footer>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size="sm" />
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   );
 };

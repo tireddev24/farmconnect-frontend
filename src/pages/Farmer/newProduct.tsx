@@ -21,9 +21,14 @@ import { type Product } from "types/types";
 import { Toaster, toaster } from "components/ui/toaster";
 import { categories } from "data/constant";
 import { returnCategory } from "helpers/function";
+import { DateInput } from "helpers/date";
+import { useNavigate } from "react-router-dom";
+import { useFarmerStore } from "store/store";
 
 export default function ListNewProduct() {
   const date = new Date();
+
+  const { createProduct } = useFarmerStore();
 
   const [produce, setProduce] = useState<Product>({
     categoryId: 0,
@@ -33,14 +38,14 @@ export default function ListNewProduct() {
     unit: "",
     isAvailable: true,
     quantityAvailable: 100,
-    location: "string",
+    location: "Sagamu",
     harvestDate: date,
     expiryDate: date,
   });
 
   const [categoryName, setCategoryName] = useState(categories[0].name);
 
-  const handleCreateProduct = () => {
+  const handleCreateProduct = async () => {
     if (produce.categoryId == 0) {
       toaster.create({
         type: "error",
@@ -48,7 +53,20 @@ export default function ListNewProduct() {
       });
       return;
     }
+
+    const { success, message } = await createProduct(produce);
+
+    toaster.create({
+      type: success ? "success" : "error",
+      description: message,
+    });
+
+    if (success) {
+      navigate("../product");
+    }
   };
+
+  const navigate = useNavigate();
 
   return (
     <Flex minH="100vh" bg="#f8fafb" justify={"center"}>
@@ -181,6 +199,18 @@ export default function ListNewProduct() {
                     }))
                   }
                 />
+                <DateInput
+                  label="Harvest Date"
+                  value={produce.harvestDate!.toISOString().split("T")[0]}
+                  onChange={(e) =>
+                    setProduce((prevProduce) => ({
+                      ...prevProduce,
+                      harvestDate: new Date(e.target.value),
+                    }))
+                  }
+                  helperText="When was this produce harvested?"
+                  error={!date ? "Please select a date" : undefined}
+                />
               </Box>
 
               <Box>
@@ -220,7 +250,7 @@ export default function ListNewProduct() {
 
           {/* --- Live Card Preview --- */}
           <Box>
-            <ProductCard product={produce} />
+            <ProductCard product={produce} navigate={() => navigate("/")} />
           </Box>
         </SimpleGrid>
       </Container>

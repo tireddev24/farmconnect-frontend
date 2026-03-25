@@ -46,7 +46,8 @@ export default function Login() {
       });
 
       if (success) {
-        setTimeout(() => navigate("/dashboard"), 500);
+        window.location.reload();
+        // setTimeout(() => navigate("/dashboard"), 500);
       }
     } catch (err) {
       alert("Invalid credentials");
@@ -72,17 +73,7 @@ export default function Login() {
       p={6}
     >
       <Toaster />
-      <Box
-        position="absolute"
-        top="-10%"
-        left="-10%"
-        w="500px"
-        h="500px"
-        bg={{ base: "green.200", _dark: "yellow.300/30" }}
-        filter="blur(80px)"
-        opacity={0.6}
-        rounded="full"
-      />
+
       <Center flexDirection="column" mt={10}>
         {/* Logo and Header */}
         <VStack spaceX={2} mb={10}>
@@ -135,8 +126,8 @@ export default function Login() {
                       placeholder="Enter your email"
                       pl="11"
                       h="12"
-                      color={{ base: "black", _dark: "white" }}
                       rounded="xl"
+                      color={{ base: "black", _dark: "white" }}
                       borderColor="gray.200"
                       _focus={{
                         borderColor: { base: "#10a37f", _dark: "yellow.500" },

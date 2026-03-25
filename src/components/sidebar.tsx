@@ -57,6 +57,7 @@ export const Sidebar = () => {
               <Button
                 color={{ base: "green.600", _dark: "yellow.600" }}
                 bg={"none"}
+                display={"none"}
               >
                 <Settings />
               </Button>

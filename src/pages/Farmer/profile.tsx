@@ -9,6 +9,11 @@ import {
   Grid,
   GridItem,
   Link,
+  Dialog,
+  Portal,
+  SimpleGrid,
+  Input,
+  CloseButton,
 } from "@chakra-ui/react";
 
 import Badge from "../../components/ui/badge";
@@ -30,11 +35,14 @@ import {
 } from "../../components/ui/icons";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useFarmerStore } from "store/store";
+import { useFarmerStore, useUserStore } from "store/store";
 import Loader from "components/ui/load";
 import Unexpected from "error/unexpected";
 import { ProductCard, QuickLink } from "./farmercomps";
 import type { OrderRecord, ProfileProductCard } from "types/types";
+import { Toaster, toaster } from "components/ui/toaster";
+import type { User, userRegister } from "types/userType";
+import { formatDate, returnFullName } from "helpers/function";
 
 const orders = [
   {
@@ -64,7 +72,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const { products, fetchProducts } = useFarmerStore();
-
+  const { fetchUserDetails, user } = useUserStore();
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -72,6 +80,7 @@ const Profile = () => {
     const data = async () => {
       try {
         await fetchProducts();
+        await fetchUserDetails();
       } catch (error) {
         console.log(error);
         setError(true);
@@ -81,15 +90,6 @@ const Profile = () => {
     };
     data();
   }, []);
-
-  const user = {
-    ...User,
-    name: User?.firstName + " " + User?.lastName,
-    memberSince: "January 2024",
-    image:
-      "https://res.cloudinary.com/dpebuzpo4/image/upload/v1768730826/photo3_xzyf11.png",
-    stats: { orders: 12, spent: "₦450K", rating: 4.8 },
-  };
 
   if (error) {
     return <Unexpected error={error} />;
@@ -110,6 +110,7 @@ const Profile = () => {
 
   return (
     <Box minH="100vh" p={10} fontFamily="sans-serif">
+      <Toaster />
       {/* BUYERS Profile */}
       <VStack maxW="6xl" mx="auto" gap={8} align={"stretch"} zIndex={10}>
         {/* Header */}
@@ -126,18 +127,7 @@ const Profile = () => {
               Manage your produce listings and payouts
             </Text>
           </VStack>
-          <Button
-            display={"none"}
-            variant="outline"
-            color={{ base: "black", _dark: "whiteAlpha.100" }}
-            rounded={"lg"}
-            _hover={{
-              borderColor: { base: "green.400", _dark: "yellow.500/50" },
-            }}
-          >
-            <Pen size={16} />
-            Edit Profile
-          </Button>
+          <EditProfile user={User} />
         </HStack>
 
         <Grid templateColumns="repeat(12, 1fr)" gap={6}>
@@ -160,7 +150,7 @@ const Profile = () => {
                 </Avatar.Root>
                 <VStack gap={1} color={{ base: "black", _dark: "gray.300" }}>
                   <Text fontSize="xl" fontWeight="bold">
-                    {user.name}
+                    {returnFullName(user.firstName, user.lastName)}
                   </Text>
 
                   <HStack
@@ -183,28 +173,28 @@ const Profile = () => {
                       {products.length}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
-                      Listings
+                      Product Listings
                     </Text>
                   </VStack>
-                  <VStack gap={0}>
+                  <VStack gap={0} display={"none"}>
                     <Text
                       fontWeight="bold"
                       fontSize="lg"
                       color={{ base: "green.500", _dark: "green.400" }}
                     >
-                      {user.stats.spent}
+                      {""}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
                       Sold
                     </Text>
                   </VStack>
-                  <VStack gap={0}>
+                  <VStack gap={0} display={"none"}>
                     <Text
                       fontWeight="bold"
                       fontSize="lg"
                       color={{ base: "green.500", _dark: "yellow.400" }}
                     >
-                      {user.stats.rating}
+                      {""}
                     </Text>
                     <Text color="gray.500" fontSize="xs">
                       Rating
@@ -242,7 +232,7 @@ const Profile = () => {
                   <Text fontSize="xs">Member Since</Text>
                   <HStack>
                     <Calendar size={16} color="orange" />
-                    <Text>{user.memberSince}</Text>
+                    <Text>{formatDate(user.createdAt)}</Text>
                   </HStack>
                 </VStack>
               </VStack>
@@ -411,3 +401,202 @@ const SalesItem = (o: OrderRecord) => (
     </VStack>
   </HStack>
 );
+
+const EditProfile = ({ user }: { user: User }) => {
+  const [editedUser, setEditedUser] = useState<userRegister>(user);
+  const [open, setOpen] = useState(false);
+  const { editUserDetails } = useUserStore();
+
+  const handleEdit = async (data: userRegister) => {
+    const { success } = await editUserDetails(data);
+
+    toaster.create({
+      type: success ? "info" : "warning",
+      description: success
+        ? `${returnFullName(editedUser.firstName, editedUser.lastName)} details updated! `
+        : `Something went wrong`,
+    });
+
+    if (success) {
+      setOpen(false);
+    }
+  };
+  return (
+    <Dialog.Root
+      role="dialog"
+      open={open}
+      onOpenChange={(e) => setOpen(e.open)}
+    >
+      <Dialog.Trigger asChild>
+        <Button
+          // variant="outline"
+          color={{ base: "black", _dark: "white" }}
+          bg={{ base: "white", _dark: "black" }}
+          rounded={"lg"}
+          _hover={{
+            borderColor: { base: "green.400", _dark: "yellow.500/50" },
+          }}
+        >
+          <Pen size={16} />
+          Edit Profile
+        </Button>
+      </Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>
+                Edit {returnFullName(user.firstName, user.lastName)} ?
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <SimpleGrid gap={6} columns={2}>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    First Name
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    // border="none"
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.firstName}
+                    disabled
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Last Name
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.lastName}
+                    disabled
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Phone Number
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.phoneNumber}
+                    onChange={(e) =>
+                      setEditedUser((prevProduce) => ({
+                        ...prevProduce,
+                        phoneNumber: e.target.value,
+                      }))
+                    }
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Email
+                  </Text>
+                  <Input
+                    type="email"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.email}
+                    disabled
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    Address
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.address}
+                    onChange={(e) =>
+                      setEditedUser((prevProduce) => ({
+                        ...prevProduce,
+                        address: e.target.value,
+                      }))
+                    }
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
+                    State
+                  </Text>
+                  <Input
+                    defaultValue="12000"
+                    color={{ base: "black", _dark: "white" }}
+                    borderColor="gray.200"
+                    _focus={{
+                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                      ring: "2px",
+                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
+                    }}
+                    rounded="xl"
+                    h="12"
+                    value={editedUser.state}
+                    disabled
+                  />
+                </Box>
+              </SimpleGrid>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.ActionTrigger asChild>
+                <Button variant="outline">Cancel</Button>
+              </Dialog.ActionTrigger>
+              <Button
+                colorPalette="green"
+                bg={{ base: "green.400", _dark: "yellow.600" }}
+                onClick={() => handleEdit(editedUser)}
+              >
+                Update User Details
+              </Button>
+            </Dialog.Footer>
+            <Dialog.CloseTrigger asChild>
+              <CloseButton size="sm" />
+            </Dialog.CloseTrigger>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  );
+};

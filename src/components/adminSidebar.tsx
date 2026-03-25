@@ -62,7 +62,7 @@ const AdminSidebar = () => {
           link="usermanagement"
           // badge="3"
         />
-        <SidebarItem icon={Notebook} label="Products" link="products" />
+        <SidebarItem icon={Notebook} label="Product Details" link="products" />
         <SidebarItem
           icon={VerifiedIcon}
           label="Order Verification"

@@ -1,18 +1,3 @@
-// export interface Product {
-//   id: string;
-//   name: string;
-//   unit: string;
-//   category: "grains" | "legumes" | "tubers" | string; // Expandable union type
-//   price: number;
-//   stock?: string;
-//   trend?: "up" | "down" | "stable";
-//   icon?: string;
-//   location?: string;
-//   desc?: string;
-//   seller?: string;
-//   buyer?: string;
-// }
-
 export interface Product {
   id?: string;
   categoryId: number;
