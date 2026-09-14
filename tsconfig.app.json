@@ -3,25 +3,57 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
-    "types": ["vite/client"],
-
+    "types": [
+      "vite/client"
+    ],
     "skipLibCheck": true,
-
     "baseUrl": "src",
     "paths": {
-      "@/*": ["./src/*"],
-      "@api": ["./src/api"],
-      "@components/*": ["./src/components"],
-      "@ui/*": ["./src/components/ui"],
-      "@context/*": ["./src/context"],
-      "@data/*": ["./src/data"],
-      "@error/*": ["./src/error"],
-      "@hooks/*": ["./src/hooks"],
-      "@pages/*": ["./src/pages"],
-      "@store/*": ["./src/store"],
-      "@types/*": ["./src/types"]
+      "@/*": [
+        "*"
+      ],
+      "@api/*": [
+        "api/*"
+      ],
+      "@api": [
+        "api"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@ui/*": [
+        "components/ui/*"
+      ],
+      "@context/*": [
+        "context/*"
+      ],
+      "@data/*": [
+        "data/*"
+      ],
+      "@error/*": [
+        "error/*"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@store/*": [
+        "store/*"
+      ],
+      "@sidebars/*": [
+        "components/sidebars/*"
+      ],
+      "@types/*": [
+        "types/*"
+      ]
     },
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -30,7 +62,6 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -39,5 +70,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/**/*.ts", "src/**/*.tsx"]
+  "include": [
+    "src",
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
 }

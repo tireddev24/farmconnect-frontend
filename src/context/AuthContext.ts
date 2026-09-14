@@ -1,15 +1,15 @@
 import { createContext, useContext } from "react";
-import type { User } from "../types/userType";
+import type { UserProfile } from "@/types/types";
 
 export interface AuthContextType {
-  user: User | null; // Ideally replace with a real 'User' interface later
+  user: UserProfile | null; // Ideally replace with a real 'User' interface later
   // setUser: Dispatch<SetStateAction<User | null>>;
   loading: boolean;
   url: string;
   isAuthenticated: boolean;
   accessToken?: string;
-  refreshToken?: string;
-  login: (arg0: User, arg1: string, arg2: string) => void;
+  setAccessToken: (token: string) => void;
+  login: (arg0: UserProfile, arg1: string) => void;
   logout: () => void;
 }
 

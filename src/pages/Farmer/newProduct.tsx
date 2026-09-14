@@ -3,47 +3,46 @@ import {
   Flex,
   Heading,
   Text,
-  VStack,
-  HStack,
   Button,
   Input,
   Textarea,
-  Container,
   SimpleGrid,
-  Link,
+  GridItem,
 } from "@chakra-ui/react";
 
 import CustomSelect from "../../components/customselect";
 import { useState } from "react";
 import { LeftArrow } from "components/ui/icons";
 import { ProductCard } from "components/productcard";
-import { type Product } from "types/types";
-import { Toaster, toaster } from "components/ui/toaster";
-import { categories } from "data/constant";
-import { returnCategory } from "helpers/function";
-import { DateInput } from "helpers/date";
+import { type Product, type ProductUnit } from "types/types";
+import { Toaster } from "components/ui/toaster";
+import { toaster } from "@/hooks/useUI";
+import { categories, MEASUREMENT_UNITS } from "@/lib/constants";
+import { returnCategory, returnCategoryName } from "@/lib/helpers";
+import { DateInput } from "@/components/date";
 import { useNavigate } from "react-router-dom";
 import { useFarmerStore } from "store/store";
 
 export default function ListNewProduct() {
-  const date = new Date();
 
-  const { createProduct } = useFarmerStore();
+
+  const createProduct = useFarmerStore((state) => state.createProduct);
 
   const [produce, setProduce] = useState<Product>({
+    id: "0",
     categoryId: 0,
     name: "",
     description: "",
     pricePerUnit: 3,
-    unit: "",
-    isAvailable: true,
+    unit: "kg",
     quantityAvailable: 100,
-    location: "Sagamu",
-    harvestDate: date,
-    expiryDate: date,
+    location: "",
+    harvestDate: new Date().toISOString(),
+    longitude: null,
+    latitude: null,
+    expiryDate: null
   });
 
-  const [categoryName, setCategoryName] = useState(categories[0].name);
 
   const handleCreateProduct = async () => {
     if (produce.categoryId == 0) {
@@ -62,199 +61,204 @@ export default function ListNewProduct() {
     });
 
     if (success) {
-      navigate("../product");
+      navigate("../products");
     }
   };
 
   const navigate = useNavigate();
 
   return (
-    <Flex minH="100vh" bg="#f8fafb" justify={"center"}>
+    <Flex justifyContent={"center"} p={8}>
       <Toaster />
       {/* --- Main Content --- */}
-      <Container py={12}>
-        <VStack align="start" mb={10}>
-          <HStack
-            color="gray.500"
-            cursor="pointer"
-            _hover={{ color: "gray.700" }}
-          >
-            <Link href="../">
-              <Text>
-                <LeftArrow />
-              </Text>
-              <Text fontSize="sm">Back</Text>
-            </Link>
-          </HStack>
-          <Heading size="lg" color="#1a202c">
-            List New Product
-          </Heading>
-          <Text color="gray.500" fontSize="sm">
-            Add a new crop or product to the marketplace
+
+      <Box w={"full"} mt={4}>
+
+
+        <Flex alignItems={"center"} gap={1} _hover={{ color: "gray.700", cursor: "pointer" }} transition={"all 0.3s ease"} onClick={() => navigate(-1)}>
+          <Text>
+            <LeftArrow />
           </Text>
-        </VStack>
+          <Text fontSize="sm">Back</Text>
+        </Flex>
 
-        <SimpleGrid columns={2} mb={8}>
+        <Heading size="lg" color="#1a202c" mt={4}>
+          List New Product
+        </Heading>
+        <Text color="gray.500" fontSize="sm">
+          Add a new product to the marketplace
+        </Text>
+
+
+        <SimpleGrid columns={3} p={4} mt={4}>
+
           {/* --- Input Form --- */}
-          <Box
-            columnWidth={"initial"}
-            flex={1.5}
-            bg="white"
-            p={10}
-            rounded="3xl"
-            shadow="sm"
-            border="1px solid"
-            borderColor="gray.100"
-          >
-            <VStack align="stretch">
-              <Box>
-                <Text fontSize="xs" fontWeight="bold" color="gray.500" mb={3}>
-                  Select Crop/Product Base
-                </Text>
+          <GridItem colSpan={2} shadow={"lg"} rounded={"lg"} p={4}>
 
-                <SimpleGrid columns={2} spaceX={4} mb={8}>
-                  <Input
-                    bg="gray.50"
-                    border="none"
-                    rounded="xl"
-                    h="12"
-                    value={produce.name}
-                    onChange={(e) =>
-                      setProduce((prevProduce) => ({
-                        ...prevProduce,
-                        name: e.target.value,
-                      }))
-                    }
-                  />
-                  <CustomSelect
-                    defaultValue={"CATEGORY"}
-                    options={categories.map((cat) => cat.name)}
-                    value={categoryName}
-                    onChange={(e) => {
-                      returnCategory(e, setProduce);
-                      setCategoryName(e);
-                    }}
-                  />
-                </SimpleGrid>
-                {/* <Text fontSize="sm" color="gray.400" my={4}>
-                  Choosing a base automatically fills standard market details.
-                </Text> */}
-              </Box>
+            <SimpleGrid columns={2} gap={4} w={"full"} p={2}>
 
-              <HStack spaceX={6}>
-                <Box flex={1}>
-                  <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
-                    Your Selling Price (₦)
-                  </Text>
-                  <Input
-                    defaultValue="12000"
-                    bg="gray.50"
-                    border="none"
-                    rounded="xl"
-                    h="12"
-                    value={produce.pricePerUnit}
-                    onChange={(e) =>
-                      setProduce((prevProduce) => ({
-                        ...prevProduce,
-                        pricePerUnit: Number(e.target.value),
-                      }))
-                    }
-                  />
-                </Box>
-                <Box flex={1}>
-                  <Text fontWeight="bold" color="gray.500" mb={3}>
-                    Stock Level / Quantity
-                  </Text>
-                  <Input
-                    bg="gray.50"
-                    border="none"
-                    rounded="xl"
-                    h="12"
-                    value={produce.quantityAvailable}
-                    onChange={(e) =>
-                      setProduce((prevProduce) => ({
-                        ...prevProduce,
-                        quantityAvailable: Number(e.target.value),
-                      }))
-                    }
-                  />
-                </Box>
-              </HStack>
+              <Flex direction={"column"} gap={1}>
 
-              <Box>
-                <Text fontWeight="bold" color="gray.500" mb={3}>
-                  Measurement Unit
+                <Text fontSize="sm" color="gray.500" >
+                  Crop/Product Name
                 </Text>
                 <Input
-                  defaultValue="Bag"
                   bg="gray.50"
                   border="none"
-                  rounded="xl"
-                  h="12"
-                  value={produce.unit}
+                  outline={"1px solid "}
+                  placeholder="Rice, Potato, Yam etc"
+                  rounded="lg"
+                  value={produce.name}
                   onChange={(e) =>
                     setProduce((prevProduce) => ({
                       ...prevProduce,
-                      unit: e.target.value,
+                      name: e.target.value,
                     }))
                   }
                 />
-                <DateInput
-                  label="Harvest Date"
-                  value={produce.harvestDate!.toISOString().split("T")[0]}
+              </Flex>
+
+              <Box alignSelf={"end"}>
+
+                <CustomSelect
+                  defaultValue={categories[0].name}
+                  options={categories.slice(1).map((cat) => cat.name)}
+                  value={returnCategoryName(produce.categoryId)!}
+                  onChange={(e) => {
+                    returnCategory(e, setProduce);
+                  }}
+                />
+              </Box>
+
+              <Flex direction={"column"} gap={1}>
+                <Text fontSize="sm" color="gray.500" >
+                  Your Selling Price (₦)
+                </Text>
+                <Input
+                  defaultValue="12000"
+                  bg="gray.50"
+                  border="none"
+                  outline={"1px solid "}
+                  rounded="lg"
+                  value={produce.pricePerUnit}
                   onChange={(e) =>
                     setProduce((prevProduce) => ({
                       ...prevProduce,
-                      harvestDate: new Date(e.target.value),
+                      pricePerUnit: Number(e.target.value),
+                    }))
+                  }
+                />
+              </Flex>
+
+              <Flex direction={"column"} gap={1} >
+
+                <Text fontSize="sm" color="gray.500">
+                  Stock Level / Quantity
+                </Text>
+                <Input
+                  bg="gray.50"
+                  border="none"
+                  type="number"
+                  outline={"1px solid "}
+                  rounded="lg"
+                  value={produce.quantityAvailable}
+                  onChange={(e) =>
+                    setProduce((prevProduce) => ({
+                      ...prevProduce,
+                      quantityAvailable: Number(e.target.value),
+                    }))
+                  }
+                />
+              </Flex>
+
+
+              <Flex direction={"column"} gap={1}>
+                <Text fontSize="sm" color="gray.500">
+                  Measurement Unit
+                </Text>
+                <CustomSelect
+                  defaultValue={MEASUREMENT_UNITS[0].name}
+                  options={MEASUREMENT_UNITS.slice(1).map((u) => u.name)}
+                  value={produce.unit}
+                  onChange={(value) => {
+                    setProduce((prevProduce) => ({
+                      ...prevProduce,
+                      unit: value as ProductUnit,
+                    }))
+                  }}
+                />
+
+              </Flex>
+
+              <Flex direction={"column"} gap={1}>
+                <Text fontSize="sm" color="gray.500">
+                  Harvest Date
+                </Text>
+                <DateInput
+                  // label="Harvest Date"
+                  value={produce.harvestDate}
+                  onChange={(e) =>
+                    setProduce((prevProduce) => ({
+                      ...prevProduce,
+                      harvestDate: e.target.value,
                     }))
                   }
                   helperText="When was this produce harvested?"
-                  error={!date ? "Please select a date" : undefined}
+                  error={!produce.harvestDate ? "Please select a date" : undefined}
                 />
-              </Box>
+              </Flex>
 
-              <Box>
-                <Text fontWeight="bold" color="gray.500" mb={3}>
-                  Product Description
-                </Text>
-                <Textarea
-                  defaultValue="Red sorghum, excellent for brewing or food."
-                  bg="gray.50"
-                  border="none"
-                  rounded="xl"
-                  rows={4}
-                  value={produce.description}
-                  onChange={(e) =>
-                    setProduce((prevProduce) => ({
-                      ...prevProduce,
-                      description: e.target.value,
-                    }))
-                  }
-                />
-              </Box>
+              <GridItem colSpan={2}  >
+                <Flex direction={"column"} gap={1}>
 
-              <Button
-                // leftIcon={<CheckCircle2 size={18} />}
-                bg="#10a37f"
-                color="white"
-                h="14"
-                rounded="2xl"
-                fontSize="md"
-                _hover={{ bg: "#0d8a6b" }}
-                onClick={handleCreateProduct}
-              >
-                Publish Listing
-              </Button>
-            </VStack>
-          </Box>
+                  <Text fontSize={"sm"} color="gray.500">
+                    Product Description
+                  </Text>
+                  <Textarea
+                    placeholder="Type your description here..."
+                    bg="gray.100"
+                    outline="1px solid gray"
+                    border={"none"}
+                    rounded="xl"
+                    rows={4}
+                    value={produce.description ?? ""}
+                    onChange={(e) =>
+                      setProduce((prevProduce) => ({
+                        ...prevProduce,
+                        description: e.target.value,
+                      }))
+                    }
+                  />
+                </Flex>
+              </GridItem>
+
+              <GridItem colSpan={2}>
+
+                <Button
+                  w={"full"}
+                  bg="#10a37f"
+                  color="white"
+                  p={6}
+                  rounded="2xl"
+                  fontSize="md"
+                  _hover={{ bg: "#0d8a6b" }}
+                  onClick={handleCreateProduct}
+                >
+                  Publish Listing
+                </Button>
+              </GridItem>
+
+            </SimpleGrid>
+          </GridItem>
 
           {/* --- Live Card Preview --- */}
-          <Box>
-            <ProductCard product={produce} navigate={() => navigate("/")} />
+          <Box cursor={"not-allowed"}>
+            <ProductCard product={produce} navigate={() => { }} canClick={false} />
           </Box>
         </SimpleGrid>
-      </Container>
-    </Flex>
+      </Box>
+
+    </Flex >
   );
 }
 

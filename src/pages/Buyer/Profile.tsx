@@ -1,94 +1,89 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
-  Avatar, Box, Button, HStack, Separator, Text, VStack, GridItem, Dialog, Portal, Input, CloseButton,
-  Flex,
+  Avatar,
+  Box,
+  Button,
+  HStack,
+  Separator,
+  Text,
+  VStack,
+  GridItem,
+  Dialog, Portal, Input, CloseButton,
   SimpleGrid,
+  Flex,
 } from "@chakra-ui/react";
-import Badge from "../../components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { Box as Cube } from "lucide-react"
-import { Plus } from "lucide-react";
 
-// Standard Lucide icons or your custom ones
+import Badge from "@/components/ui/badge";
+
+import { useNavigate } from "react-router-dom";
+
 import {
+  Cube,
   Location,
   Contact,
   Phone,
   Calendar,
+  RightArrow,
   Pen,
   History,
   Check,
-} from "../../components/ui/icons";
+  ShoppingBag,
+} from "@/components/ui/icons";
 import { useEffect, useState } from "react";
-import { useFarmerStore, useUserStore } from "store/store";
-import Unexpected from "@/components/ui/error/unexpected";
-import { ProductCard } from "./farmercomps";
-import { QuickLink } from "@/components/quicklink";
-import type { UserProfile } from "types/types";
-import { toaster } from "@/hooks/useUI";
-import { formatDate, getStatusColor, returnFullName } from "@/lib/helpers";
-
+import { useOrderStore, useUserStore } from "@/store/store";
 import Spin from "@/components/ui/spinner";
+import { formatCurrency, formatDate, formatPlural, getStatusColor, getTotalSpent, returnFullName } from "@/lib/helpers";
+import { QuickLink } from "@/components/quicklink";
+import { toaster } from "@/hooks/useUI";
+import type { UserProfile } from "@/types/types";
 
 const Profile = () => {
-
-
-
-  const navigate = useNavigate();
-
-  const products = useFarmerStore((state) => state.products);
-  const fetchProducts = useFarmerStore((state) => state.fetchProducts);
-  const orders = useFarmerStore((state) => state.orders);
-  const fetchOrders = useFarmerStore((state) => state.fetchOrders);
-  // const user = useAuthStore((state) => state.user);
-
-  const fetchUsers = useUserStore((state) => state.fetchUserDetails)
   const user = useUserStore((state) => state.user);
 
+  const fetchUser = useUserStore((state) => state.fetchUserDetails);
+  const orders = useOrderStore((state) => state.orders);
+  const fetchOrders = useOrderStore((state) => state.fetchOrders);
 
+  const [load, setLoad] = useState<boolean>(true);
 
-  const [error, setError] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const data = async () => {
-      try {
-        await fetchUsers()
-        await fetchProducts();
-        await fetchOrders();
-      } catch (error) {
-        console.log(error);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-
-    };
-    data();
-  }, [fetchOrders, fetchProducts, fetchUsers]);
-
-  if (error) {
-    return <Unexpected error={error} />;
-  }
-
-
-  if (loading) {
-    return <Spin h="100dvh" />;
-  }
-
+  const navigate = useNavigate();
 
   // Reusable card style
   const cardStyle = {
     bg: { base: "white", _dark: "#121212" },
-    // border: "1px solid #262626",
     rounded: "2xl",
     p: 6,
     w: "full",
     shadow: "lg"
   };
 
-  return (
-    <Flex direction={"column"} p={8} >
+  useEffect(() => {
+    const data = async () => {
+      try {
+        await fetchOrders();
+        await fetchUser()
+      } catch (error) {
+        console.log(error);
+        // setError(true);
+      } finally {
+        setLoad(false);
+      }
+    };
+    data();
+  }, []);
 
+  if (load) {
+    return <Spin h="100dvh" />;
+  }
+
+  if (!user) {
+    navigate("/login")
+    return <Spin h="100dvh" />;
+  }
+
+
+  return (
+    <Flex direction={"column"} p={8}>
       {/* BUYERS Profile */}
       {/* Header */}
       <HStack justifyContent="space-between">
@@ -97,19 +92,17 @@ const Profile = () => {
             fontSize="3xl"
             fontWeight="bold"
           >
-            Farmer's Profile
+            Buyer's Profile
           </Text>
-          <Text color="gray.500">
-            Manage your produce listings and payouts
-          </Text>
+          <Text color="gray.500">Manage your profile and track orders</Text>
         </VStack>
-        <EditProfile user={user!} />
+        <EditProfile user={user} />
       </HStack>
 
       <SimpleGrid columns={{ base: 1, lg: 3 }} gap={6} p={"4"} mt={4}>
         {/* Left Column */}
-        <GridItem>
-          <VStack gap={6}>
+        <GridItem w={"full"}>
+          <VStack gap={4} >
             {/* Profile Card */}
             <VStack
               {...cardStyle}
@@ -121,12 +114,12 @@ const Profile = () => {
                 size="2xl"
                 border="4px solid #1a1a1a"
               >
-                <Avatar.Fallback name={user!.lastName + " " + user!.firstName} color="gray.400" />
-                {/* <Avatar.Image src={user.imag';[e} /> */}
+                <Avatar.Fallback name={returnFullName(user.firstName, user.lastName)} color="gray.400" />
+                {/* <Avatar.Image src={userDetails?.image!} /> */}
               </Avatar.Root>
               <VStack gap={1} color={{ base: "black", _dark: "gray.300" }}>
                 <Text fontSize="xl" fontWeight="bold">
-                  {returnFullName(user!.firstName, user!.lastName)}
+                  {returnFullName(user.firstName, user.lastName)}
                 </Text>
 
                 <HStack
@@ -139,17 +132,29 @@ const Profile = () => {
                   bg={"gray.200/50"}
                   rounded={"lg"}
                 >
-                  {user!.role}
+                  {user.role}
                 </HStack>
               </VStack>
               <Separator borderColor="gray.800" />
               <HStack justify="space-around" w="full" textAlign="center">
                 <VStack gap={0} color={{ base: "black", _dark: "white" }}>
-                  <Text fontWeight="bold" fontSize="lg">
-                    {products.length}
+                  <Text >
+                    {orders.length}
                   </Text>
                   <Text color="gray.500" fontSize="xs">
-                    Product Listings
+                    Orders
+                  </Text>
+                </VStack>
+                <VStack gap={0}>
+                  <Text
+                    fontWeight="bold"
+
+                    color={{ base: "green.500", _dark: "green.400" }}
+                  >
+                    {formatCurrency(getTotalSpent(orders, "totalAmount"))}
+                  </Text>
+                  <Text color="gray.500" fontSize="xs">
+                    Spent
                   </Text>
                 </VStack>
 
@@ -159,33 +164,32 @@ const Profile = () => {
             {/* Contact Info */}
             <VStack
               {...cardStyle}
-              color={{ base: "black", _dark: "gray.400" }}
-              align="start"
-              gap={5}
+              align={"start"}
+              gap={4}
             >
               <HStack>
                 <Contact size={18} />
-                <Text fontWeight="bold">CONTACT INFO</Text>
+                <Text fontWeight="bold">CONTACT INFORMATION</Text>
               </HStack>
               <VStack align="start" gap={1}>
-                <Text fontSize="xs">Phone Number</Text>
+                <Text fontSize="sm">Phone Number</Text>
                 <HStack>
-                  <Phone size={16} color="orange" />
-                  <Text>{user!.phoneNumber}</Text>
+                  <Phone size={16} />
+                  <Text>{user.phoneNumber}</Text>
                 </HStack>
               </VStack>
               <VStack align="start" gap={1}>
-                <Text fontSize="xs">Farm Location</Text>
+                <Text fontSize="sm">Location</Text>
                 <HStack>
-                  <Location size={16} color="orange" />
-                  <Text>{user!.address}</Text>
+                  <Location size={16} />
+                  <Text>{user.address}</Text>
                 </HStack>
               </VStack>
               <VStack align="start" gap={1}>
-                <Text fontSize="xs">Member Since</Text>
+                <Text fontSize="sm">Member Since</Text>
                 <HStack>
-                  <Calendar size={16} color="orange" />
-                  <Text>{formatDate(user!.createdAt)}</Text>
+                  <Calendar size={16} />
+                  <Text>{formatDate(user.createdAt, "long")}</Text>
                 </HStack>
               </VStack>
             </VStack>
@@ -193,8 +197,8 @@ const Profile = () => {
             {/* Verification */}
             <VStack
               {...cardStyle}
-              align="start"
-              borderColor="green.900/30"
+              align={"start"}
+
             >
               <Text fontSize="xs" fontWeight="bold">
                 VERIFICATION
@@ -225,134 +229,119 @@ const Profile = () => {
         </GridItem>
 
         {/* Right Column */}
-        <GridItem colSpan={2}  >
+        <GridItem colSpan={2}>
 
-          {/* Active Orders */}
-
-          <Flex gap={4} flexDirection={{ base: "column", lg: "row" }}>
-            <Box minH={"30vh"} {...cardStyle} >
-              <Flex justifyContent="space-between" alignItems={"center"}>
+          <Flex gap={6}>
+            {/* Active Orders */}
+            <Box {...cardStyle} gap={6}>
+              <HStack justifyContent="space-between">
                 <HStack color={{ base: "black", _dark: "white" }}>
-                  <Cube size={20} color={"green"} />
-
-                  <Text fontWeight="bold">My Active Listings</Text>
+                  <Text color={{ base: "green.500", _dark: "orange" }}>
+                    <Cube />
+                  </Text>
+                  <Text fontWeight="bold">Pending Orders</Text>
                 </HStack>
-                <Flex
+                <HStack
                   color={{ base: "green.500", _dark: "orange" }}
                   cursor="pointer"
                   onClick={() => navigate("/orders")}
-                  alignItems={"center"}
-                  transition={"all 0.3s ease"}
-                  _hover={{ color: "green.700", cursor: "pointer" }}
                 >
-                  <Text fontSize="sm">Add New</Text>
-                  <Text fontSize={"lg"} fontWeight={"bold"}>
-                    <Plus />
-                  </Text>
+                  <Text fontSize="sm">View All</Text>
+
+                  <RightArrow />
+                </HStack>
+              </HStack>
+              {orders.filter((order) => order.status.toLowerCase() === "pending").slice(0, 3).map((order) => (
+                <Flex gap={2} alignItems={"center"} justifyContent={"space-between"} {...cardStyle} key={order.id} >
+                  <Box>
+                    <Text
+                      textTransform={"capitalize"}
+                    >
+                      {order.items![0].productName}  •  {order.items && order.items.reduce((acc, item) => acc + item.quantity, 0)} {order.items && formatPlural(order.items[0].unit!, order.items.reduce((acc, item) => acc + item.quantity, 0))}
+                    </Text>
+                    <Text fontSize="xs" color="gray.500">
+                      {formatDate(order.createdAt!)}
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Badge
+                      color={getStatusColor(order.status!)}
+                      text={order.status!}
+                    />
+                  </Box>
+
                 </Flex>
-              </Flex>
+              ))}
+            </Box>
 
-              {/* Order Item 1 */}
+            {/* Order Item 1 */}
 
-              <Flex flexDirection={"column"} mt={4} gap={4}>
-                {products.slice(0, 2).map((o) => (
-                  <ProductCard product={o} />
+            {/* Recent Purchases */}
+            <Box {...cardStyle} gap={4}>
+
+              <HStack>
+                <History color="green" />
+                <Text fontWeight="bold">Recent Purchases</Text>
+              </HStack>
+
+
+              <Flex
+                direction={"column"}
+                gap={2}
+              >
+
+
+                {orders.filter((order) => order.status.toLowerCase() !== "pending").slice(0, 3).map((order) => (
+                  <Flex gap={2} alignItems={"center"} justifyContent={"space-between"} {...cardStyle} key={order.id} >
+                    <Box>
+                      <Text
+                        textTransform={"capitalize"}
+                      >{order.items.length > 0 ?
+                        order.items[0].productName + "  •  " + order.items.reduce((acc, item) => acc + item.quantity, 0) + " " + formatPlural(order.items![0].unit!, order.items.reduce((acc, item) => acc + item.quantity, 0))
+                        : ""
+                        }
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {formatDate(order.createdAt!)}
+                      </Text>
+                    </Box>
+                    <Box textAlign={"right"}>
+                      <Text fontSize={"xs"} textTransform={"capitalize"} color={"gray.500"}>{order.farmerName}</Text>
+
+                      <Badge
+                        color={getStatusColor(order.status!)}
+                        text={order.status!}
+                      />
+                    </Box>
+
+                  </Flex>
                 ))}
               </Flex>
 
-            </Box>
+              {/* Add more recent items here... */}
 
-
-            {/* Recent Purchases */}
-            <Box {...cardStyle} gap={4} minH={"30vh"}>
-              <HStack justifyContent="space-between" alignItems={"center"} gap={8}>
-                <HStack>
-                  <History color="green" />
-                  <Text fontWeight="bold" textWrap={"nowrap"}>Recent Sales</Text>
-                </HStack>
-                <Box textWrap={"nowrap"} onClick={() => navigate("/farmer/orders")} cursor="pointer" transition={"all 0.3s ease"} color={"green.500"} fontSize={"sm"} _hover={{ color: "green.700" }} >
-                  View All Orders
-                </Box>
-              </HStack>
-
-              {orders.length == 0 ? <Text>No Sales Yet</Text> : orders
-                .filter(
-                  (o) => o.status.toLowerCase() == "accepted",
-                )
-                .map((o) => <SalesItem {...o} />)}
 
             </Box>
-
-
-
-
-
-
           </Flex>
-
-          {/* Bottom Quick Links */}
-          <Flex gap={2} mt={2} alignSelf={"start"} p={2}>
-
+          <SimpleGrid mt={4} p={2} columns={{ base: 1, md: 3 }} gap={2} w="full">
             <QuickLink
-              icon={<Plus />}
-              label="Add Product"
-              sub="List to market"
-              link="newProduct"
+              icon={<ShoppingBag />}
+              label="New Order"
+              sub="Place a new order for fresh food"
+              link="dashboard"
             />
-          </Flex>
+          </SimpleGrid>
         </GridItem>
+        {/* Bottom Quick Links */}
       </SimpleGrid>
 
-    </Flex>
+    </Flex >
   );
 };
 
+
+
 export default Profile;
-
-const SalesItem = ({ ...o }) => (
-  <HStack
-    key={o.id}
-    justifyContent="space-between"
-    cursor="pointer"
-    rounded={"md"}
-    p={4}
-    transition="all 0.2s"
-    _hover={{
-      bg: { base: "gray.50", _dark: "whiteAlpha.50" },
-      transform: "translateX(4px)",
-      boxShadow: "md"
-
-    }}
-    borderBottom="1px solid"
-    borderColor={{ base: "gray.200", _dark: "whiteAlpha.100" }}
-  >
-    {/* Left Section: Icon & Main Details */}
-    < HStack >
-
-
-      <Box>
-        <Text fontWeight="bold" fontSize="md" textTransform={"capitalize"} letterSpacing="-0.01em">
-          {o.buyerName}
-        </Text>
-        <Badge size="sm" color={getStatusColor(o.status)} text={o.status} />
-
-      </Box>
-    </HStack >
-
-    {/* Right Section: Price & Status Tag */}
-    < Box textAlign={"end"} >
-      <Text
-        fontWeight="800"
-        fontSize="sm"
-        color={"green.600"}
-      >
-        ₦{o.totalAmount}
-      </Text>
-      <Text fontSize="xs" color="gray.500">{formatDate(o.updatedAt.split("T")[0])}</Text>
-    </Box >
-  </HStack >
-);
-
 
 
 const EditProfile = ({ user }: { user: UserProfile }) => {
@@ -509,24 +498,6 @@ const EditProfile = ({ user }: { user: UserProfile }) => {
                     }
                   />
                 </Box>
-                <Box>
-                  <Text fontSize="sm" fontWeight="bold" mb={3}>
-                    State
-                  </Text>
-                  <Input
-                    defaultValue="12000"
-                    color={{ base: "black", _dark: "white" }}
-                    borderColor="gray.200"
-                    _focus={{
-                      borderColor: { base: "#10a37f", _dark: "yellow.500" },
-                      ring: "2px",
-                      ringColor: { base: "emerald.50", _dark: "yellow.50" },
-                    }}
-                    rounded="lg"
-                    value={editedUser.state ?? ""}
-                    disabled
-                  />
-                </Box>
               </SimpleGrid>
             </Dialog.Body>
             <Dialog.Footer>
@@ -550,3 +521,4 @@ const EditProfile = ({ user }: { user: UserProfile }) => {
     </Dialog.Root>
   );
 };
+

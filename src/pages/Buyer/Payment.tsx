@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import {
   Box,
   Flex,
@@ -14,6 +13,7 @@ import { ColorModeButton } from "components/ui/color-mode";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import type { Order } from "types/types";
+import { formatCurrency } from "@/lib/helpers";
 
 const Payment = () => {
   const [orders] = useState<Array<Order>>(
@@ -79,7 +79,7 @@ const Payment = () => {
         <Text>Account Number: 1234567890</Text>
 
         <Text mt={4} fontWeight="bold">
-          Amount: ₦{order.totalAmount}
+          Amount: {formatCurrency(order.price)}
         </Text>
 
         <Text>Payment Reference: {order.orderId}</Text>

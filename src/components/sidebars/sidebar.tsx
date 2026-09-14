@@ -8,12 +8,27 @@ import {
   Settings,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ColorModeButton } from "./ui/color-mode";
-import { useAuth } from "../context/AuthContext";
-import { Logout, ShoppingBag } from "./ui/icons";
+import { ColorModeButton } from "@/components/ui/color-mode";
+import { Logout, ShoppingBag } from "@/components/ui/icons";
+import { useLogout } from "@/hooks/useAuthHooks";
+import { useAuthStore } from "@/store/store";
 
 export const Sidebar = () => {
-  const { logout, user } = useAuth();
+  const user = useAuthStore((state => state.user));
+  const navigate = useNavigate();
+  const { logout } = useLogout()
+
+  const handleLogout = async () => {
+
+    const { success } = await logout()
+
+    if (success) {
+
+      navigate('/login')
+    }
+
+  }
+
   return (
     <Box bg={{ base: "white", _dark: "black" }} zIndex={"30"}>
       <Box
@@ -34,7 +49,7 @@ export const Sidebar = () => {
           gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
           className=" w-10 h-10 rounded-xl  flex items-center justify-center"
           color={{ base: "white", _dark: "#0a0a0a" }}
-          // mb={4}
+        // mb={4}
         >
           <Wheat className="w-5 h-5 " />
         </Box>
@@ -63,7 +78,7 @@ export const Sidebar = () => {
               </Button>
 
               <Button
-                onClick={logout}
+                onClick={handleLogout}
                 color={{ base: "red.600", _dark: "red.400" }}
                 bg={"none"}
               >
@@ -133,7 +148,7 @@ const NavItem = ({
       onClick={() =>
         farmerLink ? navigate(`${link}`) : navigate(`../${link}`)
       }
-      // ${active ? "bg-[#a38d6d]/10 text-[#c9a962]" : "text-gray-500 hover:bg-[#252525] hover:text-[#c9a962]"}`}
+    // ${active ? "bg-[#a38d6d]/10 text-[#c9a962]" : "text-gray-500 hover:bg-[#252525] hover:text-[#c9a962]"}`}
     >
       {icon}
     </Button>

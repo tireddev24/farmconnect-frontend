@@ -3,7 +3,7 @@ import { Box, Text, Table, TableBody } from "@chakra-ui/react";
 import Badge from "../../components/ui/badge";
 import type { Order, OrderRecord } from "../../types/types";
 
-import { formatDate, getStatusColor } from "helpers/function";
+import { formatCurrency, formatDate, getStatusColor } from "@/lib/helpers";
 
 export const OrderCard = ({ order }: { order: Order }) => {
   return (
@@ -53,77 +53,66 @@ export const OrderCard = ({ order }: { order: Order }) => {
 
 export const OrderTable = ({ orders }: { orders: OrderRecord[] }) => {
   return (
-    <>
-      <Table.Root colorPalette={"gray"}>
-        <Table.Header
-          rounded={"2xl"}
-          color={{ base: "black", _dark: "gray.500" }}
-          bg={"gray.200"}
-          className="uppercase font-bold  "
+
+    <Table.Root >
+      <Table.Header
+        textTransform={"capitalize"}
+        textWrap={'nowrap'}
+      >
+        <Table.Row
+          rounded={"lg"}
         >
+          <Table.ColumnHeader >order id</Table.ColumnHeader>
+          <Table.ColumnHeader >Items</Table.ColumnHeader>
+          <Table.ColumnHeader >Date Placed</Table.ColumnHeader>
+          <Table.ColumnHeader >Quantity</Table.ColumnHeader>
+          <Table.ColumnHeader >Amount</Table.ColumnHeader>
+          <Table.ColumnHeader >Status</Table.ColumnHeader>
+        </Table.Row>
+      </Table.Header>
+      <TableBody>
+        {orders.map((order) => (
           <Table.Row
-            rounded={"lg"}
-            className="uppercase font-bold rounded-3xl text-gray-500"
-            bg={{ base: "whiteAlpha.100", _dark: "black/90" }}
-            // border={"none"}
-            alignContent={"center"}
+            key={order.id}
+            rounded={"xl"}
+            textTransform={"capitalize"}
           >
-            <Table.ColumnHeader color={"gray.500"}>order id</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Items</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Date</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Quantity</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Amount</Table.ColumnHeader>
-            <Table.ColumnHeader color={"gray.500"}>Status</Table.ColumnHeader>
-            {/* <Table.ColumnHeader color={"gray.500"}>Action</Table.ColumnHeader> */}
+            <Table.Cell>
+              <Text>{order.orderNumber}</Text>
+            </Table.Cell>
+            <Table.Cell>
+              <Text>
+                {order.items.map((item) => (
+                  <Text key={item.productId}>{item.productName}</Text>
+                ))}
+              </Text>
+            </Table.Cell>
+            <Table.Cell>
+              <Text>{formatDate(order.createdAt)}</Text>
+            </Table.Cell>
+            <Table.Cell>
+              <Text>{order.items.reduce((acc, item) => acc + item.quantity, 0)}{order.items.map((item) => (
+                <Text as={"span"} key={item.productId}>{item.unit}</Text>
+              ))}</Text>
+            </Table.Cell>
+            <Table.Cell>
+              <Text>{formatCurrency(order.totalAmount)}</Text>
+            </Table.Cell>
+            <Table.Cell>
+              <Text>
+                <Badge
+                  text={order.status!.replace("-", " ")}
+                  color={getStatusColor(order.status)}
+                />
+              </Text>
+            </Table.Cell>
+            <Table.Cell>
+
+            </Table.Cell>
           </Table.Row>
-        </Table.Header>
-        <TableBody>
-          {orders.map((order: OrderRecord) => (
-            <Table.Row
-              alignContent={"center"}
-              key={order.id}
-              // border={"none"}
-              rounded={"xl"}
-              bg={{ base: "whiteAlpha.100", _dark: "whiteAlpha.200" }}
-            >
-              <Table.Cell>
-                <Text>{order.orderNumber}</Text>
-              </Table.Cell>
-              <Table.Cell textTransform={"capitalize"}>
-                <Text>
-                  {order.items.length > 0 && order.items[0].productName}
-                </Text>
-              </Table.Cell>
-              <Table.Cell>
-                <Text>{formatDate(order.createdAt)}</Text>
-              </Table.Cell>
-              <Table.Cell>
-                <Text>{order.items.length > 0 && order.items[0].quantity}</Text>
-              </Table.Cell>
-              <Table.Cell>
-                <Text>{order.totalAmount}</Text>
-              </Table.Cell>
-              <Table.Cell>
-                <Text>
-                  <Badge
-                    text={order.status!.replace("-", " ")}
-                    color={getStatusColor(order.status)}
-                  />
-                </Text>
-              </Table.Cell>
-              <Table.Cell>
-                {/* <Text
-                  cursor={"pointer"}
-                  onClick={() => navigate("../")}
-                  color={{ base: "green.600", _dark: "yellow.300/60" }}
-                >
-                  View Details
-                </Text> */}
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </TableBody>
-      </Table.Root>
-    </>
+        ))}
+      </TableBody>
+    </Table.Root>
+
   );
 };

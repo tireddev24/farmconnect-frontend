@@ -1,149 +1,197 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { url } from "api/axios";
-import type { CreateOrderPayload, CreateProductPayload } from "types/types";
+import { secureFetch } from "api/axios";
+
+import type {
+  OrderRecord as Order,
+  Product,
+  UserProfile,
+  CreateOrderPayload,
+  AdminUsers,
+} from "types/types";
+
 import { create } from "zustand";
 
-const token = JSON.parse(sessionStorage.getItem("accessToken")!);
+// ============================================================
+// Auth Store
+// ============================================================
 
-export const useProductStore: any = create((set) => ({
+interface AuthStore {
+  user: UserProfile | null;
+  accessToken: string | null;
+  isInitialized: boolean;
+
+  setAuth: (user: UserProfile, accessToken: string) => void;
+  clearAuth: () => void;
+  setInitialized: (value: boolean) => void;
+}
+
+export const useAuthStore = create<AuthStore>((set) => ({
+  user: null,
+  accessToken: null,
+  isInitialized: false,
+
+  setAuth: (user, accessToken) =>
+    set({ user, accessToken, isInitialized: true }),
+
+  clearAuth: () =>
+    set({ user: null, accessToken: null, isInitialized: true }),
+
+  setInitialized: (value) =>
+    set({ isInitialized: value, }),
+}));
+
+// ============================================================
+// Product Store
+// ============================================================
+
+interface ProductStore {
+  products: Product[];
+  product: Product | null;
+
+  setProducts: (products: Product[]) => void;
+
+  fetchProducts: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchProductById: (id: string) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+}
+
+export const useProductStore = create<ProductStore>((set) => ({
   products: [],
-  product: {},
-  setProducts: (products: []) => set({ products }),
+  product: null,
+
+  setProducts: (products) => set({ products }),
+
   fetchProducts: async () => {
-    const res: Response = await fetch(`${url}/products`, {
+    const res: Response = await secureFetch("/products", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
+    set({ products: data.data.items });
 
-    set({ products: data.data });
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   fetchProductById: async (id: string) => {
-    const res: Response = await fetch(`${url}/products/${id}`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res: Response = await secureFetch(`/products/${id}`);
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
 
     set({ product: data.data });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
 }));
 
-export const useOrderStore: any = create((set) => ({
+// ============================================================
+// Order Store
+// ============================================================
+
+interface OrderStore {
+  orders: Order[];
+
+  setOrders: (orders: Order[]) => void;
+
+  fetchOrders: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  createOrder: (body: CreateOrderPayload) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+}
+
+export const useOrderStore = create<OrderStore>((set) => ({
   orders: [],
-  setOrders: (orders: []) => set({ orders }),
+
+  setOrders: (orders) => set({ orders }),
+
   fetchOrders: async () => {
-    const res: Response = await fetch(`${url}/orders/my`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res: Response = await secureFetch("/orders/my");
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
 
     set({ orders: data.data.items });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   createOrder: async (body: CreateOrderPayload) => {
-    const res: Response = await fetch(`${url}/orders`, {
+    const res: Response = await secureFetch("/orders", {
       method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(body),
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
+
     if (res.status === 400) {
-      return { success: data.success, message: data.message };
+      return {
+        success: data.success,
+        message: data.message,
+      };
     }
 
     if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
+      return {
+        success: false,
+        res: 401,
+        message: data.message,
+      };
     }
 
     if (res.status === 403) {
@@ -153,497 +201,523 @@ export const useOrderStore: any = create((set) => ({
       };
     }
 
-    // set({ orders: data.data.items });
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
 }));
 
-export const useAdminStore: any = create((set) => ({
+// ============================================================
+// Admin Store
+// ============================================================
+
+interface AdminStore {
+  users: AdminUsers[];
+  orders: Order[];
+  products: Product[];
+  logs: any[];
+
+  setOrders: (orders: Order[]) => void;
+
+  fetchUsers: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchOrders: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchProducts: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchLogs: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+}
+
+export const useAdminStore = create<AdminStore>((set) => ({
   users: [],
   orders: [],
   products: [],
   logs: [],
-  setOrders: (orders: []) => set({ orders }),
+
+  setOrders: (orders) => set({ orders }),
+
   fetchUsers: async () => {
-    const res: Response = await fetch(`${url}/admin/users`, {
+    const res: Response = await secureFetch("/admin/users", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
+    set({ users: data.data.items });
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
-
-    set({ users: data });
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   fetchOrders: async () => {
-    const res: Response = await fetch(`${url}/admin/orders`, {
+    const res: Response = await secureFetch("/admin/orders", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
 
     set({ orders: data.data.items });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   fetchProducts: async () => {
-    const res: Response = await fetch(`${url}/admin/products`, {
+    const res: Response = await secureFetch("/admin/products", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
 
     set({ products: data.data.items });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   fetchLogs: async () => {
-    const res: Response = await fetch(`${url}/admin/audit-logs`, {
+    const res: Response = await secureFetch("/admin/audit-logs", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
-      };
-    }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
-
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
       };
     }
 
     set({ logs: data.data });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
 }));
 
-export const useFarmerStore: any = create((set) => ({
+// ============================================================
+// Farmer Store
+// ============================================================
+
+interface FarmerStore {
+  orders: Order[];
+  products: Product[];
+
+  setOrders: (orders: Order[]) => void;
+
+  fetchOrders: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchProducts: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  createProduct: (body: Omit<Product, "id">) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  editProduct: (
+    id: string,
+    body: Omit<Product, "id">,
+  ) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  deleteProduct: (id: string) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  acceptOrder: (
+    id: string
+  ) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  declineOrder: (
+    id: string,
+    body: { reason: string }
+  ) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+}
+
+export const useFarmerStore = create<FarmerStore>((set) => ({
   orders: [],
   products: [],
-  setOrders: (orders: []) => set({ orders }),
+
+  setOrders: (orders) => set({ orders }),
+
   fetchOrders: async () => {
-    const res: Response = await fetch(`${url}/orders/farmer`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await secureFetch("/orders/farmer");
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
 
     set({ orders: data.data.items });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
+
   fetchProducts: async () => {
-    const res: Response = await fetch(`${url}/products`, {
+    const res: Response = await secureFetch("/products/my", {
       method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
+
 
     set({ products: data.data.items });
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
-  createProduct: async (body: CreateProductPayload) => {
-    const res: Response = await fetch(`${url}/products`, {
+
+  createProduct: async (body: Omit<Product, "id">) => {
+    const res: Response = await secureFetch("/products", {
       method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(body),
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.title };
-    }
 
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
+    set((state) => ({
+      products: [...state.products, data.data],
+    }));
 
-    set({ products: data.data.items });
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
-  editProduct: async (id: string, body: CreateProductPayload) => {
-    const res: Response = await fetch(`${url}/products/${id}`, {
+
+  editProduct: async (
+    id: string,
+    body: Omit<Product, "id">,
+  ) => {
+    const res: Response = await secureFetch(`/products/${id}`, {
       method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(body),
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
-
-    // set({ products: data.data.items });
-    set((state: any) => ({
-      products: state.products.map((product: any) =>
+    set((state) => ({
+      products: state.products.map((product) =>
         product.id === id ? data.data : product,
       ),
     }));
 
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
-  deleteProduct: async (id: string) => {
-    const res: Response = await fetch(`${url}/products/${id}`, {
+
+  deleteProduct: async (id) => {
+    const res: Response = await secureFetch(`/products/${id}`, {
       method: "DELETE",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
-    set((state: any) => ({
-      products: state.products.filter((product: any) => product.id !== id),
+    set((state) => ({
+      products: state.products.filter(
+        (product) => product.id !== id,
+      ),
     }));
-    return { success: true, message: data.message };
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
-  acceptOrder: async (id: string, body: CreateOrderPayload) => {
-    const res: Response = await fetch(`${url}/orders/${id}/accept`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+
+  acceptOrder: async (
+    id: string
+  ) => {
+    const res: Response = await secureFetch(
+      `/orders/${id}/accept`,
+      {
+        method: "POST"
       },
-      body: JSON.stringify(body),
-    });
+    );
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.title };
-    }
 
-    if (res.status === 403) {
+    set((state) => ({
+      orders: state.orders.map((order) =>
+        order.id === id ? data.data : order,
+      ),
+    }));
+
+    return {
+      success: true,
+      message: data.message,
+    };
+  },
+  declineOrder: async (
+    id,
+    body
+  ) => {
+    const res: Response = await secureFetch(
+      `/orders/${id}/decline`,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
       return {
         success: false,
-        message: "You are not authorized to perform this action",
+        message: "Unable to communicate with server",
       };
     }
 
-    set({ products: data.data.items });
-    return { success: true, message: data.message };
+
+
+    set((state) => ({
+      orders: state.orders.filter(
+        (order) => order.id !== id,
+      ),
+    }));
+
+    return {
+      success: true,
+      message: data.message,
+    };
   },
 }));
 
-export const useUserStore: any = create((set) => ({
-  user: {},
+// ============================================================
+// User Store
+// ============================================================
+
+interface UserStore {
+  user: UserProfile | null;
+  products: Product[];
+
+  setUsers: (users: UserProfile[]) => void;
+
+  changePass: (pass: string) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  fetchUserDetails: () => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+
+  editUserDetails: (body: Partial<UserProfile>) => Promise<{
+    success: boolean;
+    message: string;
+    res?: number;
+  }>;
+}
+
+export const useUserStore = create<UserStore>((set) => ({
+  user: null,
   products: [],
-  setUsers: (users: []) => set({ users }),
+
+  setUsers: (users) => {
+    // Kept to match your original store.
+    // If users are not actually stored in this store,
+    // this function can be removed.
+    console.log(users);
+  },
+
   changePass: async (pass: string) => {
-    const res: Response = await fetch(`${url}/api/users/passchg`, {
+    const res: Response = await secureFetch("/api/users/passchg", {
       method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(pass),
     });
-    if (!res) {
-      return { success: false, message: "Unable to communicate with server" };
-    }
 
-    const data = await res.json();
-
-    if (res.status === 400) {
-      return { success: data.success, message: data.message };
-    }
-
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
-
-    return { success: data.success, message: data.message };
-  },
-  fetchUserDetails: async () => {
-    const res: Response = await fetch(`${url}/users/me`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = await res.json();
-
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
+    const data = await res.json();
 
-    if (res.status === 403) {
+    return {
+      success: data.success,
+      message: data.message,
+    };
+  },
+
+  fetchUserDetails: async () => {
+    const res: Response = await secureFetch("/users/me", {
+      method: "GET",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
       return {
         success: false,
-        message: "You are not authorized to perform this action",
+        message: "Unable to communicate with server",
       };
     }
+
     set({ user: data.data });
 
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
-  editUserDetails: async (body: CreateProductPayload) => {
-    const res: Response = await fetch(`${url}/users/me`, {
+
+  editUserDetails: async (
+    body: Partial<UserProfile>,
+  ) => {
+    const res: Response = await secureFetch("/users/me", {
       method: "PUT",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
       body: JSON.stringify(body),
     });
+
     const data = await res.json();
 
-    if (!res) {
+    if (!res.ok) {
       return {
         success: false,
         message: "Unable to communicate with server",
       };
     }
-    if (res.status === 400) {
-      return { success: data.success, message: data.title };
-    }
 
-    if (res.status === 401) {
-      return { success: false, res: 401, message: data.message };
-    }
-
-    if (res.status === 403) {
-      return {
-        success: false,
-        message: "You are not authorized to perform this action",
-      };
-    }
-
-    // set({ products: data.data.items });
-    set((state: any) => ({
+    set((state) => ({
       user: {
-        ...state.user, // Keep existing fields (id, category, etc.)
+        ...state.user,
         ...data.data,
-      }, // Overwrite with new fields from the response
+      } as UserProfile,
     }));
 
-    return { success: true, message: data.message };
+    return {
+      success: true,
+      message: data.message,
+    };
   },
 }));

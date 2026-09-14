@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+
 import {
   Box,
   Flex,
@@ -8,23 +8,24 @@ import {
   VStack,
   HStack,
   Icon,
-  Center,
-  Link,
   Input,
 } from "@chakra-ui/react";
 import { ArrowLeft } from "lucide-react";
-import { ColorModeButton } from "components/ui/color-mode";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useState } from "react";
 import Spin from "components/ui/spinner";
 import { type CreateOrderPayload, type Product } from "types/types";
-import { useOrderStore } from "store/store";
-import { Toaster, toaster } from "components/ui/toaster";
+import { useAuthStore } from "store/store";
+import { Toaster } from "components/ui/toaster";
+import { toaster } from "@/hooks/useUI";
+import { returnFullName } from "@/lib/helpers";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const [loading, setLoading] = useState(false);
-  const { createOrder } = useOrderStore();
 
+
+  const user = useAuthStore((state) => state.user)
   const navigate = useNavigate();
 
   const [order, setOrder] = useState<CreateOrderPayload>(
@@ -35,23 +36,37 @@ const Checkout = () => {
   );
 
   const handleNext = async () => {
-    setLoading(true);
-    //send order placed to backend
 
-    const { success, message } = await createOrder(order);
-
+    setLoading(true)
     toaster.create({
-      type: success ? "success" : "error",
-      title: success ? "Success" : "Error",
-      description: message,
-    });
+      type: "info",
+      title: "Info",
+      description: "Payment not integrated yet."
+    })
+    setLoading(false)
 
-    setLoading(false);
+    // setLoading(true);
+    // //send order placed to backend
 
-    navigate("../orders");
+    // const { success, message } = await createOrder(order);
+
+    // toaster.create({
+    //   type: success ? "success" : "error",
+    //   title: success ? "Success" : "Error",
+    //   description: message,
+    // });
+
+    // setLoading(false);
+
+    // navigate("../orders");
   };
 
   const path = location.pathname;
+
+
+  if (!user) {
+    return <Navigate to="/login" replace={true} />
+  }
 
   return (
     <Box bg={{ base: "#f8fafb", _dark: "black" }} minH="100vh" w={"full"}>
@@ -70,27 +85,28 @@ const Checkout = () => {
           borderBottom="1px solid"
           borderColor="gray.100"
         >
-          <Link
-            href={`../product/${product.id}`}
+          <Button
+            onClick={() => navigate(-1)}
             display="flex"
             alignItems="center"
             gap={2}
-            color="gray.500"
+            colorPalette="green"
+            variant={"ghost"}
             fontSize="sm"
           >
             <Icon as={ArrowLeft} /> Back
-          </Link>
-          <Heading color="#10a37f">
-            <Text fontSize={"lg"} fontWeight={"bold"}>
-              FARMCONNECT
-            </Text>
-          </Heading>
-          <ColorModeButton />
+          </Button>
         </Flex>
 
-        <Center>
-          <Text>Checkout Page</Text>
-        </Center>
+
+        <Heading
+          fontSize={"xl"}
+          fontWeight={"bold"}
+          textAlign={"center"}
+          mt={"4"}
+        >
+          Checkout Page
+        </Heading>
 
         <Box
           py={12}
@@ -112,7 +128,7 @@ const Checkout = () => {
                       className=" rounded-2xl  flex items-center justify-center text-2xl"
                     >
                       {/* {order.icon} */}
-                      {product?.imageUrls![0] || "🥕"}
+                      {"🥕"}
                     </Box>
                     <Heading size="2xl" textTransform={"capitalize"}>
                       {product.name}
@@ -144,9 +160,9 @@ const Checkout = () => {
                 </VStack>
               </Flex>
 
-              <Box>
+              <Box textTransform={"capitalize"}>
                 <Text>Order Breakdown</Text>
-                <Text>Buyer: {"Buyer"}</Text>
+                <Text>Buyer: {returnFullName(user.firstName, user.lastName)}</Text>
                 <Text>Seller: {product.farmerName}</Text>
                 <Text>Item: {product.name}</Text>
                 <HStack justifyContent={"space-between"} m={4}>

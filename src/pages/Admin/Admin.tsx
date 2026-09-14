@@ -7,22 +7,21 @@ import { useEffect, useState } from "react";
 import { ColorModeButton } from "components/ui/color-mode";
 import { useAdminStore } from "store/store";
 import Spin from "components/ui/spinner";
-import Unexpected from "error/unexpected";
-import PieChartComp from "components/chart";
-import type { OrderRecord } from "types/types";
+import Unexpected from "@/components/ui/error/unexpected";
+import { PieChartComp } from "components/chart";
+
 
 const AdminDashboard = () => {
-  // Chart Data
-  //   const chartData = [
-  //     { name: "Farmers", value: 400, color: "#10a37f" },
-  //     { name: "Buyers", value: 300, color: "#f59e0b" },
-  //     { name: "Logistics", value: 300, color: "#2563eb" },
-  //   ];
 
-  const [load, setLoad] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<boolean>(false);
 
-  const { users, fetchUsers, orders, fetchOrders } = useAdminStore();
+  const users = useAdminStore((state) => state.users)
+  const orders = useAdminStore((state) => state.orders);
+
+  const fetchUsers = useAdminStore((state) => state.fetchUsers)
+  const fetchOrders = useAdminStore((state) => state.fetchOrders);
+
 
   useEffect(() => {
     const data = async () => {
@@ -31,21 +30,17 @@ const AdminDashboard = () => {
         await fetchOrders();
       } catch (error) {
         console.log(error);
-
         setError(true);
       } finally {
-        setLoad(false);
+        setLoading(false);
       }
     };
     data();
-  }, []);
+  }, [fetchUsers, fetchOrders]);
 
-  if (load)
-    return (
-      <VStack minH={"100dvh"} justifyContent={"center"}>
-        <Spin />
-      </VStack>
-    );
+  if (loading) {
+    return <Spin h="100dvh" />;
+  }
 
   if (error) {
     return <Unexpected error={error} />;
@@ -53,6 +48,7 @@ const AdminDashboard = () => {
 
   return (
     <Flex minH="100vh">
+
       {/* --- Main Content --- */}
       <Box flex={1} p={10}>
         <Flex justify="space-between" align="center" mb={8}>
@@ -69,7 +65,7 @@ const AdminDashboard = () => {
         <SimpleGrid columns={2} spaceX={6} mb={8}>
           <StatCard
             label="Total Users"
-            value={users.data.totalCount}
+            value={users.length.toString()}
             icon={Users}
             iconColor="blue.500"
             iconBg="blue.50"
@@ -79,8 +75,8 @@ const AdminDashboard = () => {
             label="Pending Approvals"
             value={
               orders.filter(
-                (p: OrderRecord) => p.status.toLowerCase() == "pending",
-              ).length
+                (p) => p.status.toLowerCase() === "pending",
+              ).length.toString()
             }
             icon={UserCheck}
             iconColor="orange.500"
@@ -109,7 +105,7 @@ const AdminDashboard = () => {
               User Distribution
             </Heading>
             <Box>
-              <PieChartComp users={users.data.items} />
+              <PieChartComp users={users} />
             </Box>
           </Box>
 
@@ -146,7 +142,5 @@ const AdminDashboard = () => {
     </Flex>
   );
 };
-
-// --- Helper Components ---
 
 export default AdminDashboard;

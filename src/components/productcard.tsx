@@ -2,24 +2,24 @@ import { TrendingUp, Package, TrendingDown } from "lucide-react";
 import type { Product } from "types/types";
 import { Box, Text } from "@chakra-ui/react";
 import type { NavigateFunction } from "react-router-dom";
-import { returnCategoryName } from "helpers/function";
+import { returnCategoryName } from "@/lib/helpers";
 
 export const ProductCard = ({
   product,
   navigate,
+  canClick = true
 }: {
   product: Product;
   navigate: NavigateFunction;
+  canClick?: boolean
 }) => (
   <Box
-    padding={4}
+    cursor={canClick ? "pointer" : "not-allowed"} p={4}
     bg={{ base: "white", _dark: "whiteAlpha.300/50" }}
-    border={"1px solid"}
-    borderColor={{ base: "gray.100", _dark: "gray.700" }}
-    cursor={"pointer"}
-    margin={4}
-    rounded={"xl"}
-    _hover={{ boxShadow: "0px 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+    border={"1px solid"} borderColor={{ base: "gray.100", _dark: "gray.700" }}
+    margin={4} rounded={"xl"}
+    transition={"all 0.3s ease"}
+    _hover={{ shadow: "sm", shadowColor: "green.100" }}
     onClick={() => navigate(`/product/${product.id}`)}
   >
     <Box className="flex items-center gap-4" mb={2}>
@@ -28,7 +28,8 @@ export const ProductCard = ({
         className="w-14 h-14 rounded-2xl  flex items-center justify-center text-2xl"
         fontSize={30}
       >
-        {product.imageUrls ? product.imageUrls![0] || "🌽" : "🌽"}
+        {"🌽"}
+        {/* upgrade for image */}
       </Box>
       <Box className="flex flex-col items-start">
         <h3 className="font-semibold text-gray-200">
@@ -59,7 +60,7 @@ export const ProductCard = ({
           fontWeight={"bold"}
           fontSize={"xs"}
         >
-          {returnCategoryName(product.categoryId) || product.categoryName}
+          {returnCategoryName(product.categoryId)}
         </Text>
       </Box>
     </Box>
@@ -124,8 +125,8 @@ export const ProductCard = ({
       className="flex items-center justify-between  border-t border-[#252525]"
     >
       <span className="flex items-center gap-1">
-        <Package size={14} />{" "}
-        {`${product.quantityAvailable} ${product.unit}${product.quantityAvailable > 1 && product.unit != "" ? "s" : ""} `}{" "}
+        <Package size={14} />
+        {`${product.quantityAvailable} ${product.unit}${product.quantityAvailable > 1 && product.unit?.toLowerCase() != "kg" ? "s" : ""} `}
         in stock
       </span>
       <span
