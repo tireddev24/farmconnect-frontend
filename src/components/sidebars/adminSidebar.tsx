@@ -19,29 +19,41 @@ import {
   ScrollText,
 } from "lucide-react";
 import SidebarItem from "./sidebaritem";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import { useLogout } from "@/hooks/useAuthHooks"
+import { useNavigate } from "react-router-dom";
 
 const AdminSidebar = () => {
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
+
+  const navigate = useNavigate()
+
+  const { logout } = useLogout()
+  const handleLogout = async () => {
+
+    const { success } = await logout()
+
+    if (success) {
+      return navigate("/login")
+    }
+  }
   return (
     <VStack
-      //   w="280px"
-      flex={1}
-      bg={{ base: "white", _dark: "#141414" }}
       borderRight="1px solid"
-      borderColor="gray.100"
+      borderColor="gray.600"
       p={6}
-      minH={"dvh"}
-      align="stretch"
+      minH={'100dvh'}
+      justifyContent={"space-between"}
+
     >
-      <HStack mb={10} spaceX={3}>
+      <HStack mb={4} spaceX={3}>
         <Box
           bgGradient={"to-r"}
           gradientFrom={{ base: "green.600/90", _dark: "#c9a962" }}
           gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
           className=" w-10 h-10 rounded-xl  flex items-center justify-center"
           color={{ base: "white", _dark: "#0a0a0a" }}
-          // mb={4}
+
         >
           <Wheat className="w-5 h-5 " />
         </Box>
@@ -50,7 +62,7 @@ const AdminSidebar = () => {
         </Heading>
       </HStack>
 
-      <VStack align="stretch" spaceX={2} flex={1}>
+      <VStack align="stretch" mb={"auto"} >
         <SidebarItem
           icon={LayoutDashboard}
           label="Dashboard"
@@ -60,7 +72,7 @@ const AdminSidebar = () => {
           icon={Users}
           label="User Management"
           link="usermanagement"
-          // badge="3"
+        // badge="3"
         />
         <SidebarItem icon={Notebook} label="Product Details" link="products" />
         <SidebarItem
@@ -90,7 +102,7 @@ const AdminSidebar = () => {
           colorPalette="red"
           size="sm"
           rounded="lg"
-          onClick={logout}
+          onClick={handleLogout}
         >
           Logout
         </Button>

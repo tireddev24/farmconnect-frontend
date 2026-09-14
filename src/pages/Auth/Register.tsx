@@ -24,12 +24,15 @@ import {
   // User,
   Location as MapPin,
   // ShieldCheck,
-} from "../components/ui/icons";
-import CustomSelect from "../components/customselect";
-import Spin from "../components/ui/spinner";
+} from "@/components/ui/icons";
+import CustomSelect from "@/components/customselect";
+import Spin from "@/components/ui/spinner";
 import { Wheat } from "lucide-react";
-import { Toaster, toaster } from "../components/ui/toaster";
-import useRegister from "../hooks/useRegister";
+import { Toaster } from "@/components/ui/toaster";
+import { toaster } from "@/hooks/useUI";
+
+import { useRegister } from "@/hooks/useAuthHooks";
+import type { UserRole } from "@/types/types";
 
 export default function Register() {
   const { registerUser } = useRegister();
@@ -38,8 +41,9 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [address, setAddress] = useState("");
+  const [state, setState] = useState("")
   // const [nin, setNin] = useState("");
-  const [role, setRole] = useState("Buyer");
+  const [role, setRole] = useState<UserRole>("Buyer");
   // const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // const [password, setPassword] = useState("");
@@ -52,7 +56,7 @@ export default function Register() {
     e.preventDefault();
     try {
       setLoading(true);
-      setTimeout(() => {}, 5000);
+      setTimeout(() => { }, 5000);
       // return;
       const { success, message } = await registerUser({
         firstName,
@@ -62,8 +66,8 @@ export default function Register() {
         phoneNumber,
         role,
         address,
-        // nin,
-        // username,
+        state
+
       });
 
       toaster.create({
@@ -73,7 +77,7 @@ export default function Register() {
       });
 
       if (success) {
-        setTimeout(() => {}, 2000);
+        setTimeout(() => { }, 2000);
         navigate("/dashboard");
       }
     } catch (err) {
@@ -156,7 +160,7 @@ export default function Register() {
           <form>
             <Stack spaceX={0}>
               {/* Names Row */}
-              <SimpleGrid columns={2} spaceX={4}>
+              <SimpleGrid columns={2} gap={4}>
                 <Box>
                   <Text
                     fontSize="xs"
@@ -195,10 +199,7 @@ export default function Register() {
                     onChange={(e) => setLastname(e.target.value)}
                   />
                 </Box>
-              </SimpleGrid>
 
-              {/* email and Phone */}
-              <SimpleGrid columns={2} spaceX={4}>
                 <Box>
                   <Text
                     fontSize="xs"
@@ -209,18 +210,17 @@ export default function Register() {
                   >
                     Email Address
                   </Text>
-                  <InputGroup>
-                    <>
-                      <Input
-                        type="email"
-                        placeholder="johndoe@gmail.com"
-                        h="12"
-                        rounded="xl"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value.toLowerCase())}
-                      />
-                    </>
-                  </InputGroup>
+
+                  <Input
+                    type="email"
+                    placeholder="johndoe@gmail.com"
+                    h="12"
+                    rounded="xl"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value.toLowerCase())}
+                  />
+
+
                 </Box>
                 <Box>
                   <Text
@@ -232,75 +232,67 @@ export default function Register() {
                   >
                     Phone Number
                   </Text>
-                  <InputGroup>
-                    <>
-                      <Input
-                        placeholder="080..."
-                        h="12"
-                        rounded="xl"
-                        value={phoneNumber}
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                      />
-                    </>
-                  </InputGroup>
+                  <Input
+                    placeholder="080..."
+                    h="12"
+                    rounded="xl"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+
                 </Box>
+
+                {/* Residential Address */}
+
+                <Box >
+                  <Text
+                    fontSize="xs"
+                    fontWeight="bold"
+                    color="gray.500"
+                    mb={1}
+                    ml={1}
+                  >
+                    Address
+                  </Text>
+                  <InputElement h="12">
+                    <Icon as={MapPin} fontSize={"xl"} color="gray.400" />
+                  </InputElement>
+                  <Input
+                    placeholder="Street City"
+                    pl="10"
+                    h="12"
+                    rounded="xl"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </Box>
+
+                <Box>
+                  <Text
+                    fontSize="xs"
+                    fontWeight="bold"
+                    color="gray.500"
+                    mb={1}
+                    ml={1}
+                  >
+                    State
+                  </Text>
+                  <InputElement h="12">
+                    <Icon as={MapPin} fontSize={"xl"} color="gray.400" />
+                  </InputElement>
+                  <Input
+                    placeholder="State"
+                    pl="10"
+                    h="12"
+                    rounded="xl"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                  />
+                </Box>
+
               </SimpleGrid>
 
-              {/* Residential Address */}
-              <Box>
-                <Text
-                  fontSize="xs"
-                  fontWeight="bold"
-                  color="gray.500"
-                  mb={1}
-                  ml={1}
-                >
-                  Address
-                </Text>
-                <InputGroup>
-                  <>
-                    <InputElement h="12">
-                      <Icon as={MapPin} fontSize={"xl"} color="gray.400" />
-                    </InputElement>
-                    <Input
-                      placeholder="Street, City, State"
-                      pl="10"
-                      h="12"
-                      rounded="xl"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                  </>
-                </InputGroup>
-              </Box>
 
-              {/* NIN */}
-              {/* <Box>
-                <Text
-                  fontSize="xs"
-                  fontWeight="bold"
-                  color="gray.500"
-                  mb={1}
-                  ml={1}
-                >
-                  NIN (Verification)
-                </Text>
-                <InputGroup>
-                  <>
-                    <InputElement h="12">
-                      <Icon as={ShieldCheck} fontSize={"xl"} color="gray.400" />
-                    </InputElement>
-                    <Input
-                      placeholder="11-digit NIN"
-                      pl="10"
-                      h="12"
-                      rounded="xl"
-                      value={nin}
-                      onChange={(e) => setNin(e.target.value)}
-                    />
-                  </>
-                </InputGroup>
-              </Box> */}
 
               {/* Account Role */}
               <Box>
@@ -319,39 +311,13 @@ export default function Register() {
                       defaultValue="BUYER"
                       options={["Buyer", "Farmer"]}
                       value={role}
-                      onChange={(e) => setRole(e)}
+                      onChange={(e) => setRole(e as UserRole)}
                     />
                   </>
                 </InputGroup>
               </Box>
 
-              {/* Username */}
-              {/* <Box>
-                <Text
-                  fontSize="xs"
-                  fontWeight="bold"
-                  color="gray.500"
-                  mb={1}
-                  ml={1}
-                >
-                  Username
-                </Text>
-                <InputGroup>
-                  <>
-                    <InputElement h="12">
-                      <Icon as={User} fontSize={"md"} color="gray.400" />
-                    </InputElement>
-                    <Input
-                      placeholder="Create a username"
-                      pl="10"
-                      h="12"
-                      rounded="xl"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </>
-                </InputGroup>
-              </Box> */}
+
 
               {/* Password */}
               <Box>
@@ -426,7 +392,7 @@ export default function Register() {
           <LeftArrow />
           Back to Market
         </Link>
-      </Center>
-    </Box>
+      </Center >
+    </Box >
   );
 }

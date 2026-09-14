@@ -12,24 +12,27 @@ import {
   CloseButton,
   SimpleGrid,
   Input,
+  Flex,
 } from "@chakra-ui/react";
-import { Truck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Product } from "../../types/types";
 import { useEffect, useState } from "react";
 import { useFarmerStore } from "store/store";
-import Unexpected from "error/unexpected";
-import Loader from "components/ui/load";
-import { formatDate, returnCategoryId } from "helpers/function";
+import Unexpected from "@/components/ui/error/unexpected";
+import { formatDate } from "@/lib/helpers";
 import { Pen, Trash } from "components/ui/icons";
-import { Toaster, toaster } from "components/ui/toaster";
+import { Toaster } from "components/ui/toaster";
+import { toaster } from "@/hooks/useUI";
+import Spin from "@/components/ui/spinner";
 
 export default function FarmerProducts() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const { products, fetchProducts } = useFarmerStore();
+
+  const products = useFarmerStore((state) => state.products)
+  const fetchProducts = useFarmerStore((state) => state.fetchProducts)
 
   useEffect(() => {
     const data = async () => {
@@ -43,173 +46,136 @@ export default function FarmerProducts() {
       }
     };
     data();
-  }, []);
+  }, [fetchProducts]);
 
   if (error) {
     return <Unexpected error={error} />;
   }
 
   if (loading) {
-    return <Loader />;
+    return <Spin h="100dvh" />
   }
 
   return (
-    <Box
-      minH="100vh"
-      display={"flex"}
-      flex={1}
-      //   w={"full"}
-      color={{ base: "black", _dark: "white" }}
+    <Flex p={8}
     >
       <Toaster />
-      <Box
-        display={"flex"}
-        flexDir={"row"}
-        flex={1}
-        justifyContent={"center"}
-        mx={"auto"}
-      >
-        <Box display={"flex"} flexDir={"column"} gap={10} mt={10}>
-          <HStack
-            minW={"5xl"}
-            display={"flex"}
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            className=" font-sans "
-          >
+      <Box display={"flex"} flexDir={"column"} w={"full"} gap={4} mt={4}>
+        <HStack
+          display={"flex"}
+          flexDirection={"row"}
+          justifyContent={"space-between"}
+        >
+          <Box>
+            <Heading size="2xl">
+              Product Management
+            </Heading>
+            <Text color="gray.500" fontSize="sm">
+              Manage your product listings.
+            </Text>
+          </Box>
+          <HStack spaceX={4}>
             <Box>
-              <Heading size="xl" mb={1}>
-                Product Management
-              </Heading>
-              <Text color="gray.500" fontSize="sm">
-                Manage your product listings.
-              </Text>
-            </Box>
-            <HStack spaceX={4}>
-              <Box>
-                <Button
-                  mr={4}
-                  colorPalette={"gray"}
-                  variant={"outline"}
-                  disabled
-                  display={"none"}
-                >
-                  Support
-                </Button>
-                <Button
-                  p={2}
-                  onClick={() => navigate("../newProduct")}
-                  bg={{ base: "green.600", _dark: "#8a7557" }}
-                >
-                  List New Product
-                </Button>
-              </Box>
-            </HStack>
-          </HStack>{" "}
-          {/* Active Deliveries Section */}
-          <VStack display={"none"} align="stretch" spaceX={6} mb={12}>
-            <HStack alignSelf={"flex-start"}>
-              <Text
-                fontWeight={"bold"}
-                fontSize={20}
-                color={{ base: "green.600", _dark: "yellow.400/80" }}
+              <Button
+                mr={4}
+                colorPalette={"gray"}
+                variant={"outline"}
+                disabled
+                display={"none"}
               >
-                <Truck />
-              </Text>
-              <Text
-                color={{ base: "green.600", _dark: "yellow.400/80" }}
-                fontSize={18}
-                fontWeight={"semibold"}
+                Support
+              </Button>
+              <Button
+                p={2}
+                onClick={() => navigate("../newProduct")}
+                variant={{ base: "outline", _dark: "surface" }}
+                colorPalette={{ base: "green", _dark: "yellow" }}
               >
-                Outbound Shipments (2)
-              </Text>
-            </HStack>
-          </VStack>
-          {/* History Section */}
-          <VStack align="stretch" spaceX={6}>
-            <Box
-              bg="#111"
-              rounded="2xl"
-              border="1px solid"
-              borderColor="whiteAlpha.100"
-              overflow="hidden"
-            >
-              <Table.Root size="lg">
-                <Table.Header
-                  borderBottom="1px solid"
-                  borderColor="whiteAlpha.100"
-                >
-                  <Table.Row textTransform={"capitalize"}>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      Product Name
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      Category
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      unit
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      price per unit
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      Quantity Available
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      date
-                    </Table.Cell>
-                    <Table.Cell color="gray.600" fontSize="xs">
-                      Actions
-                    </Table.Cell>
-                  </Table.Row>
-                </Table.Header>
-                <TableBody>
-                  {products
-                    .filter((p: Product) => p.isAvailable == true)
-                    .map((p: Product) => (
-                      <ProductRow product={p} />
-                    ))}
-                </TableBody>
-              </Table.Root>
+                List New Product
+              </Button>
             </Box>
-          </VStack>
-        </Box>
+          </HStack>
+        </HStack>
+
+        {/* History Section */}
+        <VStack align="stretch" mt={4} spaceX={6}>
+          <Box
+            rounded="2xl"
+            overflow="hidden"
+            shadow={"md"}
+            p={4}
+            minH={"60vh"}
+          >
+            <Table.Root >
+              <Table.Header
+                borderBottom="1px solid"
+                borderColor="whiteAlpha.100"
+              >
+                <Table.Row textTransform={"capitalize"} fontWeight={"bold"}>
+                  <Table.Cell>
+                    Product Name
+                  </Table.Cell>
+                  <Table.Cell >
+                    Category
+                  </Table.Cell>
+                  <Table.Cell>
+                    unit
+                  </Table.Cell>
+                  <Table.Cell>
+                    rice per unit
+                  </Table.Cell>
+                  <Table.Cell>
+                    Quantity Available
+                  </Table.Cell>
+                  <Table.Cell>
+                    Date Harvested
+                  </Table.Cell>
+                  <Table.Cell>
+                    Actions
+                  </Table.Cell>
+                </Table.Row>
+              </Table.Header>
+              <TableBody>
+                {products
+                  .map((product) => (
+                    <ProductRow {...product} />
+                  ))}
+              </TableBody>
+            </Table.Root>
+          </Box>
+        </VStack>
       </Box>
-    </Box>
+    </Flex>
   );
 }
 
-const ProductRow = ({ product }: { product: Product }) => {
+const ProductRow = (product: Product) => {
+
   return (
-    <Table.Row
-      borderBottom="1px solid"
-      borderColor="whiteAlpha.50"
-      _last={{ border: 0 }}
-      key={product.id}
-    >
-      <Table.Cell color="gray.500" fontSize="sm">
+    <Table.Row key={product.id}>
+      <Table.Cell >
         {product.name}
       </Table.Cell>
-      <Table.Cell fontWeight="bold" fontSize="sm">
+      <Table.Cell >
         {product.categoryName}
       </Table.Cell>
-      <Table.Cell color="gray.500" fontSize="sm">
+      <Table.Cell >
         {product.unit}
       </Table.Cell>
-      <Table.Cell fontWeight="bold" fontSize="sm">
+      <Table.Cell >
         {product.pricePerUnit}
       </Table.Cell>
       <Table.Cell>{product.quantityAvailable}</Table.Cell>
       <Table.Cell>
-        <Text>{formatDate(String(product.createdAt))}</Text>
+        <Text>{formatDate(String(product.harvestDate))}</Text>
       </Table.Cell>
       <Table.Cell>
         <HStack gap={2}>
-          <Text bg={"green.200"} rounded={"lg"} cursor={"pointer"}>
-            <Edit prod={product} />
+          <Text rounded={"lg"} cursor={"pointer"}>
+            <Edit {...product} />
           </Text>
-          <Text bg={"red.300"} rounded={"lg"} cursor={"pointer"}>
-            <Delete prod={product} />
+          <Text rounded={"lg"} cursor={"pointer"}>
+            <Delete {...product} />
           </Text>
         </HStack>
       </Table.Cell>
@@ -217,14 +183,13 @@ const ProductRow = ({ product }: { product: Product }) => {
   );
 };
 
-const Edit = ({ prod }: { prod: Product }) => {
-  const [editedProduce, setEditProduce] = useState<Product>({
-    ...prod,
-    categoryId: returnCategoryId(prod.categoryName!)!,
-  });
+const Edit = (prod: Product) => {
+  const [editedProduce, setEditProduce] = useState(prod);
 
-  const { editProduct } = useFarmerStore();
+  const editProduct = useFarmerStore((state) => state.editProduct);
+
   const handleEdit = async (id: string, data: Product) => {
+
     const { success, message } = await editProduct(id, data);
 
     toaster.create({
@@ -245,8 +210,11 @@ const Edit = ({ prod }: { prod: Product }) => {
       onOpenChange={(e) => setOpen(e.open)}
     >
       <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm" _hover={{ bg: "green.300" }}>
+        <Button variant="subtle" size="sm" colorPalette={"green"}>
           <Pen />
+          <Text as={"span"} display={{ base: "none", md: "block" }}>
+            Edit
+          </Text>
         </Button>
       </Dialog.Trigger>
       <Portal>
@@ -262,36 +230,19 @@ const Edit = ({ prod }: { prod: Product }) => {
                   <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
                     Product Name (₦)
                   </Text>
-                  <Input
-                    defaultValue="12000"
-                    bg="gray.50"
-                    border="none"
-                    rounded="xl"
-                    h="12"
-                    value={editedProduce.name}
-                    disabled
-                  />
+                  <Input bg="gray.50" border="none" rounded="xl" h="12" value={editedProduce.name} disabled />
                 </Box>
                 <Box flex={1}>
                   <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
-                    Product Category
+                    Category
                   </Text>
-                  <Input
-                    defaultValue="12000"
-                    bg="gray.50"
-                    border="none"
-                    rounded="xl"
-                    h="12"
-                    value={editedProduce.categoryName}
-                    disabled
-                  />
+                  <Input bg="gray.50" border="none" rounded="xl" h="12" value={editedProduce.categoryName} disabled />
                 </Box>
                 <Box flex={1}>
                   <Text fontSize="sm" fontWeight="bold" color="gray.500" mb={3}>
                     Your Selling Price (₦)
                   </Text>
                   <Input
-                    defaultValue="12000"
                     bg="gray.50"
                     border="none"
                     rounded="xl"
@@ -310,7 +261,6 @@ const Edit = ({ prod }: { prod: Product }) => {
                     Quantity Available (₦)
                   </Text>
                   <Input
-                    defaultValue="12000"
                     bg="gray.50"
                     border="none"
                     rounded="xl"
@@ -333,7 +283,7 @@ const Edit = ({ prod }: { prod: Product }) => {
               </Dialog.ActionTrigger>
               <Button
                 colorPalette="red"
-                onClick={() => handleEdit(prod.id!, editedProduce)}
+                onClick={() => handleEdit(prod.id, editedProduce)}
               >
                 Update Product Details
               </Button>
@@ -348,7 +298,7 @@ const Edit = ({ prod }: { prod: Product }) => {
   );
 };
 
-const Delete = ({ prod }: { prod: Product }) => {
+const Delete = (prod: Product) => {
   const { deleteProduct } = useFarmerStore();
 
   const [open, setOpen] = useState(false);
@@ -371,8 +321,11 @@ const Delete = ({ prod }: { prod: Product }) => {
       onOpenChange={(e) => setOpen(e.open)}
     >
       <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm" _hover={{ bg: "red.500" }}>
+        <Button variant="subtle" size="sm" colorPalette={"red"} >
           <Trash />
+          <Text as={"span"} display={{ base: "none", md: "block" }}>
+            Delete
+          </Text>
         </Button>
       </Dialog.Trigger>
       <Portal>
@@ -390,7 +343,7 @@ const Delete = ({ prod }: { prod: Product }) => {
               <Dialog.ActionTrigger asChild>
                 <Button variant="outline">No</Button>
               </Dialog.ActionTrigger>
-              <Button colorPalette="red" onClick={() => handleDelete(prod.id!)}>
+              <Button colorPalette="red" onClick={() => handleDelete(prod.id)}>
                 Yes
               </Button>
             </Dialog.Footer>

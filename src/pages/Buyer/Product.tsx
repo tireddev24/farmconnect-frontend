@@ -1,57 +1,35 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Button,
-  VStack,
-  HStack,
-  Badge,
-  Icon,
-  Center,
-  Link,
-  Circle,
-  Separator,
-  Loader,
-} from "@chakra-ui/react";
-import {
-  ArrowLeft,
-  CheckCircle,
-  MapPin,
-  TrendingDown,
-  BarChart3,
-} from "lucide-react";
-import CustomSelect from "../components/customselect";
-import { ColorModeButton } from "../components/ui/color-mode";
-// import { MOCK_PRODUCTS as products } from "../data/mockdata";
+import { Flex, Box, Heading, Text, Button, VStack, HStack, Badge, Icon, Center, Circle, Separator } from "@chakra-ui/react";
+import { ArrowLeft, MapPin, TrendingDown, BarChart3 } from "lucide-react";
+import CustomSelect from "@/components/customselect";
+import { ColorModeButton } from "@/components/ui/color-mode";
 import { useNavigate, useParams } from "react-router-dom";
-import { Star } from "../components/ui/icons";
-import Spin from "../components/ui/spinner";
+import { Star } from "@/components/ui/icons";
+import Spin from "@/components/ui/spinner";
 import { useEffect, useState } from "react";
 import { useProductStore } from "store/store";
-import Unexpected from "error/unexpected";
+import Unexpected from "@/components/ui/error/unexpected";
 import type { CreateOrderPayload } from "types/types";
+import { formatPlural } from "@/lib/helpers";
 
 const ProductDetails = () => {
   const { id } = useParams();
 
-  const { product, fetchProductById } = useProductStore();
+
+  const product = useProductStore((state) => state.product);
+  const fetchProductById = useProductStore((state) => state.fetchProductById);
+
 
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<boolean>(false);
-  //   const [product, setProduct] = useState<any>(null);
-
-  // const p = products?.items?.find((prod: Product) => prod.id === id);
-  // const product: Product = p[0];
 
   useEffect(() => {
     const data = async () => {
       try {
-        await fetchProductById(id);
+        await fetchProductById(id!);
       } catch (error) {
         console.log(error);
         setError(true);
@@ -65,6 +43,8 @@ const ProductDetails = () => {
   const handleOrder = () => {
     //function to generate order id
     // const rand = Math.floor(Math.random() * 900000 + 100000);
+
+    if (!product?.id) return
 
     const order: CreateOrderPayload = {
       items: [
@@ -92,8 +72,9 @@ const ProductDetails = () => {
   };
 
   if (loading) {
-    return <Loader />;
+    return <Spin h="100dvh" />;
   }
+
 
   if (error) {
     return <Unexpected error={error} />;
@@ -107,7 +88,7 @@ const ProductDetails = () => {
             Product not found
           </Text>
           <Button onClick={() => navigate("/dashboard")}>
-            Return to Market
+            Return to Dashboard
           </Button>
         </VStack>
       </Center>
@@ -127,16 +108,16 @@ const ProductDetails = () => {
         borderBottom="1px solid"
         borderColor="gray.100"
       >
-        <Link
-          href="../dashboard"
-          display="flex"
+        <Flex
           alignItems="center"
           gap={2}
           color="gray.500"
           fontSize="sm"
+          cursor="pointer"
+          onClick={() => navigate("/dashboard")}
         >
-          <Icon as={ArrowLeft} /> Back to Market
-        </Link>
+          <Icon as={ArrowLeft} /> Back
+        </Flex>
         <Heading color="#10a37f" mx={"auto"}>
           <Text fontSize={"lg"} fontWeight={"bold"}>
             FARMCONNECT
@@ -280,7 +261,7 @@ const ProductDetails = () => {
                       bg={{ base: "gray.300/40", _dark: "#252525" }}
                       className=" rounded-2xl  flex items-center justify-center text-2xl"
                     >
-                      {product?.imageUrls[0] || "🥕"}
+                      {"🥕"}
                     </Box>
                     <Heading size="2xl">{product.name}</Heading>
                   </HStack>
@@ -342,7 +323,7 @@ const ProductDetails = () => {
                 display={"flex"}
                 px={10}
               >
-                <HStack spaceX={4} flex={1}>
+                {/* <HStack spaceX={4} flex={1}>
                   <VStack align="start" spaceX={0}>
                     <HStack>
                       <Text fontWeight="bold" fontSize="lg">
@@ -357,8 +338,9 @@ const ProductDetails = () => {
                       <HStack>
                         <Text
                           color={
-                            product.farmerRating > 4
+                            product.farmerRating ? product.farmerRating > 4
                               ? "green.500"
+                              : "yellow.500"
                               : "yellow.500"
                           }
                         >
@@ -368,7 +350,7 @@ const ProductDetails = () => {
                       </HStack>
                     </HStack>
                   </VStack>
-                </HStack>
+                </HStack> */}
 
                 <HStack spaceX={4}>
                   <VStack
@@ -377,7 +359,7 @@ const ProductDetails = () => {
                     py={2}
                     rounded="lg"
                     align="center"
-                    //   flex={1}
+                  //   flex={1}
                   >
                     <Text
                       fontSize="10px"
@@ -405,7 +387,7 @@ const ProductDetails = () => {
                     >
                       Stock
                     </Text>
-                    <Text fontWeight="bold">{product.quantityAvailable}</Text>
+                    <Text textTransform={"capitalize"} fontWeight="bold">{product.quantityAvailable}{" "}{formatPlural(product.unit, product.quantityAvailable)}</Text>
                   </VStack>
                 </HStack>
 

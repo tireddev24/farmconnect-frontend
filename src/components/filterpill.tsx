@@ -8,7 +8,7 @@ export const FilterPill = ({
   onClick,
 }: {
   label: string;
-  icon: JSX.Element;
+  icon?: JSX.Element;
   active: boolean;
   onClick: MouseEventHandler;
 }) => (
@@ -16,19 +16,22 @@ export const FilterPill = ({
     onClick={onClick}
     bg={{
       base: active ? "green.600/80" : "gray.100",
-      _dark: active ? "#8a7557" : "#252525",
+      _dark: active ? "yellow.400/80" : "#252525",
     }}
     color={{
       base: active ? "" : "gray.500",
-      _dark: active ? "" : "gray.400",
+      _dark: active ? "white" : "gray.400",
     }}
     _hover={{
       bg: {
-        base: active ? " " : "",
-        _dark: active ? "" : "#333",
+        base: active ? "" : "green.600/80",
+        _dark: active ? "" : "yellow.400/80",
       },
+      color: {
+        base: active ? "" : "white",
+        _dark: active ? "" : "white",
+      }
     }}
-    gradientTo={{ base: "green.600/80", _dark: "#8a7557" }}
     marginTop={4}
     rounded={"3xl"}
     className={`flex items-center gap-2 rounded-full text-sm font-medium transition-all whitespace-nowrap

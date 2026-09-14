@@ -1,27 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import api, { url } from "./axios";
-import { type userRegister } from "../types/userType";
+import type { UserProfile } from "@/types/types";
 
 export const register = async (
-  payload: userRegister,
+  payload: Omit<UserProfile, 'id'>,
 ): Promise<{ message: string; success: boolean }> => {
-  console.log(payload);
 
-  const isObjectComplete = (obj: Record<string, any>): boolean => {
-    // .every returns true only if the condition is met for EVERY item
 
-    return Object.values(obj).every((value) => {
-      // Check for null, undefined, and empty strings
-      if (value === null || value === undefined) return false;
-      if (typeof value === "string" && value.trim() === "") return false;
-
-      return true;
-    });
-  };
-
-  if (!isObjectComplete(payload)) {
-    return { success: false, message: "Please fill in all fields" };
-  }
   // return { success: false, message: "No response" };
   try {
     const response = await fetch(`${url}/auth/register`, {
@@ -50,8 +35,4 @@ export const register = async (
 };
 export const getMe = () => api.get("/auth/me");
 
-export const logout = () => {
-  api.post("/auth/logout");
-  sessionStorage.removeItem("user_data");
-  return;
-};
+

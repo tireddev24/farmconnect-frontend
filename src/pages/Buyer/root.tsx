@@ -1,35 +1,36 @@
 import { Box } from "@chakra-ui/react";
 import { Outlet, useNavigate } from "react-router-dom";
-
-import { useEffect } from "react";
 import { Sidebar } from "@/components/sidebars/sidebar";
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 
 export const Root = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    if (window.location.pathname === "/farmer") {
-      navigate("dashboard");
+
+    if (window.location.pathname === "/") {
+      navigate("dashboard")
     }
-  }, [navigate]);
+  }, [navigate])
 
   return (
     <Box
-      color={{ base: "#252525", _dark: "white" }}
+      rounded={"md"}
+      alignContent={"flex-start"}
+      color={{ base: "black", _dark: "white" }}
       bg={{ base: "#f8fafb", _dark: "black" }}
-
-
+      minW={"lg"}
     >
       {/* Sidebar */}
-      <Toaster />
-
       <Sidebar />
+      <Toaster />
 
       {/* Main content */}
       <Box
         ml={16}
-        minW={"lg"}
+        minH={"dvh"}
+        bg={{ base: "f8fafb", _dark: "black" }}
       >
         <Outlet />
       </Box>

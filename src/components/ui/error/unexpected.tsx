@@ -5,7 +5,7 @@ const Unexpected = ({ error }: { error: boolean }) => {
   const [count, setCount] = useState<number>(30);
 
   useEffect(() => {
-    let timer: any;
+    let timer: ReturnType<typeof setInterval>;
 
     if (error && count > 0) {
       timer = setInterval(() => {
@@ -27,16 +27,16 @@ const Unexpected = ({ error }: { error: boolean }) => {
   return (
     <VStack
       w={"full"}
-      bg={"gray.400"}
+      bg={"whiteALpha.100"}
       spaceX={4}
       align="center"
       justify="center"
       height="100vh"
     >
-      <Text fontSize={"5xl"} color={"red.500"} fontWeight={"bold"}>
+      <Text fontSize={"3xl"} color={"red.300"} fontWeight={"bold"}>
         Oops!
       </Text>
-      <Text fontSize="3xl">An unexpected error occurred.</Text>
+      <Text fontSize="xl">An unexpected runtime error occurred.</Text>
       <Text fontSize="lg">
         {count > 0
           ? `Retrying in ${count} second${count !== 1 ? "s" : ""}...`

@@ -9,14 +9,15 @@ import {
   Container,
   Table,
 } from "@chakra-ui/react";
-import Unexpected from "error/unexpected";
-import { formatDate } from "helpers/function";
-import { Loader } from "lucide-react";
+import Unexpected from "@/components/ui/error/unexpected";
+import { formatDate } from "@/lib/helpers";
 import { useEffect, useState } from "react";
 import { useAdminStore } from "store/store";
+import Spin from "@/components/ui/spinner";
 
 const SystemLogs = () => {
-  const { logs, fetchLogs } = useAdminStore();
+  const logs = useAdminStore((state) => state.logs);
+  const fetchLogs = useAdminStore((state) => state.fetchLogs);
 
   const [error, setError] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -33,20 +34,20 @@ const SystemLogs = () => {
       }
     };
     data();
-  }, []);
+  }, [fetchLogs]);
 
   if (error) {
     return <Unexpected error={error} />;
   }
 
   if (loading) {
-    return <Loader />;
+    return <Spin h="100dvh" />;
   }
 
   return (
-    <Flex minH="100vh" bg="#f8fafb">
+    <Flex minH="100vh" >
       {/* --- Main Content --- */}
-      <Box flex={1} p={10}>
+      <Box p={10}>
         <Flex justify="space-between" align="center" mb={8}>
           <Box>
             <Heading size="lg">System Logs</Heading>
@@ -94,8 +95,7 @@ const SystemLogs = () => {
 
             {/* Log Content Area */}
             <Box
-              w="full"
-              h={"90dvh"}
+              h={"60dvh"}
               overflowY={"scroll"}
               fontFamily="monospace"
               fontSize="sm"
@@ -103,22 +103,24 @@ const SystemLogs = () => {
               <VStack>
                 <Table.Root>
                   <Table.Header>
-                    <Table.ColumnHeader>User Action </Table.ColumnHeader>
-                    <Table.ColumnHeader>User Id</Table.ColumnHeader>
-                    <Table.ColumnHeader>Port</Table.ColumnHeader>
-                    <Table.ColumnHeader>User Agent</Table.ColumnHeader>
-                    <Table.ColumnHeader w={"max-content"}>
-                      Date
-                    </Table.ColumnHeader>
+                    <Table.Row>
+                      <Table.ColumnHeader>User Action </Table.ColumnHeader>
+                      <Table.ColumnHeader>User Id</Table.ColumnHeader>
+                      <Table.ColumnHeader>Port</Table.ColumnHeader>
+                      <Table.ColumnHeader>User Agent</Table.ColumnHeader>
+                      <Table.ColumnHeader w={"max-content"}>
+                        Date
+                      </Table.ColumnHeader>
+                    </Table.Row>
                   </Table.Header>
                   <Table.Body>
-                    {logs
+                    {logs.slice(0, 10)
                       .sort(
                         (log: Log) =>
                           Number(log.timestamp) - Number(log.timestamp),
                       )
                       .map((log: Log) => (
-                        <LogLine log={log} />
+                        <LogLine key={log.id} log={log} />
                       ))}
                   </Table.Body>
                 </Table.Root>
@@ -132,6 +134,7 @@ const SystemLogs = () => {
 };
 
 interface Log {
+  id: string
   type: string;
   message: string;
   userId: string;

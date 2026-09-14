@@ -7,21 +7,24 @@ import {
   Table,
   TableBody,
   Badge,
-  VStack,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import type { UserProfile } from "types/types";
 import { useAdminStore } from "store/store";
-import Unexpected from "error/unexpected";
-import { formatDate } from "helpers/function";
+import Unexpected from "@/components/ui/error/unexpected";
+import { formatDate } from "@/lib/helpers";
 import Spin from "components/ui/spinner";
+
 
 const UserManagement = () => {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(false);
-  const { users, fetchUsers } = useAdminStore();
+
+  const users = useAdminStore((state) => state.users)
+  const fetchUsers = useAdminStore((state) => state.fetchUsers)
+
+
   const path = location.pathname;
 
   useEffect(() => {
@@ -36,15 +39,12 @@ const UserManagement = () => {
       }
     };
     data();
-  }, []);
+  }, [fetchUsers]);
 
   if (loading) {
-    return (
-      <VStack minH={"100dvh"} justifyContent={"center"}>
-        <Spin />
-      </VStack>
-    );
+    return <Spin h="100dvh" />;
   }
+
 
   if (error) {
     return <Unexpected error={error} />;
@@ -68,6 +68,13 @@ const UserManagement = () => {
         </Flex>
         {/* 2. All Users Table */}
 
+
+        <Flex justify="space-between" align="center" mb={6}>
+          <Heading size="md" color="gray.800">
+            All Users
+          </Heading>
+        </Flex>
+
         <Box
           bg="white"
           p={8}
@@ -75,47 +82,50 @@ const UserManagement = () => {
           shadow="sm"
           border="1px solid"
           borderColor="gray.100"
+          h={"60dvh"}
+          overflowY={"scroll"}
         >
-          <Flex justify="space-between" align="center" mb={6}>
-            <Heading size="md" color="gray.800">
-              All Users
-            </Heading>
-          </Flex>
+
 
           <Table.Root size="sm">
             <Table.Header>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                User
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Role
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Status
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Date
-              </Table.ColumnHeader>
-              <Table.ColumnHeader
-                color="gray.400"
-                textTransform="none"
-                textAlign="right"
-              >
-                Manage
-              </Table.ColumnHeader>
+              <Table.Row>
+
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  User
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Role
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Status
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Date
+                </Table.ColumnHeader>
+                <Table.ColumnHeader
+                  color="gray.400"
+                  textTransform="none"
+                  textAlign="right"
+                >
+                  Manage
+                </Table.ColumnHeader>
+              </Table.Row>
             </Table.Header>
             <TableBody>
-              {users.data.items
-                .filter((o: UserProfile) => o.role.toLowerCase() !== "admin")
-                .map((user: UserProfile, i: number) => (
-                  <UserRow
-                    index={i}
-                    name={user.firstName + " " + user.lastName}
-                    role={user.role}
-                    status={user.status}
-                    date={user.createdAt}
-                  />
-                ))}
+              {users.filter((user) => user.role.toString().toLowerCase() !== "admin")
+                .map((user, i: number) => {
+                  return (
+                    <UserRow
+                      key={user.id ?? i} // Added key prop to prevent React warnings
+                      index={i}
+                      name={user.firstName + " " + user.lastName}
+                      role={user.role}
+                      status={user.status}
+                      date={user.createdAt}
+                    />
+                  )
+                })}
             </TableBody>
           </Table.Root>
         </Box>
@@ -126,26 +136,14 @@ const UserManagement = () => {
 
 // --- Sub-components to keep code clean ---
 
-const UserRow = ({
-  index,
-  name,
-  role,
-  date,
-  status,
-}: {
-  index: number;
-  name: string;
-  role: string;
-  date: string;
-  status: string;
-}) => {
-  const isBanned = status === "BANNED";
+const UserRow = ({ ...props }) => {
+  const isBanned = props.status === "BANNED";
   return (
-    <Table.Row key={index}>
+    <Table.Row key={props.index}>
       <Table.Cell fontWeight="bold" py={4}>
-        {name}
+        {props.name}
       </Table.Cell>
-      <Table.Cell color="gray.500">{role}</Table.Cell>
+      <Table.Cell color="gray.500">{props.role}</Table.Cell>
       <Table.Cell>
         <Badge
           bg={isBanned ? "red.50" : "emerald.50"}
@@ -154,10 +152,10 @@ const UserRow = ({
           px={2}
           rounded="md"
         >
-          {status}
+          {props.status}
         </Badge>
       </Table.Cell>
-      <Table.Cell>{formatDate(date)}</Table.Cell>
+      <Table.Cell>{formatDate(props.date)}</Table.Cell>
       <Table.Cell textAlign="right">
         <Button
           variant="ghost"

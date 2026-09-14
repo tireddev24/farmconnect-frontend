@@ -6,14 +6,13 @@ import {
   Icon,
   Table,
   TableBody,
-  VStack,
 } from "@chakra-ui/react";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { OrderRecord } from "types/types";
 import { useAdminStore } from "store/store";
-import Unexpected from "error/unexpected";
-import { formatDate } from "helpers/function";
+import Unexpected from "@/components/ui/error/unexpected";
+import { formatDate } from "@/lib/helpers";
 import Spin from "components/ui/spinner";
 import { Button, CloseButton, Dialog, Portal } from "@chakra-ui/react";
 
@@ -29,7 +28,10 @@ const Verify = () => {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState(false);
-  const { orders, fetchOrders } = useAdminStore();
+
+  const orders = useAdminStore((state) => state.orders)
+  const fetchOrders = useAdminStore((state) => state.fetchOrders)
+
 
   useEffect(() => {
     const data = async () => {
@@ -43,15 +45,12 @@ const Verify = () => {
       }
     };
     data();
-  }, []);
+  }, [fetchOrders]);
 
   if (loading) {
-    return (
-      <VStack minH={"100dvh"} justifyContent={"center"}>
-        <Spin />
-      </VStack>
-    );
+    return <Spin h="100dvh" />;
   }
+
 
   if (error) {
     return <Unexpected error={error} />;
@@ -79,7 +78,7 @@ const Verify = () => {
           borderColor={{ base: "gray.100", _dark: "gray.800" }}
           mb={8}
           color={{ base: "gray.800", _dark: "white" }}
-          // overflow={"scroll"}
+        // overflow={"scroll"}
         >
           <HStack mb={6} color="emerald.600">
             <Icon as={Check} fontSize={20} />
@@ -88,37 +87,34 @@ const Verify = () => {
 
           <Table.Root size="sm">
             <Table.Header>
-              {/* <Table.ColumnHeader color="gray.400" textTransform="none">
-                Name
-              </Table.ColumnHeader> */}
-              {/* <Table.ColumnHeader color="gray.400" textTransform="none">
-                    Location
-                  </Table.ColumnHeader> */}
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Order Id
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Buyer
-              </Table.ColumnHeader>{" "}
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Seller
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Status
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Date
-              </Table.ColumnHeader>
-              <Table.ColumnHeader color="gray.400" textTransform="none">
-                Amount
-              </Table.ColumnHeader>
-              <Table.ColumnHeader
-                color="gray.400"
-                textTransform="none"
-                textAlign="right"
-              >
-                Action
-              </Table.ColumnHeader>
+              <Table.Row>
+
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Order Id
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Buyer
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Seller
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Status
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Date
+                </Table.ColumnHeader>
+                <Table.ColumnHeader color="gray.400" textTransform="none">
+                  Amount
+                </Table.ColumnHeader>
+                <Table.ColumnHeader
+                  color="gray.400"
+                  textTransform="none"
+                  textAlign="right"
+                >
+                  Action
+                </Table.ColumnHeader>
+              </Table.Row>
             </Table.Header>
             <TableBody>
               {orders
@@ -128,7 +124,6 @@ const Verify = () => {
                 .map((o: OrderRecord) => (
                   <VerificationRow
                     key={o.id}
-                    //   name={o.items[0].productName}
                     seller={o.farmerName!}
                     buyer={o.buyerName!}
                     status={o.status!}
@@ -168,14 +163,10 @@ export const VerificationRow = ({
   buyer: string;
 }) => (
   <Table.Row>
-    {/* <Table.Cell fontWeight="bold" py={4}>
-      {name}
-    </Table.Cell> */}
-    {/* <Table.Cell color="gray.500">{location}</Table.Cell> */}
     <Table.Cell color="gray.500">{orderId}</Table.Cell>
     <Table.Cell textTransform={"capitalize"} color="gray.500">
       {buyer}
-    </Table.Cell>{" "}
+    </Table.Cell>
     <Table.Cell textTransform={"capitalize"} color="gray.500">
       {seller}
     </Table.Cell>

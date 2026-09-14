@@ -1,37 +1,52 @@
-export interface Product {
-  id?: string;
-  categoryId: number;
-  name: string;
-  description: string;
-  pricePerUnit: number; // In JS/TS, all numbers are 'number'
-  unit: string;
-  quantityAvailable: number;
-  isAvailable: boolean;
-  location?: string;
-  latitude?: number;
-  longitude?: number;
-  harvestDate?: Date; // Converted from string to Date object
-  expiryDate?: Date;
-  createdAt?: Date;
-  categoryName?: string;
-  farmerName?: string;
-  farmerRating?: number;
-  imageUrls?: string[]; // Array of strings
+
+import { type ACCOUNT_STATUSES, USER_ROLES, PRODUCT_UNITS } from "@/lib/constants";
+import type { LucideIcon } from "lucide-react"; // Or your preferred icon library
+import type { JSX } from "react";
+
+export interface UserProfile {
+  id: string; // UUID
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  role: UserRole // String literal types for safety
+  status: AccountStatus
+  isEmailVerified: boolean;
+  createdAt: string; // ISO 8601 Date string
+  profileImageUrl: string | null;
+  address: string | null;
+  state: string | null;
 }
 
-export interface CreateProductPayload {
+
+
+export type UserRole = typeof USER_ROLES[keyof typeof USER_ROLES];
+export type AccountStatus = typeof ACCOUNT_STATUSES[keyof typeof ACCOUNT_STATUSES];
+
+export type ProductUnit = typeof PRODUCT_UNITS[keyof typeof PRODUCT_UNITS];
+
+
+export interface Product {
+  id: string;
   categoryId: number;
+  categoryName?: string
   name: string;
-  description: string;
+  description: string | null;
   pricePerUnit: number;
-  unit: "bag" | "kg" | "crate" | "ton" | "tubers"; // Using specific units for better validation
+  unit: ProductUnit;
   quantityAvailable: number;
-  location: string;
-  latitude?: number;
-  longitude?: number;
-  harvestDate?: string; // ISO 8601 string
-  expiryDate?: string; // ISO 8601 string
+  location: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  harvestDate: string;
+  expiryDate: string | null;
+  farmerName?: string;
 }
+
+
+
+type orderStatus = "pending" | "awaiting-confirmation" | "approved" | "shipped" | "delivered";
 
 export interface Order {
   id: string;
@@ -41,12 +56,7 @@ export interface Order {
   price: number;
   unit: string;
   stock?: string;
-  status?:
-    | "awaiting-confirmation"
-    | "approved"
-    | "shipped"
-    | "delivered"
-    | string;
+  status: orderStatus;
   trend?: "up" | "down" | "stable";
   icon?: string;
   location?: string;
@@ -55,8 +65,44 @@ export interface Order {
   seller?: string;
   buyer?: string;
   quantity: number;
-  totalAmount: number;
+  items?: Partial<OrderProduct>
+
+
 }
+
+
+export interface OrderProduct {
+  id?: string
+  productId: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalPrice: number;
+}
+
+
+export interface OrderRecord {
+  id: string; // UUID
+  orderNumber: string; // e.g., "FC202603171197"
+  status: orderStatus;
+  subTotal: number;
+  deliveryFee: number;
+  totalAmount: number;
+  deliveryAddress: string;
+  notes: string
+  createdAt: string; // Or Date if you parse it
+  updatedAt: string;
+  buyerName: string;
+  farmerName: string;
+  items: OrderProduct[]; // The nested array
+  delivery: {
+    status: string;
+    dropoffAddress: string;
+    trackingCode: string;
+  }
+}
+
 
 export interface OrderItem {
   productId: string;
@@ -77,21 +123,6 @@ export interface OrderItemDetail {
   quantity: number;
   unitPrice: number;
   totalPrice: number;
-}
-
-export interface OrderRecord {
-  id: string; // UUID
-  orderNumber: string; // e.g., "FC202603171197"
-  status: "Pending" | "Processing" | "Completed" | "Cancelled"; // Strict status typing
-  subTotal: number;
-  deliveryFee: number;
-  totalAmount: number;
-  deliveryAddress: string;
-  createdAt: string; // Or Date if you parse it
-  updatedAt: string;
-  buyerName: string;
-  farmerName: string;
-  items: OrderItemDetail[]; // The nested array
 }
 
 export interface FarmerOrderItem {
@@ -128,58 +159,26 @@ export interface FarmerOrders {
 }
 
 export interface AdminUsers {
-  success: boolean;
-  message: string;
-  data: {
-    items: [
-      {
-        id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        phoneNumber: string;
-        role: "Buyer" | "Farmer" | "Admin";
-        status: "Active" | "Banned";
-        isEmailVerified: boolean;
-        createdAt: string;
-      },
-    ];
-    totalCount: number;
-    page: number;
-    pageSize: number;
-    totalPages: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  };
-  timestamp: string;
-}
-
-export interface UserProfile {
-  id: string; // UUID
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
-  role: "Farmer" | "Buyer" | "Admin"; // String literal types for safety
-  status: "Active" | "Inactive" | "Suspended";
+  role: UserProfile
+  status: AccountStatus
   isEmailVerified: boolean;
-  createdAt: string; // ISO 8601 Date string
+  createdAt: string;
+
 }
+
+
 
 export interface category {
   id: number;
   name: string;
 }
 
-export interface ProfileProductCard {
-  name: string;
-  category: string;
-  pricePerUnit: number;
-  unit: string;
-  quantityAvailable: number;
-  harvestDate: string;
-  id: string;
-}
+
 
 export interface Quicklink {
   icon: JSX.Element;
@@ -196,17 +195,6 @@ export type OrderActivityStatus =
   | "Delivered"
   | "Cancelled";
 
-export interface OrderActivity {
-  id: string; // UUID from backend
-  name: string; // Product name (e.g., "25L Palm Oil")
-  date: string; // ISO Date string (e.g., "2026-03-24T...")
-  amount: number; // Numeric value for calculations
-  status: OrderActivityStatus | string;
-  tracking: string; // Unique tracking reference
-}
-
-import type { LucideIcon } from "lucide-react"; // Or your preferred icon library
-import type { JSX } from "react";
 
 export interface DashboardStat {
   label: string; // e.g., "Total Orders"
@@ -215,3 +203,4 @@ export interface DashboardStat {
   icon: LucideIcon; // The component itself: Leaf, ShoppingCart, etc.
   color: string; // The theme color: "green", "orange", "blue"
 }
+
