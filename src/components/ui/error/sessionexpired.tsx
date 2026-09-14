@@ -1,4 +1,5 @@
-import { Toaster, toaster } from "components/ui/toaster";
+import { Toaster } from "@/components/ui/toaster";
+import { toaster } from "@/hooks/useUI";
 import { useAuth } from "context/AuthContext";
 import { useEffect } from "react";
 

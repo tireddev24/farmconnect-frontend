@@ -17,7 +17,6 @@ export default function Login() {
 
   const { user, loading: load } = useAuth();
   const navigate = useNavigate()
-  //implement for loading, awaiting data
 
   const { loading, loginUser } = useLogin();
 
@@ -75,7 +74,7 @@ export default function Login() {
           color={{ base: "white", _dark: "#0a0a0a" }}
           p={2}
         >
-          <Wheat size={"sm"} />
+          <Wheat />
         </Box>
 
         <Heading
@@ -102,119 +101,118 @@ export default function Login() {
         borderColor={{ base: "gray.100", _dark: "gray.800" }}
 
       >
-        <form>
-          <Stack gap={6} >
-            {/* Email */}
-            <Box>
-              <Text fontWeight="semibold" mb={2} ml={1}>
-                Email
-              </Text>
-              <InputElement h="12">
-                {/* <User /> */}
-              </InputElement>
-              <Input
-                placeholder="Enter your email"
+        {/* <form> */}
+        <Stack gap={6} >
+          {/* Email */}
+          <Box>
+            <Text fontWeight="semibold" mb={2} ml={1}>
+              Email
+            </Text>
+            <InputElement h="12">
+              {/* <User /> */}
+            </InputElement>
+            <Input
+              placeholder="Enter your email"
 
-                rounded="lg"
-                color={{ base: "black", _dark: "white" }}
-                borderColor="gray.200"
-                _focus={{
-                  borderColor: { base: "#10a37f", _dark: "yellow.500" },
-                  ring: "2px",
-                  ringColor: { base: "emerald.50", _dark: "yellow.50" },
-                }}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </Box>
-
-            {/* Password */}
-            <Box>
-              <Text fontWeight="semibold" mb={2} ml={1}>
-                Password
-              </Text>
-
-              <InputElement h="12">
-
-                {/* <Lock /> */}
-              </InputElement>
-              <Input
-
-                type="password"
-                placeholder="••••••••"
-                color={{ base: "black", _dark: "white" }}
-                p={3}
-                rounded="lg"
-                borderColor="gray.200"
-                _focus={{
-                  borderColor: { base: "#10a37f", _dark: "yellow.500" },
-                  ring: "2px",
-                  ringColor: { base: "emerald.50", _dark: "yellow.50" },
-                }}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-
-            </Box>
-
-            {/* Remember Me & Forgot Password */}
-            <Flex align="center">
-              <Checkbox.Root
-                colorPalette={"emerald"}
-                size={"sm"}
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-                <Checkbox.Label>Remember me</Checkbox.Label>
-              </Checkbox.Root>
-              <Spacer />
-              <Link
-                // to="/forgot-password"
-                fontSize="sm"
-                fontWeight="bold"
-                color={{ base: "#10a37f", _dark: "yellow.400" }}
-              >
-                Forgot Password?
-              </Link>
-            </Flex>
-
-            <Button
-              type="submit"
-              py={6}
-              fontSize="md"
-              fontWeight="bold"
-              rounded="2xl"
-              bg={{ base: "#10a37f", _dark: "yellow.500" }}
-              _hover={{
-                bg: { base: "#0e8c6d", _dark: "yellow.600" },
-                shadow: "md",
+              rounded="lg"
+              color={{ base: "black", _dark: "white" }}
+              borderColor="gray.200"
+              _focus={{
+                borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                ring: "2px",
+                ringColor: { base: "emerald.50", _dark: "yellow.50" },
               }}
-              _active={{ transform: "scale(0.98)" }}
-              shadow={{
-                base: "0 8px 15px rgba(16, 163, 127, 0.25)",
-                _dark: "none",
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Box>
+
+          {/* Password */}
+          <Box>
+            <Text fontWeight="semibold" mb={2} ml={1}>
+              Password
+            </Text>
+
+            <InputElement h="12">
+
+              {/* <Lock /> */}
+            </InputElement>
+            <Input
+
+              type="password"
+              placeholder="••••••••"
+              color={{ base: "black", _dark: "white" }}
+              p={3}
+              rounded="lg"
+              borderColor="gray.200"
+              _focus={{
+                borderColor: { base: "#10a37f", _dark: "yellow.500" },
+                ring: "2px",
+                ringColor: { base: "emerald.50", _dark: "yellow.50" },
               }}
-              onClick={handleSubmit}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+
+          </Box>
+
+          {/* Remember Me & Forgot Password */}
+          <Flex align="center">
+            <Checkbox.Root
+              colorPalette={"emerald"}
+              size={"sm"}
             >
-              {loading ? <Spin /> : "Log In"}
-            </Button>
-          </Stack>
-        </form>
+              <Checkbox.HiddenInput />
+              <Checkbox.Control />
+              <Checkbox.Label>Remember me</Checkbox.Label>
+            </Checkbox.Root>
+            <Spacer />
+            <Link
+              // to="/forgot-password"
+              fontSize="sm"
+              fontWeight="bold"
+              color={{ base: "#10a37f", _dark: "yellow.400" }}
+            >
+              Forgot Password?
+            </Link>
+          </Flex>
+
+          <Button
+            type="submit"
+            py={6}
+            fontSize="md"
+            fontWeight="bold"
+            rounded="2xl"
+            bg={{ base: "#10a37f", _dark: "yellow.500" }}
+            _hover={{
+              bg: { base: "#0e8c6d", _dark: "yellow.600" },
+              shadow: "md",
+            }}
+            _active={{ transform: "scale(0.98)" }}
+            shadow={{
+              base: "0 8px 15px rgba(16, 163, 127, 0.25)",
+              _dark: "none",
+            }}
+            onClick={handleSubmit}
+          >
+            {loading ? <Spin /> : "Log In"}
+          </Button>
+        </Stack>
+        {/* </form> */}
 
         <Separator my={4} borderColor={{ base: "gray.100", _dark: "gray.800" }} />
 
 
         <Flex fontSize="sm" justify={"center"} color={{ base: "gray.700", _dark: "gray.300" }} textAlign={"center"}>
           Don't have an account?
-          <Text ml={2} fontWeight={"bold"} color={"green.500"}>
 
-            <Box
-              onClick={() => navigate("register")}
-              className="font-bold text-green-700 dark:text-yellow-400 cursor-pointer"
-            >
+          <Box
+            onClick={() => navigate("register")}
+          >
+            <Text ml={2} fontWeight={"bold"} color={"green.500"}>
               Create Account
-            </Box>
-          </Text>
+            </Text>
+          </Box>
         </ Flex>
       </Container>
 
