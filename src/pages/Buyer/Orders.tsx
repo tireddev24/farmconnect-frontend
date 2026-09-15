@@ -90,6 +90,13 @@ const Orders = () => {
         >
 
           <OrderTable orders={orders} />
+          {orders.length === 0 && (
+            <Flex minH={"40vh"} alignItems={"center"} justifyContent={"center"} w={"full"}>
+              <Text fontSize={"xl"} textAlign={"center"}>
+                No orders to display here
+              </Text>
+            </Flex>
+          )}
         </Box>
       ) : (
         <Box w={"full"}>

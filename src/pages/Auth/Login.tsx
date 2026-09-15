@@ -207,7 +207,7 @@ export default function Login() {
           Don't have an account?
 
           <Box
-            onClick={() => navigate("register")}
+            onClick={() => navigate("/register")}
           >
             <Text ml={2} fontWeight={"bold"} color={"green.500"}>
               Create Account

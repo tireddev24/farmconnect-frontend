@@ -16,14 +16,11 @@ import {
   Center,
   InputElement,
 } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import {
-  LeftArrow,
   PadLock,
-  // User,
   Location as MapPin,
-  // ShieldCheck,
 } from "@/components/ui/icons";
 import CustomSelect from "@/components/customselect";
 import Spin from "@/components/ui/spinner";
@@ -33,9 +30,11 @@ import { toaster } from "@/hooks/useUI";
 
 import { useRegister } from "@/hooks/useAuthHooks";
 import type { UserRole } from "@/types/types";
+import { useAuthStore } from "@/store/store";
 
 export default function Register() {
   const { registerUser } = useRegister();
+  const user = useAuthStore((state) => state.user)
   const [firstName, setFirstname] = useState("");
   const [lastName, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -49,8 +48,6 @@ export default function Register() {
   // const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,10 +73,6 @@ export default function Register() {
         description: message,
       });
 
-      if (success) {
-        setTimeout(() => { }, 2000);
-        navigate("/dashboard");
-      }
     } catch (err) {
       console.error(err);
       alert("Registration failed.");
@@ -87,6 +80,10 @@ export default function Register() {
       setLoading(false);
     }
   };
+
+  if (user) {
+    return <Navigate to="/" replace />
+  }
 
   return (
     <Box
@@ -308,7 +305,7 @@ export default function Register() {
                 <InputGroup>
                   <>
                     <CustomSelect
-                      defaultValue="BUYER"
+                      defaultValue="Select Role"
                       options={["Buyer", "Farmer"]}
                       value={role}
                       onChange={(e) => setRole(e as UserRole)}
@@ -377,21 +374,6 @@ export default function Register() {
             </Text>
           </Center>
         </Container>
-
-        {/* Footer Link */}
-        <Link
-          href="../dashboard"
-          mt={8}
-          display="flex"
-          alignItems="center"
-          gap={2}
-          color="gray.500"
-          fontSize="sm"
-          _hover={{ color: "gray.800", textDecoration: "none" }}
-        >
-          <LeftArrow />
-          Back to Market
-        </Link>
       </Center >
     </Box >
   );
