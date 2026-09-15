@@ -4,13 +4,16 @@ import { MdError } from "react-icons/md";
 const Notauthorized = () => {
   return (
     <VStack
-      minH={"50vh"}
+      minH={"80vh"}
       justifyContent={"center"}
-      fontSize={"6xl"}
       color={"red.600"}
+      minW={"md"}
+      mx={"auto"}
     >
-      <MdError />
-      <Text fontWeight={"bolder"}>
+      <Text fontSize={"8xl"}>
+        <MdError />
+      </Text>
+      <Text fontWeight={"bolder"} fontSize={"5xl"}>
         You are not authorized to view this page!
       </Text>
     </VStack>

@@ -272,6 +272,13 @@ const Profile = () => {
 
                 </Flex>
               ))}
+              {orders.filter((order) => order.status.toLowerCase() === "pending").length === 0 && (
+                <Flex py={8} alignItems={"center"} justifyContent={"center"} w={"full"}>
+                  <Text textAlign={"center"}>
+                    No Pending Orders
+                  </Text>
+                </Flex>
+              )}
             </Box>
 
             {/* Order Item 1 */}
@@ -316,6 +323,13 @@ const Profile = () => {
 
                   </Flex>
                 ))}
+                {orders.filter((order) => order.status.toLowerCase() !== "pending").length === 0 && (
+                  <Flex py={8} alignItems={"center"} justifyContent={"center"} w={"full"}>
+                    <Text textAlign={"center"}>
+                      No Recent Purchases
+                    </Text>
+                  </Flex>
+                )}
               </Flex>
 
               {/* Add more recent items here... */}

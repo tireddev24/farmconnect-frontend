@@ -54,13 +54,13 @@ export const OrderCard = ({ order }: { order: Order }) => {
 export const OrderTable = ({ orders }: { orders: OrderRecord[] }) => {
   return (
 
-    <Table.Root >
+    <Table.Root rounded={"md"}>
       <Table.Header
         textTransform={"capitalize"}
         textWrap={'nowrap'}
       >
         <Table.Row
-          rounded={"lg"}
+          rounded={"xl"}
         >
           <Table.ColumnHeader >order id</Table.ColumnHeader>
           <Table.ColumnHeader >Items</Table.ColumnHeader>
